@@ -63,7 +63,7 @@ Name: Dragon
 Friendly: False
 HP: 551
 AB: 38
-AC: 43
+AC: 10
 Damage: 100
 [Attributes]
 Strength: 14
