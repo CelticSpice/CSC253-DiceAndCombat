@@ -1,0 +1,19 @@
+Name: Room1
+NumCreatures: 3
+NumItems: 3
+
+Name: Room2
+NumCreatures: 4
+NumItems: 5
+
+Name: Room3
+NumCreatures: 5
+NumItems: 5
+
+Name: Room4
+NumCreatures: 2
+NumItems: 1
+
+Name: Room5
+NumCreatures: 6
+NumItems: 5
