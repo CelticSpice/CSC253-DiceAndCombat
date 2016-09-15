@@ -40,11 +40,35 @@ namespace Dice_and_Combat_Engine
         internal void StartGame()
         {
             // Initialize UI
-            playerNameTextBox.Text = game.Player.Stats.name;
-            playerRaceClassTextBox.Text = game.Player.PlayerStats.race + " " + game.Player.PlayerStats.playerClass;
-            playerHPTextBox.Text = game.Player.Stats.hitPoints.ToString();
-            playerABTextBox.Text = game.Player.Stats.attackBonus.ToString();
-            playerACTextBox.Text = game.Player.Stats.armorClass.ToString();
+            Player player = game.Player;
+
+            playerNameTextBox.Text = player.Stats.name;
+            playerRaceClassTextBox.Text = player.PlayerStats.race + " " + player.PlayerStats.playerClass;
+            playerHPTextBox.Text = player.Stats.hitPoints.ToString();
+            playerABTextBox.Text = player.Stats.attackBonus.ToString();
+            playerACTextBox.Text = player.Stats.armorClass.ToString();
+
+            roomNameLbl.Text = game.CurrentRoom.RoomName;
+
+            string[] creatureNames = new string[game.CurrentRoom.Denizens.Count];
+            int i = 0;
+            foreach (Creature crea in game.CurrentRoom.Denizens)
+            {
+                creatureNames[i] = crea.Stats.name;
+                i++;
+            }
+
+            creatureList.Items.AddRange(creatureNames);
+            creatureList.SetSelected(0, true);
+
+            Creature creature = game.CurrentRoom.Denizens[0];
+
+            creatureImgBox.Image = creature.Portrait;
+
+            creatureNameTextBox.Text = creature.Stats.name;
+            creatureHPTextBox.Text = creature.Stats.hitPoints.ToString();
+            creatureABTextBox.Text = creature.Stats.attackBonus.ToString();
+            creatureACTextBox.Text = creature.Stats.armorClass.ToString();
         }
 
         /*
