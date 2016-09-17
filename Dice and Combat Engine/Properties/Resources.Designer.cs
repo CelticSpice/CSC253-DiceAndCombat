@@ -81,70 +81,51 @@ namespace Dice_and_Combat_Engine.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Goblin
-        ///false
-        ///5
-        ///1
-        ///15
-        ///6
-        ///0
-        ///1
-        ///1
-        ///0
-        ///-1
-        ///-2
+        ///   Looks up a localized string similar to Name: Goblin
+        ///Friendly: False
+        ///HP: 5
+        ///AB: 1
+        ///AC: 15
+        ///Damage: 6
+        ///XP: 5
+        ///Strength: 0
+        ///Constitution: 1
+        ///Dexterity: 1
+        ///Intelligence: 0
+        ///Wisdom: -1
+        ///Charisma: -2
         ///
-        ///Orc
-        ///false
-        ///5
-        ///1
-        ///13
-        ///6
-        ///3
-        ///1
-        ///0
-        ///-1
-        ///-2
-        ///-2
+        ///Name: Orc
+        ///Friendly: False
+        ///HP: 5
+        ///AB: 1
+        ///AC: 13
+        ///Damage: 6
+        ///XP: 10
+        ///Strength: 3
+        ///Constitution: 1
+        ///Dexterity: 0
+        ///Intelligence: -1
+        ///Wisdom: -2
+        ///Charisma: -2
         ///
-        ///Zombie
-        ///false
-        ///16
-        ///2
-        ///11
-        ///6
-        ///1
-        ///0
-        ///-1
-        ///0
-        ///0
-        ///-5
+        ///Name: Zombie
+        ///Friendly: False
+        ///HP: 16
+        ///AB: 2
+        ///AC: 11
+        ///Damage: 6
+        ///XP: 15
+        ///Strength: 1
+        ///Constitution: 0
+        ///Dexterity: -1
+        ///Intelligence: 0
+        ///Wisdom: 0
+        ///Charisma: -5
         ///
-        ///Kobold
-        ///false
-        ///4
-        ///1
-        ///15
-        ///6
-        ///-1
-        ///0
-        ///1
-        ///0
-        ///-1
-        ///-1
-        ///
-        ///Dragon
-        ///false
-        ///551
-        ///38
-        ///43
-        ///100
-        ///14
-        ///8
-        ///0
-        ///6
-        ///6
-        ///6.
+        ///Name: Kobold
+        ///Friendly: False
+        /// [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string creatures {
             get {
@@ -165,16 +146,6 @@ namespace Dice_and_Combat_Engine.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap dragonFight {
-            get {
-                object obj = ResourceManager.GetObject("dragonFight", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         internal static System.Drawing.Bitmap goblin {
             get {
                 object obj = ResourceManager.GetObject("goblin", resourceCulture);
@@ -183,12 +154,54 @@ namespace Dice_and_Combat_Engine.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        ///   Looks up a localized string similar to ID: 1
+        ///Name: Short Sword
+        ///Durability: 10
+        ///Value: 15
+        ///DamageBonus: 5
+        ///
+        ///ID: 1
+        ///Name: Long Sword 
+        ///Durability: 12
+        ///Value: 15
+        ///DamageBonus: 6
+        ///
+        ///ID: 1
+        ///Name: Bastard Sword
+        ///Durability: 6
+        ///Value 40
+        ///DamageBonus: 10
+        ///
+        ///ID: 1
+        ///Name: Reinforced Spork
+        ///Durability: 666
+        ///Value: 420
+        ///DamageBonus: 0
+        ///
+        ///ID: 1
+        ///Name: Anti Dragon Tech
+        ///Durability: 1
+        ///Value: 40
+        ///DamageBonus: 555
+        ///
+        ///ID: 2
+        ///Name: Small Weak Potion
+        ///Durability: 1
+        ///Value: 6
+        ///HealthRestored: 3
+        ///
+        ///ID: 2
+        ///Name: Small Strong Potion
+        ///Durability: 1
+        ///Value: 9
+        ///HealthRestored: 6
+        ///
+        ///ID: 2
+        ///Name: Small Powerful  [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static System.Drawing.Bitmap goblinFight {
+        internal static string items {
             get {
-                object obj = ResourceManager.GetObject("goblinFight", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                return ResourceManager.GetString("items", resourceCulture);
             }
         }
         
@@ -198,16 +211,6 @@ namespace Dice_and_Combat_Engine.Properties {
         internal static System.Drawing.Bitmap kobold {
             get {
                 object obj = ResourceManager.GetObject("kobold", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap koboldFight {
-            get {
-                object obj = ResourceManager.GetObject("koboldFight", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -235,16 +238,6 @@ namespace Dice_and_Combat_Engine.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap orcFight {
-            get {
-                object obj = ResourceManager.GetObject("orcFight", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         internal static System.Drawing.Bitmap rightArrow {
             get {
                 object obj = ResourceManager.GetObject("rightArrow", resourceCulture);
@@ -253,29 +246,29 @@ namespace Dice_and_Combat_Engine.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Room1
-        ///3
-        ///3
+        ///   Looks up a localized string similar to Name: Room1
+        ///NumCreatures: 3
+        ///NumItems: 3
         ///
-        ///Room2
-        ///4
-        ///5
+        ///Name: Room2
+        ///NumCreatures: 4
+        ///NumItems: 5
         ///
-        ///Room3
-        ///5
-        ///5
+        ///Name: Room3
+        ///NumCreatures: 5
+        ///NumItems: 5
         ///
-        ///Room4
-        ///2
-        ///1
+        ///Name: Room4
+        ///NumCreatures: 2
+        ///NumItems: 1
         ///
-        ///Room5
-        ///6
-        ///5.
+        ///Name: Room5
+        ///NumCreatures: 6
+        ///NumItems: 5.
         /// </summary>
-        internal static string room {
+        internal static string rooms {
             get {
-                return ResourceManager.GetString("room", resourceCulture);
+                return ResourceManager.GetString("rooms", resourceCulture);
             }
         }
         
@@ -285,16 +278,6 @@ namespace Dice_and_Combat_Engine.Properties {
         internal static System.Drawing.Bitmap zombie {
             get {
                 object obj = ResourceManager.GetObject("zombie", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap zombieFight {
-            get {
-                object obj = ResourceManager.GetObject("zombieFight", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

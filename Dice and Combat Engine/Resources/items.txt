@@ -1,80 +1,80 @@
-﻿id: 1
-name: "Short Sword"
-durability: 10
-value: 15
-damageBonus: 5
+﻿ID: 1
+Name: Short Sword
+Durability: 10
+Value: 15
+DamageBonus: 5
 
-id: 1
-name: "Long Sword" 
-durability: 12
-value: 15
-damageBonus: 6
+ID: 1
+Name: Long Sword 
+Durability: 12
+Value: 15
+DamageBonus: 6
 
-id: 1
-name: "Bastard Sword"
-durability: 6
-value 40
-damageBonus: 10
-id: 1
+ID: 1
+Name: Bastard Sword
+Durability: 6
+Value 40
+DamageBonus: 10
 
-name: "Reinforced Spork"
-durabiltiy: 666
-value: 420
-damageBonus: 0
+ID: 1
+Name: Reinforced Spork
+Durability: 666
+Value: 420
+DamageBonus: 0
 
-id: 1
-name: "Anti Dragon Tech"
-durability: 1
-value: 40
-damageBonus: 555
+ID: 1
+Name: Anti Dragon Tech
+Durability: 1
+Value: 40
+DamageBonus: 555
 
-id: 2
-name: "Small Weak Potion"
-durability: 1
-value: 6
-healthRestored: 3
+ID: 2
+Name: Small Weak Potion
+Durability: 1
+Value: 6
+HealthRestored: 3
 
-id: 2
-name: "Small Strong Potion"
-durability: 1
-value: 9
-healthRestored: 6
+ID: 2
+Name: Small Strong Potion
+Durability: 1
+Value: 9
+HealthRestored: 6
 
-id: 2
-name: "Small Powerful Potion"
-durability: 1
-value: 15
-healthRestored: 9
+ID: 2
+Name: Small Powerful Potion
+Durability: 1
+Value: 15
+HealthRestored: 9
 
-id: 2
-name: "Large Weak Potion"
-durability: 2
-value: 6
-healthRestored: 3
+ID: 2
+Name: Large Weak Potion
+Durability: 2
+Value: 6
+HealthRestored: 3
 
-id: 2
-name: "Large Strong Potion"
-durability: 2
-value: 12
-healthRestored: 6
+ID: 2
+Name: Large Strong Potion
+Durability: 2
+Value: 12
+HealthRestored: 6
 
-id: 2
-name: "Large Powerful Potion"
-durability: 2
-value: 30
-healthRestored: 9 
+ID: 2
+Name: Large Powerful Potion
+Durability: 2
+Value: 30
+HealthRestored: 9 
 
-id: 3
-name: "Australium Nugget"
-durability: 15
-value: 100
+ID: 3
+Name: Australium Nugget
+Durability: 15
+Value: 100
 
-id: 3
-name: "Australium Bar"
-durability: 30
-value: 300
+ID: 3
+Name: Australium Bar
+Durability: 30
+Value: 300
 
-id: 3
-name: "Australium Boulder"
-durability: 9001
-value: 8675309
+ID: 3
+Name: Australium Boulder
+Durability: 9001
+Value: 8675309

@@ -1,11 +1,10 @@
-[Stats]
 Name: Goblin
 Friendly: False
 HP: 5
 AB: 1
 AC: 15
 Damage: 6
-[Attributes]
+XP: 5
 Strength: 0
 Constitution: 1
 Dexterity: 1
@@ -13,14 +12,13 @@ Intelligence: 0
 Wisdom: -1
 Charisma: -2
 
-[Stats]
 Name: Orc
 Friendly: False
 HP: 5
 AB: 1
 AC: 13
 Damage: 6
-[Attributes]
+XP: 10
 Strength: 3
 Constitution: 1
 Dexterity: 0
@@ -28,14 +26,13 @@ Intelligence: -1
 Wisdom: -2
 Charisma: -2
 
-[Stats]
 Name: Zombie
 Friendly: False
 HP: 16
 AB: 2
 AC: 11
 Damage: 6
-[Attributes]
+XP: 15
 Strength: 1
 Constitution: 0
 Dexterity: -1
@@ -43,14 +40,13 @@ Intelligence: 0
 Wisdom: 0
 Charisma: -5
 
-[Stats]
 Name: Kobold
 Friendly: False
 HP: 4
 AB: 1
 AC: 15
 Damage: 6
-[Attributes]
+XP: 5
 Strength: -1
 Constitution: 0
 Dexterity: 1
@@ -58,14 +54,13 @@ Intelligence: 0
 Wisdom: -1
 Charisma: -1
 
-[Stats]
 Name: Dragon
 Friendly: False
 HP: 551
 AB: 38
 AC: 10
 Damage: 100
-[Attributes]
+XP: 1000
 Strength: 14
 Constitution: 8
 Dexterity: 0

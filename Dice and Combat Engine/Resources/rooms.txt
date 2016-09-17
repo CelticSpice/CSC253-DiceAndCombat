@@ -1,19 +1,19 @@
-Name: Room1
+Name: Hall of Sophia
 NumCreatures: 3
 NumItems: 3
 
-Name: Room2
+Name: Hall of The Pleroma
 NumCreatures: 4
 NumItems: 5
 
-Name: Room3
+Name: Hall of The Monad
 NumCreatures: 5
 NumItems: 5
 
-Name: Room4
+Name: Hall of the Void
 NumCreatures: 2
 NumItems: 1
 
-Name: Room5
+Name: Hall of The Ogdoad
 NumCreatures: 6
 NumItems: 5

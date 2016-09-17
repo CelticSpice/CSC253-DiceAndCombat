@@ -115,12 +115,6 @@
     <EmbeddedResource Include="Resources\backgroundBlurSelectCreature.jpg" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\goblin.jpg" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\orc.jpg" />
-  </ItemGroup>
-  <ItemGroup>
     <Folder Include="Properties\DataSources\" />
   </ItemGroup>
   <ItemGroup>
@@ -130,31 +124,22 @@
     <EmbeddedResource Include="Resources\backgroundBlurFight.jpg" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\goblinFight.jpg" />
+    <EmbeddedResource Include="Resources\goblin.jpg" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\orcFight.jpg" />
+    <EmbeddedResource Include="Resources\orc.jpg" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\zombie.jpg" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\zombieFight.jpg" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Resources\kobold.jpg" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\koboldFight.jpg" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\dragon.jpg" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\dragonFight.jpg" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\room.txt" />
+    <EmbeddedResource Include="Resources\rooms.txt" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5.2">
@@ -169,7 +154,7 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Resources\items.txt" />
+    <EmbeddedResource Include="Resources\items.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

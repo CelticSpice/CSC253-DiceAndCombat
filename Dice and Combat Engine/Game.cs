@@ -9,10 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Dice_and_Combat_Engine
 {
@@ -31,7 +28,7 @@ namespace Dice_and_Combat_Engine
             Constructor
         */
 
-        internal Game()
+        public Game()
         {
             assembly = Assembly.GetExecutingAssembly();
             _combatEngine = new CombatEngine();
@@ -50,7 +47,7 @@ namespace Dice_and_Combat_Engine
         private void LoadCreatures()
         {
             // Consts
-            const string CREATURES_RESOURCE = "Dice_and_Combat_Engine.Resources.creatures.txt";
+            const string CREATURE_RESOURCE = "Dice_and_Combat_Engine.Resources.creatures.txt";
             const string CREATURE_IMG_DIRECTORY = "Dice_and_Combat_Engine.Resources.";
 
             creatures = new List<Creature>();
@@ -58,125 +55,96 @@ namespace Dice_and_Combat_Engine
             try
             {
                 // Initialize stream
-                StreamReader creatureStream = new StreamReader(assembly.GetManifestResourceStream(CREATURES_RESOURCE));
+                StreamReader creatureStream = new StreamReader(assembly.GetManifestResourceStream(CREATURE_RESOURCE));
 
+                // Delimiter
                 char[] delim = { ':' };
-                char[] dataDelim = { '[', ']' };
+
+                // Prepare new creature
+                BaseStats creatureStats = new BaseStats();
+                Attributes creatureAttribs = new Attributes();
 
                 while (!creatureStream.EndOfStream)
                 {
-                    string line;
-                    string[] splitLine;
-
-                    Creature newCreature = new Creature();
-
-                    BaseStats creatureStats = new BaseStats();
-                    Attributes creatureAttribs = new Attributes();
-
-                    // Read creature statistics and attributes
-                    while (!((line = creatureStream.ReadLine()).Equals("")))
+                    string line = creatureStream.ReadLine();
+                    
+                    if (!(line.Length == 0))
                     {
-                        // Determine data being read
-                        splitLine = line.Split(dataDelim);
+                        string[] splitLine = line.Split(delim);
 
-                        switch (splitLine[1])
+                        // Switch on the data to read
+                        switch (splitLine[0])
                         {
-                            case "Stats":
-                                const int NUM_STATS = 6;
-
-                                // Get the creature's stats
-                                for (int i = 0; i < NUM_STATS; i++)
-                                {
-                                    line = creatureStream.ReadLine();
-                                    splitLine = line.Split(delim);
-
-                                    switch (splitLine[0])
-                                    {
-                                        case "Name":
-                                            creatureStats.name = splitLine[1].Trim();
-
-                                            // Get creature's image as well
-                                            Stream imageStream = assembly.GetManifestResourceStream(CREATURE_IMG_DIRECTORY +
-                                                                 splitLine[1].Trim().ToLower() + ".jpg");
-                                            newCreature.Portrait = Image.FromStream(imageStream);
-                                            break;
-                                        case "Friendly":
-                                            creatureStats.friendly = bool.Parse(splitLine[1]);
-                                            break;
-                                        case "HP":
-                                            creatureStats.hitPoints = int.Parse(splitLine[1]);
-                                            break;
-                                        case "AB":
-                                            creatureStats.attackBonus = int.Parse(splitLine[1]);
-                                            break;
-                                        case "AC":
-                                            creatureStats.armorClass = int.Parse(splitLine[1]);
-                                            break;
-                                        case "Damage":
-                                            creatureStats.damage = new RandomDie(int.Parse(splitLine[1]));
-                                            break;
-                                    }
-                                }
-
-                                newCreature.Stats = creatureStats;
-
+                            // Stats
+                            case "Name":
+                                // Read creature's name
+                                creatureStats.name = splitLine[1].Trim();
                                 break;
-                            case "Attributes":
-                                const int NUM_ATTRIBUTES = 6;
-
-                                // Get the creature's attributes
-                                for (int i = 0; i < NUM_ATTRIBUTES; i++)
-                                {
-                                    line = creatureStream.ReadLine();
-                                    splitLine = line.Split(delim);
-
-                                    switch (splitLine[0])
-                                    {
-                                        case "Strength":
-                                            creatureAttribs.strength = int.Parse(splitLine[1]);
-                                            break;
-                                        case "Constitution":
-                                            creatureAttribs.constitution = int.Parse(splitLine[1]);
-                                            break;
-                                        case "Dexterity":
-                                            creatureAttribs.dexterity = int.Parse(splitLine[1]);
-                                            break;
-                                        case "Intelligence":
-                                            creatureAttribs.intelligence = int.Parse(splitLine[1]);
-                                            break;
-                                        case "Wisdom":
-                                            creatureAttribs.wisdom = int.Parse(splitLine[1]);
-                                            break;
-                                        case "Charisma":
-                                            creatureAttribs.charisma = int.Parse(splitLine[1]);
-                                            break;
-                                    }
-                                }
-
-                                newCreature.Attributes = creatureAttribs;
-
+                            case "Friendly":
+                                // Read creature's friendly status
+                                creatureStats.friendly = bool.Parse(splitLine[1]);
                                 break;
-                            case "Other":
-                                const int NUM_OTHER = 1;
+                            case "HP":
+                                // Read creature's HP
+                                creatureStats.hitPoints = int.Parse(splitLine[1]);
 
-                                // Get the creature's other information
-                                for (int i = 0; i < NUM_OTHER; i++)
-                                {
-                                    line = creatureStream.ReadLine();
-                                    splitLine = line.Split(delim);
+                                // Set max HP as well
+                                creatureStats.maxHitPoints = int.Parse(splitLine[1]);
+                                break;
+                            case "AB":
+                                // Read creature's AB
+                                creatureStats.attackBonus = int.Parse(splitLine[1]);
+                                break;
+                            case "AC":
+                                // Read creature's AC
+                                creatureStats.armorClass = int.Parse(splitLine[1]);
+                                break;
+                            case "Damage":
+                                // Read creature's damage
+                                creatureStats.damage = new RandomDie(int.Parse(splitLine[1]));
+                                break;
+                            case "XP":
+                                // Read creature's XP value
+                                creatureStats.xpValue = int.Parse(splitLine[1]);
+                                break;
 
-                                    switch (splitLine[0])
-                                    {
-                                        case "Exp":
-                                            newCreature.ExpWorth = int.Parse(splitLine[1]);
-                                            break;
-                                    }
-                                }
+                            // Attributes
+                            case "Strength":
+                                // Read creature's strength
+                                creatureAttribs.strength = int.Parse(splitLine[1]);
+                                break;
+                            case "Constitution":
+                                // Read creature's constitution
+                                creatureAttribs.constitution = int.Parse(splitLine[1]);
+                                break;
+                            case "Dexterity":
+                                // Read creature's dexterity
+                                creatureAttribs.dexterity = int.Parse(splitLine[1]);
+                                break;
+                            case "Intelligence":
+                                // Read creature's intelligence
+                                creatureAttribs.intelligence = int.Parse(splitLine[1]);
+                                break;
+                            case "Wisdom":
+                                // Read creature's wisdom
+                                creatureAttribs.wisdom = int.Parse(splitLine[1]);
+                                break;
+                            case "Charisma":
+                                // Read creature's charisma
+                                creatureAttribs.charisma = int.Parse(splitLine[1]);
                                 break;
                         }
                     }
+                    else
+                    {
+                        // Get new creature's image
+                        Stream imageStream = assembly.GetManifestResourceStream(CREATURE_IMG_DIRECTORY +
+                                                      creatureStats.name.ToLower() + ".jpg");
+                        Image creatureImage = Image.FromStream(imageStream);
 
-                    creatures.Add(newCreature);
+                        // Create new creature with collected data
+                        creatures.Add(new Creature(creatureStats, creatureAttribs, creatureImage));
+                    }
                 }
             }
             catch (Exception ex)
@@ -184,7 +152,7 @@ namespace Dice_and_Combat_Engine
                 Console.WriteLine(ex.Message);
             }
 
-            // Trim lists
+            // Trim list
             creatures.TrimExcess();
         }
 
@@ -194,7 +162,135 @@ namespace Dice_and_Combat_Engine
 
         private void LoadItems()
         {
+            const string ITEM_RESOURCE = "Dice_and_Combat_Engine.Resources.items.txt";
+            const int WEAPON = 1;
+            const int POTION = 2;
+            const int TREASURE = 3;
+
             items = new List<Item>();
+
+            try
+            {
+                // Initialize stream
+                StreamReader itemStream = new StreamReader(assembly.GetManifestResourceStream(ITEM_RESOURCE));
+
+                // Delimiter
+                char[] delim = { ':' };
+
+                // Prepare new item
+                string itemName = "";
+
+                int itemValue = 0,
+                    itemDurability = 0;
+
+                while (!itemStream.EndOfStream)
+                {
+                    string line = itemStream.ReadLine();
+
+                    // Check for empty string delimiter
+                    if (line.Length == 0)
+                    {
+                        // Consume empty string and get next line
+                        line = itemStream.ReadLine();
+                    }
+
+                    string[] splitLine = line.Split(delim);
+
+                    // Get the item's id
+                    int id = int.Parse(splitLine[1]);
+
+                    // Switch on the item's id
+                    switch (id)
+                    {
+                        case WEAPON:
+                            // Item is weapon
+                            int damageBonus = 0;
+
+                            while (!splitLine[0].Equals("DamageBonus"))
+                            {
+                                line = itemStream.ReadLine();
+                                splitLine = line.Split(delim);
+                                
+                                switch (splitLine[0])
+                                {
+                                    case "Name":
+                                        itemName = splitLine[1].Trim();
+                                        break;
+                                    case "Durability":
+                                        itemDurability = int.Parse(splitLine[1]);
+                                        break;
+                                    case "Value":
+                                        itemValue = int.Parse(splitLine[1]);
+                                        break;
+                                    case "DamageBonus":
+                                        damageBonus = int.Parse(splitLine[1]);
+                                        break;
+                                }
+                            }
+
+                            // Create weapon
+                            items.Add(new Weapon(itemName, itemDurability, itemValue, damageBonus));
+                            break;
+                        case POTION:
+                            // Item is potion
+                            int healthRestored = 0;
+
+                            while (!splitLine[0].Equals("HealthRestored"))
+                            {
+                                line = itemStream.ReadLine();
+                                splitLine = line.Split(delim);
+
+                                switch (splitLine[0])
+                                {
+                                    case "Name":
+                                        itemName = splitLine[1].Trim();
+                                        break;
+                                    case "Durability":
+                                        itemDurability = int.Parse(splitLine[1]);
+                                        break;
+                                    case "Value":
+                                        itemValue = int.Parse(splitLine[1]);
+                                        break;
+                                    case "HealthRestored":
+                                        healthRestored = int.Parse(splitLine[1]);
+                                        break;
+                                }
+                            }
+
+                            // Create potion
+                            items.Add(new Potion(itemName, itemDurability, itemValue, healthRestored));
+                            break;
+                        case TREASURE:
+                            // Item is treasure
+                            while (!splitLine[0].Equals("Value"))
+                            {
+                                line = itemStream.ReadLine();
+                                splitLine = line.Split(delim);
+
+                                switch (splitLine[0])
+                                {
+                                    case "Name":
+                                        itemName = splitLine[1].Trim();
+                                        break;
+                                    case "Durability":
+                                        itemDurability = int.Parse(splitLine[1]);
+                                        break;
+                                    case "Value":
+                                        itemValue = int.Parse(splitLine[1]);
+                                        break;
+                                }
+                            }
+
+                            // Create treasure
+                            items.Add(new Treasure(itemName, itemDurability, itemValue));
+                            break;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
 
             // Trim list
             items.TrimExcess();
@@ -206,7 +302,7 @@ namespace Dice_and_Combat_Engine
 
         private void LoadDungeonRooms()
         {
-            const string ROOM_RESOURCE = "Dice_and_Combat_Engine.Resources.room.txt";
+            const string ROOM_RESOURCE = "Dice_and_Combat_Engine.Resources.rooms.txt";
 
             dungeon = new List<Room>();
 
@@ -215,37 +311,45 @@ namespace Dice_and_Combat_Engine
                 // Initialize stream
                 StreamReader roomStream = new StreamReader(assembly.GetManifestResourceStream(ROOM_RESOURCE));
 
+                // Delimiter
                 char[] delim = { ':' };
+
+                // Prepare new room
+                string roomName = "";
+
+                int numCreatures = 0,
+                    numItems = 0;
 
                 while (!roomStream.EndOfStream)
                 {
-                    string line;
-                    string[] splitLine;
+                    string line = roomStream.ReadLine();
 
-                    string roomName = "Name";
-                    int numCreatures = 0,
-                        numItems = 0;
-
-                    while (!((line = roomStream.ReadLine()).Equals("")))
+                    // Check for empty string delimiter
+                    if (!(line.Length == 0))
                     {
-                        line = roomStream.ReadLine();
-                        splitLine = line.Split(delim);
+                        string[] splitLine = line.Split(delim);
 
                         switch (splitLine[0])
                         {
                             case "Name":
+                                // Read the room's name
                                 roomName = splitLine[1];
                                 break;
                             case "NumCreatures":
+                                // Read the room's number of creatures
                                 numCreatures = int.Parse(splitLine[1]);
                                 break;
                             case "NumItems":
+                                // Read the room's number of items
                                 numItems = int.Parse(splitLine[1]);
                                 break;
                         }
                     }
-
-                    dungeon.Add(new Room(roomName, numCreatures, numItems));
+                    else
+                    {
+                        // Create new room
+                        dungeon.Add(new Room(roomName, numCreatures, numItems));
+                    }
                 }
             }
             catch (Exception ex)
@@ -258,7 +362,7 @@ namespace Dice_and_Combat_Engine
         }
 
         /*
-            The SortLists method sorts the List fields
+            The SortLists method sorts the List fields alphabetically
         */
 
         private void SortLists()
@@ -321,10 +425,12 @@ namespace Dice_and_Combat_Engine
             */
 
             playerBaseStats.name = "Bobert";
-            playerBaseStats.hitPoints = 6;
-            playerBaseStats.attackBonus = 2;
+            playerBaseStats.hitPoints = 30;
+            playerBaseStats.maxHitPoints = 30;
+            playerBaseStats.attackBonus = 5;
             playerBaseStats.armorClass = 12;
             playerBaseStats.damage = new RandomDie();
+            playerBaseStats.xpValue = 100;
             playerBaseStats.friendly = true;
 
             playerAttributes.strength = 5;
@@ -353,19 +459,19 @@ namespace Dice_and_Combat_Engine
             // Generate layout
             Room[] layout = new Room[dungeon.Count];
 
-            List<Room> toShuffle = dungeon.ToList();
+            List<Room> roomsToShuffle = new List<Room>(dungeon);
 
             for (int i = 0; i < layout.Length; i++)
             {
-                Room toPlace = toShuffle[rng.Next(toShuffle.Count)];
+                Room toPlace = roomsToShuffle[rng.Next(roomsToShuffle.Count)];
                 layout[i] = toPlace;
-                toShuffle.Remove(toPlace);
+                roomsToShuffle.Remove(toPlace);
             }
 
             // Set starting room
             _currentRoom = layout[0];
 
-            // Generate dungeon room contents
+            // Generate room contents
             for (int i = 0; i < layout.Length; i++)
             {
                 Room toGenerate = layout[i];
@@ -380,13 +486,12 @@ namespace Dice_and_Combat_Engine
                 {
                     while (!treasureAdded)
                     {
-                        foreach (Item item in items)
+                        Item treasureToAdd = items[rng.Next(items.Count)];
+
+                        if (treasureToAdd is Treasure)
                         {
-                            if (item is Treasure)
-                            {
-                                toGenerate.Contents.Add(item);
-                                treasureAdded = true;
-                            }
+                            toGenerate.Contents.Add(treasureToAdd);
+                            treasureAdded = true;
                         }
                     }
                 }
@@ -394,6 +499,13 @@ namespace Dice_and_Combat_Engine
                 for (int j = (treasureAdded ? 1 : 0); j < maxItems; j++)
                 {
                     Item toAdd = items[rng.Next(items.Count)];
+
+                    // Make sure item added is not the treasure
+                    while (toAdd is Treasure)
+                    {
+                        toAdd = items[rng.Next(items.Count)];
+                    }
+                    
                     toGenerate.Contents.Add(toAdd);
                 }
 
@@ -450,6 +562,7 @@ namespace Dice_and_Combat_Engine
         public Room CurrentRoom
         {
             get { return _currentRoom; }
+            set { _currentRoom = value; }
         }
     }
 }

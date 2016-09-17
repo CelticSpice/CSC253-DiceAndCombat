@@ -5,27 +5,22 @@
     Author: James Alves, Shane McCann, Timothy Burns
 */
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Windows.Forms;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Dice_and_Combat_Engine
 {
     class Treasure : Item
     {
         // Consts
-        private const int ID = 3;   // All treasure has an ID of 3
+        private const int TREASURE_ID = 3;   // All treasure has an ID of 3
 
         /*
              Constructor
-             Accepts value, durability, and name
+             Accepts the name, durability, and value
         */
 
-        public Treasure(int value, int durability, string name)
-            : base(value, durability, ID, name)
+        public Treasure(string name, int durability, int value)
+            : base(name, durability, value, TREASURE_ID)
         {
             // ???  XD
         }

@@ -5,12 +5,7 @@
     Author: James Alves, Shane McCann, Timothy Burns
 */
 
-using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Dice_and_Combat_Engine
 {
@@ -20,8 +15,10 @@ namespace Dice_and_Combat_Engine
         public string name;
 
         public int hitPoints,
+                   maxHitPoints,
                    attackBonus,
-                   armorClass;
+                   armorClass,
+                   xpValue;
 
         public RandomDie damage;
 
@@ -43,7 +40,6 @@ namespace Dice_and_Combat_Engine
         // Fields
         private BaseStats _stats;
         private Attributes _attributes;
-        private int _expWorth;
         private Image _portrait;
 
         /*
@@ -54,21 +50,19 @@ namespace Dice_and_Combat_Engine
         {
             _stats = new BaseStats();
             _attributes = new Attributes();
-            _expWorth = 0;
             _portrait = null;
         }
 
         /*
             Constructor
-            Defines starting stats and attributes, experience worth, and portrait
+            Defines starting stats and attributes, and portrait
         */
 
-        public Creature(BaseStats creatureStats, Attributes attribs, int exp, Image img)
+        public Creature(BaseStats stats, Attributes attribs, Image portrait)
         {
-            _stats = creatureStats;
+            _stats = stats;
             _attributes = attribs;
-            _expWorth = exp;
-            _portrait = img;
+            _portrait = portrait;
         }
 
         /*
@@ -89,16 +83,6 @@ namespace Dice_and_Combat_Engine
         {
             get { return _attributes; }
             set { _attributes = value; }
-        }
-
-        /*
-            ExpWorth property
-        */
-
-        public int ExpWorth
-        {
-            get { return _expWorth; }
-            set { _expWorth = value; }
         }
 
         /*

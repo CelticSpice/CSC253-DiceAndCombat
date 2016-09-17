@@ -216,9 +216,10 @@
             // feedbackList
             // 
             this.feedbackList.FormattingEnabled = true;
-            this.feedbackList.Location = new System.Drawing.Point(306, 119);
+            this.feedbackList.Location = new System.Drawing.Point(239, 119);
             this.feedbackList.Name = "feedbackList";
-            this.feedbackList.Size = new System.Drawing.Size(197, 251);
+            this.feedbackList.SelectionMode = System.Windows.Forms.SelectionMode.None;
+            this.feedbackList.Size = new System.Drawing.Size(331, 251);
             this.feedbackList.TabIndex = 19;
             // 
             // playerImgBox
@@ -257,14 +258,14 @@
             // 
             // roomNameLbl
             // 
-            this.roomNameLbl.AutoSize = true;
             this.roomNameLbl.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.roomNameLbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.roomNameLbl.Location = new System.Drawing.Point(338, 9);
+            this.roomNameLbl.Location = new System.Drawing.Point(306, 9);
             this.roomNameLbl.Name = "roomNameLbl";
-            this.roomNameLbl.Size = new System.Drawing.Size(132, 27);
+            this.roomNameLbl.Size = new System.Drawing.Size(197, 43);
             this.roomNameLbl.TabIndex = 23;
             this.roomNameLbl.Text = "Room Name";
+            this.roomNameLbl.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // previousBtn
             // 
@@ -276,6 +277,7 @@
             this.previousBtn.Size = new System.Drawing.Size(66, 32);
             this.previousBtn.TabIndex = 24;
             this.previousBtn.UseVisualStyleBackColor = false;
+            this.previousBtn.Click += new System.EventHandler(this.previousBtn_Click);
             // 
             // nextBtn
             // 
@@ -287,6 +289,7 @@
             this.nextBtn.Size = new System.Drawing.Size(66, 32);
             this.nextBtn.TabIndex = 25;
             this.nextBtn.UseVisualStyleBackColor = false;
+            this.nextBtn.Click += new System.EventHandler(this.nextBtn_Click);
             // 
             // useItemBtn
             // 
@@ -297,6 +300,7 @@
             this.useItemBtn.TabIndex = 26;
             this.useItemBtn.Text = "&Use";
             this.useItemBtn.UseVisualStyleBackColor = true;
+            this.useItemBtn.Click += new System.EventHandler(this.useItemBtn_Click);
             // 
             // creatureListBox
             // 
@@ -315,8 +319,9 @@
             this.creatureList.Name = "creatureList";
             this.creatureList.Size = new System.Drawing.Size(129, 186);
             this.creatureList.TabIndex = 0;
+            this.creatureList.SelectedIndexChanged += new System.EventHandler(this.creatureList_SelectedIndexChanged);
             // 
-            // FightForm
+            // MainForm
             // 
             this.AcceptButton = this.attackButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -349,7 +354,7 @@
             this.Controls.Add(this.playerHPTextBox);
             this.Controls.Add(this.playerNameTextBox);
             this.Controls.Add(this.attackButton);
-            this.Name = "FightForm";
+            this.Name = "MainForm";
             this.Text = "Dice and Combat Engine - Fight";
             ((System.ComponentModel.ISupportInitialize)(this.playerImgBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.creatureImgBox)).EndInit();

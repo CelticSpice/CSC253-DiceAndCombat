@@ -5,28 +5,22 @@
     Author: James Alves, Shane McCann, Timothy Burns
 */
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace Dice_and_Combat_Engine
 {
     class Potion : Item
     {
         // Consts
-        private const int ID = 2;   // All Potions have an id of 2
+        private const int POTION_ID = 2;   // All Potions have an id of 2
 
         // Fields
         private int _healthRestored;
 
         /*
             Constructor
-            Accepts the value, durability, name, and amount of health restored
+            Accepts the name, durability, value, and amount of health restored
         */
-        public Potion(int value, int durability, string name, int heal)
-            : base(value, durability, ID, name)
+        public Potion(string name, int durability, int value, int heal)
+            : base(name, durability, value, POTION_ID)
         {
             _healthRestored = heal;
         }
@@ -41,6 +35,15 @@ namespace Dice_and_Combat_Engine
         {
             Durability -= 1;
             return _healthRestored;
+        }
+
+        /*
+            HealthRestored property
+        */
+
+        public int HealthRestored
+        {
+            get { return _healthRestored; }
         }
     }
 }

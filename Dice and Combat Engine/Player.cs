@@ -5,12 +5,8 @@
     Author: James Alves, Shane McCann, Timothy Burns
 */
 
-using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Dice_and_Combat_Engine
 {
@@ -29,6 +25,7 @@ namespace Dice_and_Combat_Engine
         private PlayerStats _playerStats;
         private List<Item> _inventory;
         private Weapon _equippedWeapon;
+        private bool _leveledUp;
 
         /*
             Constructor
@@ -37,11 +34,73 @@ namespace Dice_and_Combat_Engine
         */
 
         public Player(PlayerStats playerStats, BaseStats baseStats, Attributes attribs, Image portrait = null)
-            : base(baseStats, attribs, 0, portrait)
+            : base(baseStats, attribs, portrait)
         {
             _playerStats = playerStats;
             _inventory = new List<Item>();
             _equippedWeapon = null;
+            _leveledUp = false;
+        }
+
+        /*
+            The GainExperience method simulates the player gaining experience points
+            The method accepts the number of experience points earned as an argument
+        */
+
+        public void GainExperience(int xp)
+        {
+            _playerStats.experience += xp;
+
+            // Check for level up
+            if (_playerStats.level == 0)
+            {
+                if (_playerStats.experience == 100)
+                {
+                    // Set level up notifier to true
+                    _leveledUp = true;
+                }
+            }
+            else
+            {
+                if (_playerStats.experience == _playerStats.experience * 2)
+                {
+                    // Set level up notifier to true
+                    _leveledUp = true;
+                }
+            }
+        }
+
+        /*
+            The LevelUp method levels up the player
+        */
+
+        public void LevelUp()
+        {
+            // Add 1 to each of the player's stats
+            BaseStats newStats = Stats;
+            newStats.hitPoints += 1;
+            newStats.maxHitPoints += 1;
+            newStats.attackBonus += 1;
+            newStats.armorClass += 1;
+
+            // Add 1 to each of the player's attributes
+            Attributes attribs = Attributes;
+            attribs.strength += 1;
+            attribs.constitution += 1;
+            attribs.dexterity += 1;
+            attribs.intelligence += 1;
+            attribs.wisdom += 1;
+            attribs.charisma += 1;
+
+            // Set new stats and attributes
+            Stats = newStats;
+            Attributes = attribs;
+
+            // Raise player's level
+            _playerStats.level += 1;
+
+            // Return leveled up notifier to false
+            _leveledUp = false;
         }
 
         /*
@@ -66,6 +125,33 @@ namespace Dice_and_Combat_Engine
             newStats.damage.DieSize -= _equippedWeapon.DamageBonus;
             Stats = newStats;
             _equippedWeapon = null;
+        }
+
+        /*
+            The UsePotion method simulates the player using a potion
+        */
+
+        public void UsePotion(Potion potion)
+        {
+            // Update player's hp appropriately
+            BaseStats newStats = Stats;
+            newStats.hitPoints += potion.Use();
+
+            // Make sure hp does not exceed max
+            if (newStats.hitPoints > Stats.maxHitPoints)
+            {
+                newStats.hitPoints = Stats.maxHitPoints;
+            }
+
+            // Set new stats
+            Stats = newStats;
+
+            // Check if potion is destroyed
+            if (potion.Durability == 0)
+            {
+                // Remove potion from inventory
+                _inventory.Remove(potion);
+            }
         }
 
         /*
@@ -94,6 +180,15 @@ namespace Dice_and_Combat_Engine
         public Weapon EquippedWeapon
         {
             get { return _equippedWeapon; }
+        }
+
+        /*
+            LeveledUp property
+        */
+
+        public bool LeveledUp
+        {
+            get { return _leveledUp; }
         }
     }
 }

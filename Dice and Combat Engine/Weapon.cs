@@ -5,31 +5,25 @@
     Author: James Alves, Shane McCann, Timothy Burns
 */
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace Dice_and_Combat_Engine
 {
     class Weapon : Item
     {
         // Consts
-        private const int ID = 1;    // All weapons have an id of 1
+        private const int WEAPON_ID = 1;    // All weapons have an id of 1
 
         //Field
         private int _damageBonus;
 
         /*
             Constructor
-            Accepts the value, durability, name, and attack bonus of the weapon
+            Accepts the name, durability, value, and attack bonus of the weapon
         */
 
-        public Weapon(int value, int durability, string name, int attack)
-            : base(value, durability, ID, name)
+        public Weapon(string name, int durability, int value, int damage)
+            : base(name, durability, value, WEAPON_ID)
         {
-            _damageBonus = attack;
+            _damageBonus = damage;
         }
 
         /*

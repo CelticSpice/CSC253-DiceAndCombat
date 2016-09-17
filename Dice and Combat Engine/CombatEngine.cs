@@ -5,11 +5,7 @@
     Author: James Alves, Shane McCann, Timothy Burns
 */
 
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Dice_and_Combat_Engine
 {
@@ -17,59 +13,50 @@ namespace Dice_and_Combat_Engine
     {
         // Fields
         private bool _combatActive;
-        private List<Creature> combatants, friendlies, enemies;
+        private Creature[] _combatants;
+        private int _playerSelectedTarget;
         private List<string> _combatFeedback;
         private RandomDie d20Die;
-        private string _victors;
 
         /*
             Constructor
         */
 
-        internal CombatEngine()
+        public CombatEngine()
         {
             _combatActive = false;
-            combatants = new List<Creature>();
-            friendlies = new List<Creature>();
-            enemies = new List<Creature>();
+            _combatants = null;
+            _playerSelectedTarget = -1;
             _combatFeedback = new List<string>();
             d20Die = new RandomDie(20);
-            _victors = "";
         }
 
         /*
             The InitCombat method initializes combat
         */
 
-        public void InitCombat(params Creature[] newCombatants)
+        public void InitCombat(Creature[] newCombatants)
         {
             _combatActive = true;
 
-            // Get combatants and separate friendlies from enemies
-            foreach (Creature creature in newCombatants)
-            {
-                combatants.Add(creature);
+            _combatants = new Creature[newCombatants.Length];
 
-                if (creature.Stats.friendly)
-                {
-                    friendlies.Add(creature);
-                }
-                else
-                {
-                    enemies.Add(creature);
-                }
+            // Get combatants
+            for (int i = 0; i < _combatants.Length; i++)
+            {
+                _combatants[i] = newCombatants[i];
             }
 
             // Initialize initiative
-            int[] initiatives = new int[combatants.Count];         // A parallel relationship shall exist between
-                                                                   // combatants and initiatives
-            for (int i = 0; i < combatants.Count; i++)
-            {
-                int initiative;
+            int[] initiatives = new int[_combatants.Length];         // A parallel relationship shall exist between
+                                                                    // combatants and initiatives
+            for (int i = 0; i < _combatants.Length; i++)
+            {                                                       // That is, combatants shall be ordered
+                int initiative;                                     // by initiative
 
                 // Combatant rolls for initiative
                 d20Die.Roll();
-                initiative = d20Die.DieResult + combatants[i].Attributes.dexterity;
+                initiative = d20Die.DieResult + _combatants[i].Attributes.dexterity;
 
                 // Record initiative result for combatant
                 initiatives[i] = initiative;
@@ -96,11 +83,11 @@ namespace Dice_and_Combat_Engine
                             int initiative;
 
                             d20Die.Roll();
-                            initiative = d20Die.DieResult + combatants[i].Attributes.dexterity;
+                            initiative = d20Die.DieResult + _combatants[i].Attributes.dexterity;
                             initiatives[i] = initiative;
 
                             d20Die.Roll();
-                            initiative = d20Die.DieResult + combatants[j].Attributes.dexterity;
+                            initiative = d20Die.DieResult + _combatants[j].Attributes.dexterity;
                             initiatives[j] = initiative;
                         }
                     }
@@ -123,9 +110,9 @@ namespace Dice_and_Combat_Engine
                         initiatives[i] = initiatives[j];
                         initiatives[j] = tmp;
 
-                        Creature tmpCombatant = combatants[i];
-                        combatants[i] = combatants[j];
-                        combatants[j] = tmpCombatant;
+                        Creature tmpCombatant = _combatants[i];
+                        _combatants[i] = _combatants[j];
+                        _combatants[j] = tmpCombatant;
                     }
                 }
             }
@@ -133,12 +120,9 @@ namespace Dice_and_Combat_Engine
 
         /*
             The TakeCombatRound method simulates a combat round
-            The method accepts an int specifying the target for the player
-
-            -1 = Auto
         */
 
-        public void TakeCombatRound(int chosenTarget = -1)
+        public void TakeCombatRound()
         {
             // Remove old feedback from list
             if (_combatFeedback.Count > 0)
@@ -147,57 +131,48 @@ namespace Dice_and_Combat_Engine
             }
 
             bool oppositionLives = true;
-            int combatantIndex = 0;         // The index of the combatant moving
 
-            while (oppositionLives && combatantIndex < combatants.Count)
+            for (int i = 0; i < _combatants.Length && oppositionLives; i++)
             { 
-                Creature target;
-                int targetIndex;
-
-                if (combatants[combatantIndex] is Player)
+                // Check if combatant lives
+                if (_combatants[i].Stats.hitPoints > 0)
                 {
-                    Player playerCharacter = (Player) combatants[combatantIndex];
+                    Creature target;
 
-                    // Player acquires target
-                    if (chosenTarget > -1)
+                    if (_combatants[i] is Player && _playerSelectedTarget > -1)
                     {
-                        target = enemies[chosenTarget];
-                        targetIndex = combatants.IndexOf(target);
+                        target = _combatants[_playerSelectedTarget];
                     }
                     else
                     {
-                        target = SeekTarget(playerCharacter);
-                        targetIndex = combatants.IndexOf(target);
+                        target = SeekTargetFor(_combatants[i]);
                     }
 
-                    // Attack roll for player
+                    // Attack roll
                     d20Die.Roll();
 
-                    // Determine if player's attack is successful
-                    int attackResult;
-
-                    attackResult = d20Die.DieResult + playerCharacter.Stats.attackBonus;
-                    
+                    // Determine if attack successful
+                    int attackResult = d20Die.DieResult + _combatants[i].Stats.attackBonus;
 
                     if (attackResult >= target.Stats.armorClass)
                     {
-                        // Player rolls for damage
-                        int damageResult;
+                        // Damage roll
+                        _combatants[i].Stats.damage.Roll();
 
-                        playerCharacter.Stats.damage.Roll();
+                        int damageResult = _combatants[i].Stats.damage.DieResult;
 
-                        damageResult = playerCharacter.Stats.damage.DieResult;
-
-                        // Use player's weapon
-                        if (playerCharacter.EquippedWeapon != null)
+                        // Use weapon if player is attacking
+                        if (_combatants[i] is Player && ((Player)_combatants[i]).EquippedWeapon != null)
                         {
-                            playerCharacter.EquippedWeapon.Use();
+                            Player player = (Player)_combatants[i];
+
+                            player.EquippedWeapon.Use();
 
                             // Check weapon's durability
-                            if (playerCharacter.EquippedWeapon.Durability == 0)
+                            if (player.EquippedWeapon.Durability == 0)
                             {
-                                playerCharacter.Inventory.Remove(playerCharacter.EquippedWeapon);
-                                playerCharacter.UnequipWeapon();
+                                player.Inventory.Remove(player.EquippedWeapon);
+                                player.UnequipWeapon();
                             }
                         }
 
@@ -209,115 +184,61 @@ namespace Dice_and_Combat_Engine
                         target.Stats = newTargetStats;
 
                         // Update feedback
-                        _combatFeedback.Add(playerCharacter.Stats.name + " hit " + target.Stats.name +
-                                           " for " + damageResult + " damage!");
-
-                        // Check if target is dead
-                        if (target.Stats.hitPoints == 0)
-                        {
-                            // Update feedback to inform that target is dead
-                            _combatFeedback.Add(target.Stats.name + " is dead!");
-
-                            // Remove target from list of combatants and enemies
-                            combatants.Remove(target);
-                            enemies.Remove(target);
-                        }
-                    }
-                    else
-                    {
-                        // Update feedback to inform that player missed
-                        _combatFeedback.Add(playerCharacter.Stats.name + " missed!");
-                    }
-                }
-                else
-                {
-                    // Attacker acquires target
-                    target = SeekTarget(combatants[combatantIndex]);
-                    targetIndex = combatants.IndexOf(target);
-
-                    // Attack roll for attacker
-                    d20Die.Roll();
-
-                    // Determine if attack successful
-                    if (d20Die.DieResult + combatants[combatantIndex].Stats.attackBonus >= target.Stats.armorClass)
-                    {
-                        // Roll for damage
-                        combatants[combatantIndex].Stats.damage.Roll();
-
-                        // Deal damage
-                        BaseStats newTargetStats = target.Stats;
-                        newTargetStats.hitPoints -= combatants[combatantIndex].Stats.damage.DieResult;
-
-                        // Set target's new stats
-                        target.Stats = newTargetStats;
-
-                        // Update feedback
-                        _combatFeedback.Add(combatants[combatantIndex].Stats.name + " hit " + target.Stats.name +
-                                           " for " + combatants[combatantIndex].Stats.damage.DieResult + " damage!");
+                        _combatFeedback.Add(_combatants[i].Stats.name + " hit " + target.Stats.name +
+                                            " for " + damageResult + " damage!");
 
                         // Check if target is dead
                         if (target.Stats.hitPoints <= 0)
                         {
+                            // Ensure clean 0
+                            newTargetStats.hitPoints = 0;
+                            target.Stats = newTargetStats;
+
                             // Update feedback to inform that target is dead
                             _combatFeedback.Add(target.Stats.name + " is dead!");
-
-                            // Remove target from list of combatants
-                            combatants.Remove(target);
-
-                            if (target.Stats.friendly)
-                            {
-                                friendlies.Remove(target);
-                            }
-                            else
-                            {
-                                enemies.Remove(target);
-                            }
                         }
                     }
                     else
                     {
-                        // Update feedback to inform that attacker missed
-                        _combatFeedback.Add(combatants[combatantIndex].Stats.name + " missed!");
+                        // Update feedback to inform that combatant missed
+                        _combatFeedback.Add(_combatants[i].Stats.name + " missed!");
                     }
-                }
 
-                // Check if the opposition lives
-                if (friendlies.Count == 0 || enemies.Count == 0)
-                {
-                    oppositionLives = false;
-                    _combatActive = false;
+                    // Check if the opposition lives
+                    int livingFriendlies = 0,
+                        livingEnemies = 0;
 
-                    // Set the victors for the combat
-                    if (enemies.Count == 0)
+                    for (int j = 0; j < _combatants.Length; j++)
                     {
-                        _victors = "Friendlies";
+                        if (_combatants[j].Stats.friendly && _combatants[j].Stats.hitPoints > 0)
+                        {
+                            livingFriendlies++;
+                        }
+                        else if (!(_combatants[j].Stats.friendly) && _combatants[j].Stats.hitPoints > 0)
+                        {
+                            livingEnemies++;
+                        }
                     }
-                    else
+
+                    if (livingFriendlies == 0 || livingEnemies == 0)
                     {
-                        _victors = "Enemies";
-                    }
-                }
-                else
-                {
-                    // Next combatant takes turn
-                    if ((target.Stats.hitPoints <= 0 && !(targetIndex < combatantIndex)) || target.Stats.hitPoints > 0)
-                    {
-                        combatantIndex++;
+                        oppositionLives = false;
+                        _combatActive = false;
                     }
                 }
             }
         }
 
         /*
-            The SeekTarget method automates a combatant's choice of who to attack
+            The SeekTargetFor method gets a target for a combatant automatically
         */
 
-        private Creature SeekTarget(Creature combatant)
+        private Creature SeekTargetFor(Creature combatant)
         {
             // Narrow choice of targets down to those opposed to combatant
             List<Creature> possibleTargets = new List<Creature>();
 
-            foreach (Creature creature in combatants)
+            foreach (Creature creature in _combatants)
             {
                 if (creature.Stats.friendly != combatant.Stats.friendly)
                 {
@@ -333,6 +254,25 @@ namespace Dice_and_Combat_Engine
         }
 
         /*
+            The IsCombatant method checks if a Creature is a combatant for the currently
+            initialized combat
+        */
+
+        public bool IsCombatant(Creature creature)
+        {
+            bool isCombatant = false;
+            for (int i = 0; i < _combatants.Length && !isCombatant; i++)
+            {
+                if (_combatants[i] == creature)
+                {
+                    isCombatant = true;
+                }
+            }
+
+            return isCombatant;
+        }
+
+        /*
             CombatActive property
         */
 
@@ -342,21 +282,22 @@ namespace Dice_and_Combat_Engine
         }
 
         /*
+            PlayerSelectedTarget property
+        */
+
+        public int PlayerSelectedTarget
+        {
+            get { return _playerSelectedTarget; }
+            set { _playerSelectedTarget = value; }
+        }
+
+        /*
             CombatFeedback property
         */
 
         public List<string> CombatFeedback
         {
             get { return _combatFeedback; }
-        }
-
-        /*
-            Victors property
-        */
-
-        public string Victors
-        {
-            get { return _victors; }
         }
     }
 }
