@@ -515,7 +515,7 @@ namespace Dice_and_Combat_Engine
                 for (int j = 0; j < maxCreatures; j++)
                 {
                     Creature toAdd = creatures[rng.Next(creatures.Count)];
-                    toGenerate.Denizens.Add(toAdd);
+                    toGenerate.Denizens.Add(new Creature(toAdd));
                 }
 
                 // Set room's previous and next room
