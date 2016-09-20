@@ -66,6 +66,18 @@ namespace Dice_and_Combat_Engine
         }
 
         /*
+            Constructor
+            Creates a clone of an existing creature object
+        */
+
+        public Creature(Creature c)
+        {
+            _stats = c._stats;
+            _attributes = c._attributes;
+            _portrait = c._portrait;
+        }
+
+        /*
             Stats property
         */
 

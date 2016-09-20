@@ -93,3 +93,6 @@ C:\Users\burnst\Desktop\CSC253-DiceAndCombat\Dice and Combat Engine\obj\Debug\Di
 C:\Users\burnst\Desktop\CSC253-DiceAndCombat\Dice and Combat Engine\obj\Debug\Dice and Combat Engine.csproj.GenerateResource.Cache
 C:\Users\burnst\Desktop\CSC253-DiceAndCombat\Dice and Combat Engine\obj\Debug\Dice and Combat Engine.exe
 C:\Users\burnst\Desktop\CSC253-DiceAndCombat\Dice and Combat Engine\obj\Debug\Dice and Combat Engine.pdb
+C:\Users\alvesj5327\Source\Repos\CSC253-DiceAndCombat\Dice and Combat Engine\bin\Debug\Dice and Combat Engine.exe.config
+C:\Users\alvesj5327\Source\Repos\CSC253-DiceAndCombat\Dice and Combat Engine\obj\Debug\Dice and Combat Engine.exe
+C:\Users\alvesj5327\Source\Repos\CSC253-DiceAndCombat\Dice and Combat Engine\obj\Debug\Dice and Combat Engine.pdb
