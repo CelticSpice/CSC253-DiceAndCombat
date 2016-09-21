@@ -67,7 +67,7 @@ namespace Dice_and_Combat_Engine
 
         /*
             Constructor
-            Creates a clone of an existing creature object
+            Creates a clone of an existing Creature object
         */
 
         public Creature(Creature c)
