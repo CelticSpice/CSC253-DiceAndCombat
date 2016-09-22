@@ -186,6 +186,7 @@ namespace Dice_and_Combat_Engine
                     }
                 }
             }
+
             // Display the most recent feedback
             feedbackList.TopIndex = feedbackList.Items.Count - 1;
         }
@@ -255,6 +256,7 @@ namespace Dice_and_Combat_Engine
                 // Inform user that no item is selected
                 MessageBox.Show("No item is selected.");
             }
+
             // Display the most recent feedback
             feedbackList.TopIndex = feedbackList.Items.Count - 1;
         }
