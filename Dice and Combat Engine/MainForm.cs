@@ -173,7 +173,7 @@ namespace Dice_and_Combat_Engine
                 // If weapon was used, check if weapon is broken
                 if (weaponUsed)
                 {
-                    if (weapon == null)
+                    if (weapon.Durability == 0)
                     {
                         // Remove weapon from inventory list
                         playerInventoryList.Items.RemoveAt(weaponIndex);
