@@ -26,6 +26,18 @@ namespace Dice_and_Combat_Engine
         }
 
         /*
+            Copy Constructor
+        */
+
+        public Potion(Potion p)
+        {
+            this.Name = p.Name;
+            this.Durability = p.Durability;
+            this.Value = p.Value;
+            this._healthRestored = p._healthRestored;
+        }
+
+        /*
             The Use method simulates using the potion for its
             benefits. The value gained is returned and the potion's
             durability is decreased

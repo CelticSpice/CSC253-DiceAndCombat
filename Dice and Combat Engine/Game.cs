@@ -505,8 +505,15 @@ namespace Dice_and_Combat_Engine
                     {
                         toAdd = items[rng.Next(items.Count)];
                     }
-                    
-                    toGenerate.Contents.Add(toAdd);
+
+                    if (toAdd is Weapon)
+                    {
+                        toGenerate.Contents.Add(new Weapon((Weapon)toAdd));
+                    }
+                    else if (toAdd is Potion)
+                    {
+                        toGenerate.Contents.Add(new Potion((Potion)toAdd));
+                    }
                 }
 
                 // Populate room with creatures

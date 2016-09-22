@@ -27,6 +27,19 @@ namespace Dice_and_Combat_Engine
         }
 
         /*
+            Copy Constructor
+            Accepts a Weapon object
+        */
+
+        public Weapon(Weapon w)
+        {
+            this.Name = w.Name;
+            this.Durability = w.Durability;
+            this.Value = w.Value;
+            this._damageBonus = w._damageBonus;
+        }
+
+        /*
             The Use method simulates using a weapon, reducing its durability
         */
 
