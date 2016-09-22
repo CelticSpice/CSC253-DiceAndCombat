@@ -26,6 +26,17 @@ namespace Dice_and_Combat_Engine
         }
 
         /*
+            Copy Constructor
+        */
+
+        public Treasure(Treasure t)
+        {
+            this.Name = t.Name;
+            this.Durability = t.Durability;
+            this.Value = t.Value;
+        }
+
+        /*
             The Use method simulates using treasure.
             Shall we have it end the game for now?
         */

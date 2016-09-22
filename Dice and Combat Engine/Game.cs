@@ -490,7 +490,7 @@ namespace Dice_and_Combat_Engine
 
                         if (treasureToAdd is Treasure)
                         {
-                            toGenerate.Contents.Add(treasureToAdd);
+                            toGenerate.Contents.Add(new Treasure((Treasure)treasureToAdd));
                             treasureAdded = true;
                         }
                     }
