@@ -126,3 +126,9 @@ C:\Users\alvesj5327\Desktop\CSC253-Diceandcombat\Dice and Combat Engine\obj\Debu
 C:\Users\alvesj5327\Desktop\CSC253-Diceandcombat\Dice and Combat Engine\obj\Debug\Dice_and_Combat_Engine.MainForm.resources
 C:\Users\alvesj5327\Desktop\CSC253-Diceandcombat\Dice and Combat Engine\obj\Debug\Dice_and_Combat_Engine.Properties.Resources.resources
 C:\Users\alvesj5327\Desktop\CSC253-Diceandcombat\Dice and Combat Engine\obj\Debug\Dice and Combat Engine.csproj.GenerateResource.Cache
+C:\Users\mccanns0131\Desktop\CSC253-DiceAndCombat\Dice and Combat Engine\bin\Debug\Dice and Combat Engine.exe
+C:\Users\mccanns0131\Desktop\CSC253-DiceAndCombat\Dice and Combat Engine\bin\Debug\Dice and Combat Engine.pdb
+C:\Users\mccanns0131\Desktop\CSC253-DiceAndCombat\Dice and Combat Engine\obj\Debug\Dice and Combat Engine.csprojResolveAssemblyReference.cache
+C:\Users\mccanns0131\Desktop\CSC253-DiceAndCombat\Dice and Combat Engine\obj\Debug\Dice_and_Combat_Engine.MainForm.resources
+C:\Users\mccanns0131\Desktop\CSC253-DiceAndCombat\Dice and Combat Engine\obj\Debug\Dice_and_Combat_Engine.Properties.Resources.resources
+C:\Users\mccanns0131\Desktop\CSC253-DiceAndCombat\Dice and Combat Engine\obj\Debug\Dice and Combat Engine.csproj.GenerateResource.Cache
