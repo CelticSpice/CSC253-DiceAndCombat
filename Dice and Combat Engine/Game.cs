@@ -68,7 +68,7 @@ namespace Dice_and_Combat_Engine
                 {
                     string line = creatureStream.ReadLine();
                     
-                    if (!(line.Length == 0))
+                    if (!(line.Length == 0 || creatureStream.EndOfStream))
                     {
                         string[] splitLine = line.Split(delim);
 

@@ -126,3 +126,4 @@ C:\Users\alvesj5327\Desktop\CSC253-Diceandcombat\Dice and Combat Engine\obj\Debu
 C:\Users\alvesj5327\Desktop\CSC253-Diceandcombat\Dice and Combat Engine\obj\Debug\Dice_and_Combat_Engine.MainForm.resources
 C:\Users\alvesj5327\Desktop\CSC253-Diceandcombat\Dice and Combat Engine\obj\Debug\Dice_and_Combat_Engine.Properties.Resources.resources
 C:\Users\alvesj5327\Desktop\CSC253-Diceandcombat\Dice and Combat Engine\obj\Debug\Dice and Combat Engine.csproj.GenerateResource.Cache
+C:\Users\alvesj5327\Desktop\CSC253-Diceandcombat\Dice and Combat Engine\obj\Debug\Dice_and_Combat_Engine.LevelUpForm.resources
