@@ -185,6 +185,8 @@ namespace Dice_and_Combat_Engine
                         feedbackList.Items.Add("Your weapon broke!");
                     }
                 }
+                // Display the most recent feedback
+                feedbackList.TopIndex = feedbackList.Items.Count - 1;
             }
         }
 
@@ -253,6 +255,8 @@ namespace Dice_and_Combat_Engine
                 // Inform user that no item is selected
                 MessageBox.Show("No item is selected.");
             }
+            // Display the most recent feedback
+            feedbackList.TopIndex = feedbackList.Items.Count - 1;
         }
 
         /*
