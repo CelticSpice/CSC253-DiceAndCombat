@@ -150,8 +150,11 @@ namespace Dice_and_Combat_Engine
                             // Update feedback to inform that the room has been looted of items
                             feedbackList.Items.Add("You have claimed the loot in this room!");
 
-                            // Make next room available
-                            nextBtn.Enabled = true;
+                            // Make next room available, if there is one
+                            if (game.CurrentRoom.GetNextRoom() != null)
+                            {
+                                nextBtn.Enabled = true;
+                            }
                         }
                     }
                     else
