@@ -67,7 +67,7 @@ namespace Dice_and_Combat_Engine
                 while (!creatureStream.EndOfStream)
                 {
                     string line = creatureStream.ReadLine();
-                    
+
                     if (!(line.Length == 0 || creatureStream.EndOfStream))
                     {
                         string[] splitLine = line.Split(delim);
@@ -210,7 +210,7 @@ namespace Dice_and_Combat_Engine
                             {
                                 line = itemStream.ReadLine();
                                 splitLine = line.Split(delim);
-                                
+
                                 switch (splitLine[0])
                                 {
                                     case "Name":
@@ -372,7 +372,7 @@ namespace Dice_and_Combat_Engine
             {
                 for (int j = i + 1; j < creatures.Count; j++)
                 {
-                    if (creatures[i].Stats.name.CompareTo(creatures[j].Stats.name) == -1)
+                    if (creatures[i].Stats.name.CompareTo(creatures[j].Stats.name) == 1)
                     {
                         Creature tmpCreature = creatures[i];
                         creatures[i] = creatures[j];
@@ -386,7 +386,7 @@ namespace Dice_and_Combat_Engine
             {
                 for (int j = i + 1; j < items.Count; j++)
                 {
-                    if (items[i].Name.CompareTo(items[j].Name) == -1)
+                    if (items[i].Name.CompareTo(items[j].Name) == 1)
                     {
                         Item tmpItem = items[i];
                         items[i] = items[j];
@@ -400,7 +400,7 @@ namespace Dice_and_Combat_Engine
             {
                 for (int j = i + 1; j < dungeon.Count; j++)
                 {
-                    if (dungeon[i].RoomName.CompareTo(dungeon[j].RoomName) == -1)
+                    if (dungeon[i].RoomName.CompareTo(dungeon[j].RoomName) == 1)
                     {
                         Room tmpRoom = dungeon[i];
                         dungeon[i] = dungeon[j];
@@ -518,7 +518,7 @@ namespace Dice_and_Combat_Engine
 
                 // Populate room with creatures
                 int maxCreatures = toGenerate.Denizens.Capacity;
-                
+
                 for (int j = 0; j < maxCreatures; j++)
                 {
                     Creature toAdd = creatures[rng.Next(creatures.Count)];
