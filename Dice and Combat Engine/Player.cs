@@ -49,13 +49,16 @@ namespace Dice_and_Combat_Engine
 
         public void GainExperience(int xp)
         {
-            _playerStats.experience += xp;
-            const int MODIFIER = 25;  //holds value for xp needed for each level.
+            // Experience needed to level up modifier
+            const int MODIFIER = 25;
 
-            //if statement to check if the player has recieve 25 xp since their last level
+            // Add experience to player
+            _playerStats.experience += xp;
+
+            // Check for level up
             if (_playerStats.experience >= _playerStats.level * MODIFIER)
             {
-                //Set level up notifier to true
+                // Set level up notifier to true
                 _leveledUp = true;
             }
         }
@@ -66,36 +69,40 @@ namespace Dice_and_Combat_Engine
 
         public void LevelUp()
         {
-            const int POINTS = 3;   //points are spent on upgrades
+            // Points to spend on upgrades each level up
+            // const int POINTS = 3;
             
             // Raise player's level
             _playerStats.level += 1;
 
+            // Upgrade player's max hitpoints
             BaseStats newStats = Stats;
             newStats.maxHitPoints += _playerStats.level;
+            Stats = newStats;
 
+            /*
 
-            //// Add 1 to each of the player's stats
-            //BaseStats newStats = Stats;
-            //newStats.hitPoints += 1;
-            //newStats.maxHitPoints += 1;
-            //newStats.attackBonus += 1;
-            //newStats.armorClass += 1;
+            // Add 1 to each of the player's stats
+            BaseStats newStats = Stats;
+            newStats.hitPoints += 1;
+            newStats.maxHitPoints += 1;
+            newStats.attackBonus += 1;
+            newStats.armorClass += 1;
 
-            //// Add 1 to each of the player's attributes
-            //Attributes attribs = Attributes;
-            //attribs.strength += 1;
-            //attribs.constitution += 1;
-            //attribs.dexterity += 1;
-            //attribs.intelligence += 1;
-            //attribs.wisdom += 1;
-            //attribs.charisma += 1;
+            // Add 1 to each of the player's attributes
+            Attributes attribs = Attributes;
+            attribs.strength += 1;
+            attribs.constitution += 1;
+            attribs.dexterity += 1;
+            attribs.intelligence += 1;
+            attribs.wisdom += 1;
+            attribs.charisma += 1;
 
-            //// Set new stats and attributes
-            //Stats = newStats;
-            //Attributes = attribs;
+            // Set new stats and attributes
+            /Stats = newStats;
+            Attributes = attribs;
 
-            
+            */
 
             // Return leveled up notifier to false
             _leveledUp = false;
