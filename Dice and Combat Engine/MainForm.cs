@@ -185,9 +185,9 @@ namespace Dice_and_Combat_Engine
                         feedbackList.Items.Add("Your weapon broke!");
                     }
                 }
-                // Display the most recent feedback
-                feedbackList.TopIndex = feedbackList.Items.Count - 1;
             }
+            // Display the most recent feedback
+            feedbackList.TopIndex = feedbackList.Items.Count - 1;
         }
 
         /*
