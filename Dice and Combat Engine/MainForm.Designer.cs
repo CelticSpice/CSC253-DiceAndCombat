@@ -260,9 +260,9 @@
             // 
             this.roomNameLbl.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.roomNameLbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.roomNameLbl.Location = new System.Drawing.Point(306, 9);
+            this.roomNameLbl.Location = new System.Drawing.Point(239, 9);
             this.roomNameLbl.Name = "roomNameLbl";
-            this.roomNameLbl.Size = new System.Drawing.Size(197, 43);
+            this.roomNameLbl.Size = new System.Drawing.Size(331, 43);
             this.roomNameLbl.TabIndex = 23;
             this.roomNameLbl.Text = "Room Name";
             this.roomNameLbl.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
