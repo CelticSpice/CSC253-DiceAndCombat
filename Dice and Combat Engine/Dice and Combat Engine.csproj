@@ -82,12 +82,6 @@
     </Compile>
     <Compile Include="RandomDie.cs" />
     <Compile Include="Room.cs" />
-    <Compile Include="LevelUpForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="LevelUpForm.Designer.cs">
-      <DependentUpon>LevelUpForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="Treasure.cs" />
     <Compile Include="Weapon.cs" />
     <EmbeddedResource Include="MainForm.resx">
@@ -97,9 +91,6 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <SubType>Designer</SubType>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="LevelUpForm.resx">
-      <DependentUpon>LevelUpForm.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -121,16 +112,10 @@
     <EmbeddedResource Include="Resources\rightArrow.jpg" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\backgroundBlurSelectCreature.jpg" />
-  </ItemGroup>
-  <ItemGroup>
     <Folder Include="Properties\DataSources\" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\creatures.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\backgroundBlurFight.jpg" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\goblin.jpg" />
@@ -164,6 +149,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\items.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\backgroundBlur.jpg" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

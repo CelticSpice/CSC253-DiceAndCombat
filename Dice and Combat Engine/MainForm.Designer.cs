@@ -326,7 +326,7 @@
             this.AcceptButton = this.attackButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackgroundImage = global::Dice_and_Combat_Engine.Properties.Resources.backgroundBlurFight;
+            this.BackgroundImage = global::Dice_and_Combat_Engine.Properties.Resources.backgroundBlur;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.ClientSize = new System.Drawing.Size(809, 438);
             this.Controls.Add(this.creatureListBox);

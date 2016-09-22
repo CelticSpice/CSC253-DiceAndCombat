@@ -1,6 +1,6 @@
 ﻿/*
     This class represents base creature objects in the game
-    9/5/2016
+    9/22/2016
     CSC 253 0001 - Dice and Combat Engine
     Author: James Alves, Shane McCann, Timothy Burns
 */

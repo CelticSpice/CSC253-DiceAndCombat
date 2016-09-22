@@ -63,19 +63,9 @@ namespace Dice_and_Combat_Engine.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap backgroundBlurFight {
+        internal static System.Drawing.Bitmap backgroundBlur {
             get {
-                object obj = ResourceManager.GetObject("backgroundBlurFight", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap backgroundBlurSelectCreature {
-            get {
-                object obj = ResourceManager.GetObject("backgroundBlurSelectCreature", resourceCulture);
+                object obj = ResourceManager.GetObject("backgroundBlur", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -246,23 +236,23 @@ namespace Dice_and_Combat_Engine.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Name: Room1
+        ///   Looks up a localized string similar to Name: Hall of Sophia
         ///NumCreatures: 3
         ///NumItems: 3
         ///
-        ///Name: Room2
+        ///Name: Hall of The Pleroma
         ///NumCreatures: 4
         ///NumItems: 5
         ///
-        ///Name: Room3
+        ///Name: Hall of The Monad
         ///NumCreatures: 5
         ///NumItems: 5
         ///
-        ///Name: Room4
+        ///Name: Hall of the Void
         ///NumCreatures: 2
         ///NumItems: 1
         ///
-        ///Name: Room5
+        ///Name: Hall of The Ogdoad
         ///NumCreatures: 6
         ///NumItems: 5.
         /// </summary>

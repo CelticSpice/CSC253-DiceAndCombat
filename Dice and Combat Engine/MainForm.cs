@@ -1,6 +1,6 @@
 ﻿/*
-    This program is a simple rouglelike game
-    9/13/2016
+    This program is a simple rougelike game
+    9/22/2016
     CSC 253 0001 - Dice and Combat Engine
     Author: James Alves, Shane McCann, Timothy Burns
 */
