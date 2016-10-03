@@ -27,7 +27,8 @@ Additionally, all player input must be converted into lowercase before parsing.
 
 ################################################################################################
 
-TODO:    (Mark task as complete as: #COMPLETE^^<task> e.g. #COMPLETE^^Write todo file)
+TODO:    Mark task as complete as: #COMPLETE^^<task> e.g. #COMPLETE^^Write todo file
+         Mark task as taken as: #TAKEN^^<task> e.g. #TAKEN^^Write todo file
 
 
 
