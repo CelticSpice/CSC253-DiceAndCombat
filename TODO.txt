@@ -29,6 +29,10 @@ Additionally, all player input must be converted into lowercase before parsing.
 
 TODO:    (Mark task as complete as: #COMPLETE^^<task> e.g. #COMPLETE^^Write todo file)
 
+
+
+****** Implement Text-Based Commands ******
+
 Implement LOOK command, which should with no args display the current room's information (number
     of creatures, items in room, exits, etc.)
 
@@ -55,6 +59,24 @@ Flesh out INVENTORY command to display an asterisk preceding an item currently a
 Implement SCORE command, which should display the PC's current score
 
 
+
+****** Link Rooms together Based on Direction ******
+
+#COMPLETE^^Create file containing Direction enum
+
+Add array of 4 Rooms to Room object to represent the 4 room exits, as follows:
+    Element 0. North
+    Element 1. South
+    Element 2. East
+    Element 3. West
+
+Link Room objects together on generation. Each Room should lead to exactly 1 other Room object
+    in one of the exits.
+
+
+
+****** Redesign UI ******
+
 Build text field for accepting user input
 
 Build button for confirming typed command
@@ -62,4 +84,9 @@ Build button for confirming typed command
 Remove List of creatures in room, as creatures will now be observed with the LOOK command
 
 
-#COMPLETE^^Create file containing the Direction enum
+
+****** Flesh Out Items and Item Placement ******
+
+Randomly generate Treasure in Rooms (not just in last Room)
+
+Treasure should, when picked up, increase PC's score by a certain amount
