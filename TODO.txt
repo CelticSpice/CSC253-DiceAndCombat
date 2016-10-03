@@ -65,7 +65,7 @@ Implement SCORE command, which should display the PC's current score
 
 #COMPLETE^^Create file containing Direction enum
 
-Add array of 4 Rooms to Room object to represent the 4 room exits, as follows:
+#COMPLETE^^Add array of 4 Rooms to Room object to represent the 4 room exits, as follows:
     Element 0. North
     Element 1. South
     Element 2. East
