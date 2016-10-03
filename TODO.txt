@@ -1,0 +1,40 @@
+The project requirements are as follows:
+
+1. Text-based commands to control the PC's actions. Must implement the following verbs,
+    plus two additional verbs:
+
+    GO, LOOK, TAKE, GET, DROP, OPEN, <VERB>, <VERB>
+
+Additionally, must implement the following commands:
+
+    INVENTORY, SCORE, QUIT
+
+Additionally, all player input must be converted into lowercase before parsing.
+
+2. Room objects must be linked to each other in multiple directions in a linked-list fashion.
+    Enumerated directions that will be implemented are:
+
+    NORTH, SOUTH, EAST, WEST
+
+3. Must have at least 10 rooms
+
+4. UI must be implemented as a form with text fields and a button for confirming typed command
+
+5. Rooms should contain multiple objects. Treasure items will increase player's score when
+    picked up.
+
+6. Must include at least one NPC, which will be extending the Creature class.
+
+################################################################################################
+
+TODO:    (Mark task as complete as: #COMPLETE^^<task> e.g. #COMPLETE^^Write todo file)
+
+Build text field for accepting user input
+
+Build button for confirming typed command
+
+Remove List of creatures in room, as creatures will now be observed with the LOOK command
+
+
+
+#COMPLETE^^Create file containing the Direction enum
