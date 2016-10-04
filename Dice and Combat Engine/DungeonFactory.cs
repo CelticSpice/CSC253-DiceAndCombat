@@ -94,6 +94,7 @@ namespace Dice_and_Combat_Engine
             List<Room> tree = new List<Room>();
             int i = rng.Next(nodesToLink.Count);
             tree.Add(nodesToLink[i]);
+            nodesToLink[i].Linked = true;
             nodesToLink.RemoveAt(i);
 
             // Prepare variables
@@ -159,8 +160,9 @@ namespace Dice_and_Combat_Engine
                     linker.Exits[(int)Direction.East] = toLink;
                 }
 
-                // Add toLink to the tree, and remove from the list of nodes yet to be linked
+                // Add toLink to the tree, set it as linked, and remove from the list of nodes yet to be linked
                 tree.Add(toLink);
+                toLink.Linked = true;
                 nodesToLink.Remove(toLink);
             }
         }
