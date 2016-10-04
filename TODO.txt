@@ -71,7 +71,7 @@ Implement SCORE command, which should display the PC's current score
     Element 2. East
     Element 3. West
 
-Link Room objects together on generation. Each Room should lead to exactly 1 other Room object
+#COMPLETE^^Link Room objects together on generation. Each Room should lead to at least 1 other Room object
     in one of the exits.
 
 

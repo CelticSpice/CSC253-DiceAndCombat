@@ -12,6 +12,11 @@ namespace Dice_and_Combat_Engine
     class Room
     {
         // Fields
+        private bool _linked;                // Whether Room has been linked (for linking with Prim's algorithm)
+        private int _weight;                 // Value of Room (for linking with Prim's algorithm)
+
+        private int _xLoc, _yLoc;
+
         private string _roomName;
         private List<Creature> _denizens;   // Creatures in the room
         private List<Item> _contents;       // Items in the room
@@ -30,6 +35,52 @@ namespace Dice_and_Combat_Engine
 
             const int NUM_EXITS = 4;
             _exits = new Room[NUM_EXITS];
+
+            _linked = false;
+            _weight = -1;
+
+            _xLoc = -1;
+            _yLoc = -1;
+        }
+
+        /*
+            Linked property
+        */
+
+        public bool Linked
+        {
+            get;
+            set;
+        }
+
+        /*
+            Weight property
+        */
+
+        public int Weight
+        {
+            get;
+            set;
+        }
+
+        /*
+            XLoc property
+        */
+        
+        public int XLoc
+        {
+            get;
+            set;
+        }
+
+        /*
+            YLoc property
+        */
+
+        public int YLoc
+        {
+            get;
+            set;
         }
 
         /*

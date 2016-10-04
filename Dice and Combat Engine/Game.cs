@@ -20,7 +20,7 @@ namespace Dice_and_Combat_Engine
         private CombatEngine _combatEngine;     // Handles combat logic
         private List<Creature> creatures;       // The creatures in the game
         private List<Item> items;               // The items in the game
-        private List<Room> dungeon;             // The rooms in the dungeon
+        private List<Room> rooms;               // The rooms in the dungeon
         private Player _player;                 // The player character
         private Room _currentRoom;              // The current room
 
@@ -34,7 +34,7 @@ namespace Dice_and_Combat_Engine
             _combatEngine = new CombatEngine();
             LoadCreatures();
             LoadItems();
-            LoadDungeonRooms();
+            LoadRooms();
             SortLists();
             GeneratePlayer();
             GenerateDungeon();
@@ -297,14 +297,14 @@ namespace Dice_and_Combat_Engine
         }
 
         /*
-            The LoadDungeonRooms method loads the dungeon rooms
+            The LoadRooms method loads the dungeon rooms
         */
 
-        private void LoadDungeonRooms()
+        private void LoadRooms()
         {
             const string ROOM_RESOURCE = "Dice_and_Combat_Engine.Resources.rooms.txt";
 
-            dungeon = new List<Room>();
+            rooms = new List<Room>();
 
             try
             {
@@ -336,11 +336,11 @@ namespace Dice_and_Combat_Engine
                                 roomName = splitLine[1];
                                 break;
                             case "NumCreatures":
-                                // Read the room's number of creatures
+                                // Read the room's initial number of creatures
                                 numCreatures = int.Parse(splitLine[1]);
                                 break;
                             case "NumItems":
-                                // Read the room's number of items
+                                // Read the room's initial number of items
                                 numItems = int.Parse(splitLine[1]);
                                 break;
                         }
@@ -348,7 +348,7 @@ namespace Dice_and_Combat_Engine
                     else
                     {
                         // Create new room
-                        dungeon.Add(new Room(roomName, numCreatures, numItems));
+                        rooms.Add(new Room(roomName, numCreatures, numItems));
                     }
                 }
             }
@@ -358,7 +358,7 @@ namespace Dice_and_Combat_Engine
             }
 
             // Trim list
-            dungeon.TrimExcess();
+            rooms.TrimExcess();
         }
 
         /*
@@ -396,15 +396,15 @@ namespace Dice_and_Combat_Engine
             }
 
             // Sort Rooms
-            for (int i = 0; i < dungeon.Count - 1; i++)
+            for (int i = 0; i < rooms.Count - 1; i++)
             {
-                for (int j = i + 1; j < dungeon.Count; j++)
+                for (int j = i + 1; j < rooms.Count; j++)
                 {
-                    if (dungeon[i].RoomName.CompareTo(dungeon[j].RoomName) == 1)
+                    if (rooms[i].RoomName.CompareTo(rooms[j].RoomName) == 1)
                     {
-                        Room tmpRoom = dungeon[i];
-                        dungeon[i] = dungeon[j];
-                        dungeon[j] = tmpRoom;
+                        Room tmpRoom = rooms[i];
+                        rooms[i] = rooms[j];
+                        rooms[j] = tmpRoom;
                     }
                 }
             }
@@ -456,92 +456,238 @@ namespace Dice_and_Combat_Engine
         {
             Random rng = new Random((int)DateTime.Now.Ticks & 0x0000FFFF);
 
-            // Generate layout
-            Room[] layout = new Room[dungeon.Count];
+            // Get 2D field
+            Room[,] field = Generate2DField();
 
-            List<Room> roomsToShuffle = new List<Room>(dungeon);
-
-            for (int i = 0; i < layout.Length; i++)
-            {
-                Room toPlace = roomsToShuffle[rng.Next(roomsToShuffle.Count)];
-                layout[i] = toPlace;
-                roomsToShuffle.Remove(toPlace);
-            }
+            // Link Rooms using Prim's algorithm
+            LinkNodes(field);
 
             // Set starting room
-            _currentRoom = layout[0];
+            const int ROWS = 5;
+            const int COLS = 5;
+            _currentRoom = field[rng.Next(ROWS), rng.Next(COLS)];
 
             // Generate room contents
-            for (int i = 0; i < layout.Length; i++)
+            Item itemToAdd;
+            Creature creatureToAdd;
+            for (int row = 0; row < ROWS; row++)
             {
-                Room toGenerate = layout[i];
-
-                // Populate room with items
-                int maxItems = toGenerate.Contents.Capacity;
-
-                // Determine whether to place the treasure in the room
-                bool treasureAdded = false;
-
-                if (i == (layout.Length - 1))
+                for (int col = 0; col < COLS; col++)
                 {
-                    while (!treasureAdded)
-                    {
-                        Item treasureToAdd = items[rng.Next(items.Count)];
+                    // Populate room with items
+                    int maxItems = field[row, col].Contents.Capacity;
 
-                        if (treasureToAdd is Treasure)
+                    for (int i = 0; i < maxItems; i++)
+                    {
+                        itemToAdd = items[rng.Next(items.Count)];
+
+                        if (itemToAdd is Weapon)
                         {
-                            toGenerate.Contents.Add(new Treasure((Treasure)treasureToAdd));
-                            treasureAdded = true;
+                            field[row, col].Contents.Add(new Weapon((Weapon)itemToAdd));
+                        }
+                        else if (itemToAdd is Potion)
+                        {
+                            field[row, col].Contents.Add(new Potion((Potion)itemToAdd));
+                        }
+                    }
+
+                    // Populate room with creatures
+                    int maxCreatures = field[row, col].Denizens.Capacity;
+
+                    for (int i = 0; i < maxCreatures; i++)
+                    {
+                        creatureToAdd = creatures[rng.Next(creatures.Count)];
+                        field[row, col].Denizens.Add(new Creature(creatureToAdd));
+                    }
+                }
+            }
+        }
+
+        /*
+            The Generate2DField method randomly allocates nodes to a 5x5 two-dimensional array
+            The method returns a 2D array of the field
+        */
+
+        private Room[,] Generate2DField()
+        {
+            Random rng = new Random((int)DateTime.Now.Ticks & 0x0000FFFF);
+            List<Room> toAllocate = new List<Room>(rooms);
+
+            const int ROWS = 5;
+            const int COLS = 5;
+            Room[,] field = new Room[ROWS, COLS];
+
+            for (int row = 0; row < ROWS; row++)
+            {
+                for (int col = 0; col < COLS; col++)
+                {
+                    Room allocated = toAllocate[rng.Next(toAllocate.Count)];
+                    field[row, col] = allocated;
+                    allocated.XLoc = row;
+                    allocated.YLoc = col;
+                    toAllocate.Remove(allocated);
+                }
+            }
+
+            return field;
+        }
+
+        /*
+            The LinkNodes method links the nodes of a 5x5 2D array using Prim's algorithm
+
+            Reference: https://en.wikipedia.org/wiki/Prim%27s_algorithm
+        */
+
+        private void LinkNodes(Room[,] nodes)
+        {
+            Random rng = new Random((int)DateTime.Now.Ticks & 0x0000FFFF);
+
+            // Initialize nodes with random weights
+            foreach (Room node in nodes)
+            {
+                node.Weight = rng.Next(100) + 1;
+            }
+
+            // Initialize list of nodes not yet linked
+            List<Room> nodesToLink = new List<Room>();
+            const int ROWS = 5;
+            const int COLS = 5;
+            for (int row = 0; row < ROWS; row++)
+            {
+                for (int col = 0; col < COLS; col++)
+                {
+                    nodesToLink.Add(nodes[row, col]);
+                }
+            }
+
+            // Initialize tree
+            List<Room> tree = new List<Room>();
+            int i = rng.Next(nodesToLink.Count);
+            tree.Add(nodesToLink[i]);
+            nodesToLink.RemoveAt(i);
+
+            // Prepare variables
+            List<Room> adjacentNodes = new List<Room>();
+
+            // Begin
+            while (nodesToLink.Count != 0)
+            {
+                // Get adjacent nodes not yet linked
+                foreach(Room node in tree)
+                {
+                    Room[] nodesAdjacentTo = GetAdjacentNodes(node, nodes);
+                    foreach (Room adjacentNode in nodesAdjacentTo)
+                    {
+                        if (!(adjacentNode == null) && !adjacentNode.Linked)
+                        {
+                            adjacentNodes.Add(adjacentNode);
                         }
                     }
                 }
 
-                for (int j = (treasureAdded ? 1 : 0); j < maxItems; j++)
+                // Find adjacent node with lowest weight
+                Room toLink = adjacentNodes[0];
+                for (i = 1; i < adjacentNodes.Count; i++)
                 {
-                    Item toAdd = items[rng.Next(items.Count)];
-
-                    // Make sure item added is not the treasure
-                    while (toAdd is Treasure)
+                    if (adjacentNodes[i].Weight < toLink.Weight)
                     {
-                        toAdd = items[rng.Next(items.Count)];
-                    }
-
-                    if (toAdd is Weapon)
-                    {
-                        toGenerate.Contents.Add(new Weapon((Weapon)toAdd));
-                    }
-                    else if (toAdd is Potion)
-                    {
-                        toGenerate.Contents.Add(new Potion((Potion)toAdd));
+                        toLink = adjacentNodes[i];
                     }
                 }
 
-                // Populate room with creatures
-                int maxCreatures = toGenerate.Denizens.Capacity;
-
-                for (int j = 0; j < maxCreatures; j++)
+                // Select neighbor to link to adjacent node
+                Room[] neighbors = GetAdjacentNodes(toLink, nodes);
+                Room linker = null;
+                do
                 {
-                    Creature toAdd = creatures[rng.Next(creatures.Count)];
-                    toGenerate.Denizens.Add(new Creature(toAdd));
+                    i = rng.Next(neighbors.Length);
+                    if (neighbors[i] != null && neighbors[i].Linked)
+                    {
+                        linker = neighbors[i];
+                    }
+                } while (linker == null);
+
+                // The index of the element in neighbors tells us whether linker is to the north,
+                // south, east, or west (0, 1, 2, 3)
+                toLink.Exits[i] = linker;
+
+                // We also specify the exit for linker, which will be the opposite of toLink's direction
+                if (i == (int)Direction.North)
+                {
+                    linker.Exits[(int)Direction.South] = toLink;
                 }
-
-                // Set room's previous and next room
-                if (i == 0)
+                else if (i == (int)Direction.South)
                 {
-                    toGenerate.SetPreviousRoom(null);   // Previous room is null because this is the first room
-                }                                       // We delay setting next room until next iteration
-                else if (i > 0 && i < layout.Length - 1)
+                    linker.Exits[(int)Direction.North] = toLink;
+                }
+                else if (i == (int)Direction.East)
                 {
-                    layout[i - 1].SetNextRoom(toGenerate);
-                    toGenerate.SetPreviousRoom(layout[i - 1]);
+                    linker.Exits[(int)Direction.West] = toLink;
                 }
                 else
                 {
-                    layout[i - 1].SetNextRoom(toGenerate);
-                    toGenerate.SetPreviousRoom(layout[i - 1]);
-                    toGenerate.SetNextRoom(null);               // Because this is the last room, next room is null
+                    linker.Exits[(int)Direction.East] = toLink;
+                }
+
+                // Add toLink to the tree, and remove from the list of nodes yet to be linked
+                tree.Add(toLink);
+                nodesToLink.Remove(toLink);
+            }
+        }
+
+        /*
+            The GetAdjacentNodes method returns an array containing the nodes in a 5x5 2D array that are
+            adjacent to the node passed as an argument
+            The array will be ordered such that element 0 is North, element 1 is South, element 2 is East,
+            and element 3 is West
+        */
+
+        private Room[] GetAdjacentNodes(Room node, Room[,] nodes)
+        {
+            const int NUM_NEIGHBORS = 4;
+            Room[] adjacentNodes = new Room[NUM_NEIGHBORS];
+
+            int xLoc = node.XLoc;
+            int yLoc = node.YLoc;
+            int i = 0;
+            while (i < NUM_NEIGHBORS)
+            {
+                // i represents one of 4 directions: North, South, East, West, respectively
+                // If no neighbor exists, element at index i will be left null
+                switch (i)
+                {
+                    case (int)Direction.North:
+                        if (yLoc > 0)
+                        {
+                            adjacentNodes[i] = nodes[xLoc, yLoc - 1];
+                        }
+                        i++;
+                        break;
+                    case (int)Direction.South:
+                        if (yLoc < 4)
+                        {
+                            adjacentNodes[i] = nodes[xLoc, yLoc + 1];
+                        }
+                        i++;
+                        break;
+                    case (int)Direction.East:
+                        if (xLoc < 4)
+                        {
+                            adjacentNodes[i] = nodes[xLoc + 1, yLoc];
+                        }
+                        i++;
+                        break;
+                    case (int)Direction.West:
+                        if (xLoc > 0)
+                        {
+                            adjacentNodes[i] = nodes[xLoc - 1, yLoc];
+                        }
+                        i++;
+                        break;
                 }
             }
+
+            return adjacentNodes;
         }
 
         /*
