@@ -16,28 +16,33 @@ namespace Dice_and_Combat_Engine
     class Game
     {
         // Fields
-        private Assembly assembly;
         private CombatEngine _combatEngine;     // Handles combat logic
-        private List<Creature> creatures;       // The creatures in the game
-        private List<Item> items;               // The items in the game
-        private List<Room> rooms;               // The rooms in the dungeon
+        private Creature[] creatures;           // The creatures in the game
+        private Item[] items;                   // The items in the game
+        private Room[] rooms;                   // The rooms in the game
+        private RoomGrid dungeon;               // The dungeon
         private Player _player;                 // The player character
-        private Room _currentRoom;              // The current room
 
         /*
             Constructor
+            Accepts an integer representing the size of the dungeon;
+            the dungeon will contain that many rows and columns
+
+            The method also accepts an optional boolean indicating whether
+            each Room should be unique
         */
 
-        public Game()
+        public Game(int dungeonSize, bool uniqueRooms = false)
         {
-            assembly = Assembly.GetExecutingAssembly();
             _combatEngine = new CombatEngine();
             LoadCreatures();
             LoadItems();
             LoadRooms();
-            SortLists();
+            SortResources();
+            dungeon = new RoomGrid(dungeonSize, dungeonSize, rooms, uniqueRooms);
+            dungeon.GenerateRoomContents(creatures, items);
             GeneratePlayer();
-            _currentRoom = DungeonFactory.GenerateDungeon(creatures.ToArray(), items.ToArray(), rooms.ToArray());
+
         }
 
         /*
@@ -50,7 +55,9 @@ namespace Dice_and_Combat_Engine
             const string CREATURE_RESOURCE = "Dice_and_Combat_Engine.Resources.creatures.txt";
             const string CREATURE_IMG_DIRECTORY = "Dice_and_Combat_Engine.Resources.";
 
-            creatures = new List<Creature>();
+            List<Creature> loadList = new List<Creature>();
+
+            Assembly assembly = Assembly.GetExecutingAssembly();
 
             try
             {
@@ -143,7 +150,7 @@ namespace Dice_and_Combat_Engine
                         Image creatureImage = Image.FromStream(imageStream);
 
                         // Create new creature with collected data
-                        creatures.Add(new Creature(creatureStats, creatureAttribs, creatureImage));
+                        loadList.Add(new Creature(creatureStats, creatureAttribs, creatureImage));
                     }
                 }
             }
@@ -153,7 +160,10 @@ namespace Dice_and_Combat_Engine
             }
 
             // Trim list
-            creatures.TrimExcess();
+            loadList.TrimExcess();
+
+            // Set array
+            creatures = loadList.ToArray();
         }
 
         /*
@@ -167,7 +177,9 @@ namespace Dice_and_Combat_Engine
             const int POTION = 2;
             const int TREASURE = 3;
 
-            items = new List<Item>();
+            List<Item> loadList = new List<Item>();
+
+            Assembly assembly = Assembly.GetExecutingAssembly();
 
             try
             {
@@ -229,7 +241,7 @@ namespace Dice_and_Combat_Engine
                             }
 
                             // Create weapon
-                            items.Add(new Weapon(itemName, itemDurability, itemValue, damageBonus));
+                            loadList.Add(new Weapon(itemName, itemDurability, itemValue, damageBonus));
                             break;
                         case POTION:
                             // Item is potion
@@ -258,7 +270,7 @@ namespace Dice_and_Combat_Engine
                             }
 
                             // Create potion
-                            items.Add(new Potion(itemName, itemDurability, itemValue, healthRestored));
+                            loadList.Add(new Potion(itemName, itemDurability, itemValue, healthRestored));
                             break;
                         case TREASURE:
                             // Item is treasure
@@ -282,7 +294,7 @@ namespace Dice_and_Combat_Engine
                             }
 
                             // Create treasure
-                            items.Add(new Treasure(itemName, itemDurability, itemValue));
+                            loadList.Add(new Treasure(itemName, itemDurability, itemValue));
                             break;
                     }
                 }
@@ -293,7 +305,10 @@ namespace Dice_and_Combat_Engine
             }
 
             // Trim list
-            items.TrimExcess();
+            loadList.TrimExcess();
+
+            // Set array
+            items = loadList.ToArray();
         }
 
         /*
@@ -304,7 +319,9 @@ namespace Dice_and_Combat_Engine
         {
             const string ROOM_RESOURCE = "Dice_and_Combat_Engine.Resources.rooms.txt";
 
-            rooms = new List<Room>();
+            List<Room> loadList = new List<Room>();
+
+            Assembly assembly = Assembly.GetExecutingAssembly();
 
             try
             {
@@ -325,7 +342,7 @@ namespace Dice_and_Combat_Engine
                     string line = roomStream.ReadLine();
 
                     // Check for empty string delimiter
-                    if (!(line.Length == 0))
+                    if (!roomStream.EndOfStream && !(line.Length == 0))
                     {
                         string[] splitLine = line.Split(delim);
 
@@ -348,7 +365,7 @@ namespace Dice_and_Combat_Engine
                     else
                     {
                         // Create new room
-                        rooms.Add(new Room(roomName, numCreatures, numItems));
+                        loadList.Add(new Room(roomName, numCreatures, numItems));
                     }
                 }
             }
@@ -358,19 +375,22 @@ namespace Dice_and_Combat_Engine
             }
 
             // Trim list
-            rooms.TrimExcess();
+            loadList.TrimExcess();
+
+            // Set array
+            rooms = loadList.ToArray();
         }
 
         /*
-            The SortLists method sorts the List fields alphabetically
+            The SortResources method sorts the creatures, items, and rooms resource fields alphabetically
         */
 
-        private void SortLists()
+        private void SortResources()
         {
             // Sort Creatures
-            for (int i = 0; i < creatures.Count - 1; i++)
+            for (int i = 0; i < creatures.Length - 1; i++)
             {
-                for (int j = i + 1; j < creatures.Count; j++)
+                for (int j = i + 1; j < creatures.Length; j++)
                 {
                     if (creatures[i].Stats.name.CompareTo(creatures[j].Stats.name) == 1)
                     {
@@ -382,9 +402,9 @@ namespace Dice_and_Combat_Engine
             }
 
             // Sort Items
-            for (int i = 0; i < items.Count - 1; i++)
+            for (int i = 0; i < items.Length - 1; i++)
             {
-                for (int j = i + 1; j < items.Count; j++)
+                for (int j = i + 1; j < items.Length; j++)
                 {
                     if (items[i].Name.CompareTo(items[j].Name) == 1)
                     {
@@ -396,9 +416,9 @@ namespace Dice_and_Combat_Engine
             }
 
             // Sort Rooms
-            for (int i = 0; i < rooms.Count - 1; i++)
+            for (int i = 0; i < rooms.Length - 1; i++)
             {
-                for (int j = i + 1; j < rooms.Count; j++)
+                for (int j = i + 1; j < rooms.Length; j++)
                 {
                     if (rooms[i].RoomName.CompareTo(rooms[j].RoomName) == 1)
                     {
@@ -446,6 +466,17 @@ namespace Dice_and_Combat_Engine
             playerStats.level = 1;
 
             _player = new Player(playerStats, playerBaseStats, playerAttributes);
+            _player.Location = dungeon.Grid[0, 0];
+        }
+
+        /*
+            The GetDungeonASCII method returns the dungeon's layout in ASCII
+            format
+        */
+
+        public string GetDungeonASCII()
+        {
+            return dungeon.ToString();
         }
 
         /*
@@ -464,16 +495,6 @@ namespace Dice_and_Combat_Engine
         public Player Player
         {
             get { return _player; }
-        }
-
-        /*
-            CurrentRoom property
-        */
-
-        public Room CurrentRoom
-        {
-            get { return _currentRoom; }
-            set { _currentRoom = value; }
         }
     }
 }

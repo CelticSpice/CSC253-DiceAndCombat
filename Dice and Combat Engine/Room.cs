@@ -11,16 +11,16 @@ namespace Dice_and_Combat_Engine
 {
     class Room
     {
-        // Fields
-        private bool _linked;                // Whether Room has been linked (for linking with Prim's algorithm)
-        private int _weight;                 // Value of Room (for linking with Prim's algorithm)
+        // Static Fields
+        private static int numNeighbors = 4;
 
-        private int _xLoc, _yLoc;
-
+        // Properties
+        private bool _linked;
+        private int _weight, _xLoc, _yLoc;
         private string _roomName;
-        private List<Creature> _denizens;   // Creatures in the room
-        private List<Item> _contents;       // Items in the room
-        private Room[] _exits;
+        private List<Creature> _denizens;
+        private List<Item> _contents;
+        private Room[] _neighbors, _links;
 
         /*
             Constructor
@@ -32,15 +32,77 @@ namespace Dice_and_Combat_Engine
             _roomName = name;
             _denizens = new List<Creature>(numCreatures);
             _contents = new List<Item>(numItems);
-
-            const int NUM_EXITS = 4;
-            _exits = new Room[NUM_EXITS];
-
             _linked = false;
             _weight = -1;
-
             _xLoc = -1;
             _yLoc = -1;
+            _neighbors = new Room[numNeighbors];
+            _links = new Room[numNeighbors];
+        }
+
+        /*
+            Copy Constructor
+        */
+
+        public Room(Room room)
+        {
+            _roomName = room._roomName;
+            _denizens = new List<Creature>(room._denizens);
+            _contents = new List<Item>(room._contents);
+            _linked = room._linked;
+            _weight = room._weight;
+            _xLoc = room._xLoc;
+            _yLoc = room._yLoc;
+
+            _neighbors = new Room[numNeighbors];
+            for (int i = 0; i < numNeighbors; i++)
+            {
+                _neighbors[i] = room._neighbors[i];
+            }
+
+            _links = new Room[numNeighbors];
+            for (int i = 0; i < numNeighbors; i++)
+            {
+                _links[i] = room._links[i];
+            }
+        }
+
+        /*
+            The Link method links this Room to another Room
+        */
+
+        public void Link(Room toLink)
+        {
+            // Find which direction the Room to link to is in relation
+            // to this Room so we can assign to the proper Links elements
+            bool linked = false;
+            Direction direction = Direction.North;
+            while (!linked && direction <= Direction.West)
+            {
+                if (_neighbors[(int)direction] == toLink)
+                {
+                    _links[(int)direction] = toLink;
+                    
+                    // We link bidirectionally
+                    if (direction == Direction.North || direction == Direction.East)
+                    {
+                        toLink._links[(int)direction + 1] = this;
+                    }
+                    else
+                    {
+                        toLink._links[(int)direction - 1] = this;
+                    }
+
+                    // Rooms are now linked
+                    linked = true;
+                    this.Linked = true;
+                    toLink.Linked = true;
+                }
+                else
+                {
+                    direction++;
+                }
+            }
         }
 
         /*
@@ -49,8 +111,8 @@ namespace Dice_and_Combat_Engine
 
         public bool Linked
         {
-            get;
-            set;
+            get { return _linked; }
+            set { _linked = value; }
         }
 
         /*
@@ -59,8 +121,8 @@ namespace Dice_and_Combat_Engine
 
         public int Weight
         {
-            get;
-            set;
+            get { return _weight; }
+            set { _weight = value; }
         }
 
         /*
@@ -69,8 +131,8 @@ namespace Dice_and_Combat_Engine
         
         public int XLoc
         {
-            get;
-            set;
+            get { return _xLoc; }
+            set { _xLoc = value; }
         }
 
         /*
@@ -79,8 +141,8 @@ namespace Dice_and_Combat_Engine
 
         public int YLoc
         {
-            get;
-            set;
+            get { return _yLoc; }
+            set { _yLoc = value; }
         }
 
         /*
@@ -90,6 +152,7 @@ namespace Dice_and_Combat_Engine
         public string RoomName
         {
             get { return _roomName; }
+            set { _roomName = value; }
         }
 
         /*
@@ -111,12 +174,21 @@ namespace Dice_and_Combat_Engine
         }
 
         /*
-            Exits property
+            Neighbors property
         */
 
-        public Room[] Exits
+        public Room[] Neighbors
         {
-            get { return _exits; }
+            get { return _neighbors; }
+        }
+
+        /*
+            Links property
+        */
+
+        public Room[] Links
+        {
+            get { return _links; }
         }
     }
 }

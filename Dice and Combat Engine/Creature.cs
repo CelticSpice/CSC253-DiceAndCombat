@@ -41,6 +41,7 @@ namespace Dice_and_Combat_Engine
         private BaseStats _stats;
         private Attributes _attributes;
         private Image _portrait;
+        private Room _location;
 
         /*
             Constructor
@@ -51,6 +52,7 @@ namespace Dice_and_Combat_Engine
             _stats = new BaseStats();
             _attributes = new Attributes();
             _portrait = null;
+            _location = null;
         }
 
         /*
@@ -63,6 +65,7 @@ namespace Dice_and_Combat_Engine
             _stats = stats;
             _attributes = attribs;
             _portrait = portrait;
+            _location = null;
         }
 
         /*
@@ -75,6 +78,7 @@ namespace Dice_and_Combat_Engine
             _stats = c._stats;
             _attributes = c._attributes;
             _portrait = c._portrait;
+            _location = c._location;
         }
 
         /*
@@ -105,6 +109,16 @@ namespace Dice_and_Combat_Engine
         {
             get { return _portrait; }
             set { _portrait = value; }
+        }
+
+        /*
+            Location property
+        */
+
+        public Room Location
+        {
+            get;
+            set;
         }
     }
 }

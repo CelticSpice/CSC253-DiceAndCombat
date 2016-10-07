@@ -134,11 +134,11 @@ C:\Users\burnst\Desktop\CSC253-DiceAndCombat\Dice and Combat Engine\obj\Debug\Di
 C:\Users\burnst\Desktop\CSC253-DiceAndCombat\Dice and Combat Engine\obj\Debug\Dice and Combat Engine.exe
 C:\Users\burnst\Desktop\CSC253-DiceAndCombat\Dice and Combat Engine\obj\Debug\Dice and Combat Engine.pdb
 \\VBOXSVR\burnst\ftcc\2016FA\CSC253\CSC253-DiceAndCombat\Dice and Combat Engine\bin\Debug\Dice and Combat Engine.exe.config
-\\VBOXSVR\burnst\ftcc\2016FA\CSC253\CSC253-DiceAndCombat\Dice and Combat Engine\obj\Debug\Dice and Combat Engine.exe
-\\VBOXSVR\burnst\ftcc\2016FA\CSC253\CSC253-DiceAndCombat\Dice and Combat Engine\obj\Debug\Dice and Combat Engine.pdb
 \\VBOXSVR\burnst\ftcc\2016FA\CSC253\CSC253-DiceAndCombat\Dice and Combat Engine\bin\Debug\Dice and Combat Engine.exe
 \\VBOXSVR\burnst\ftcc\2016FA\CSC253\CSC253-DiceAndCombat\Dice and Combat Engine\bin\Debug\Dice and Combat Engine.pdb
-\\VBOXSVR\burnst\ftcc\2016FA\CSC253\CSC253-DiceAndCombat\Dice and Combat Engine\obj\Debug\Dice and Combat Engine.csprojResolveAssemblyReference.cache
 \\VBOXSVR\burnst\ftcc\2016FA\CSC253\CSC253-DiceAndCombat\Dice and Combat Engine\obj\Debug\Dice_and_Combat_Engine.MainForm.resources
 \\VBOXSVR\burnst\ftcc\2016FA\CSC253\CSC253-DiceAndCombat\Dice and Combat Engine\obj\Debug\Dice_and_Combat_Engine.Properties.Resources.resources
 \\VBOXSVR\burnst\ftcc\2016FA\CSC253\CSC253-DiceAndCombat\Dice and Combat Engine\obj\Debug\Dice and Combat Engine.csproj.GenerateResource.Cache
+\\VBOXSVR\burnst\ftcc\2016FA\CSC253\CSC253-DiceAndCombat\Dice and Combat Engine\obj\Debug\Dice and Combat Engine.exe
+\\VBOXSVR\burnst\ftcc\2016FA\CSC253\CSC253-DiceAndCombat\Dice and Combat Engine\obj\Debug\Dice and Combat Engine.pdb
+\\VBOXSVR\burnst\ftcc\2016FA\CSC253\CSC253-DiceAndCombat\Dice and Combat Engine\obj\Debug\Dice and Combat Engine.csprojResolveAssemblyReference.cache
