@@ -274,7 +274,7 @@ namespace Dice_and_Combat_Engine
         {
             string top, bottom, east, south;
 
-            string body = "   ";
+            string body   = "   ";
             string corner = "+";
 
             string output = "+" + String.Concat(Enumerable.Repeat("---+", _columns)) + "\r\n";
@@ -289,7 +289,7 @@ namespace Dice_and_Combat_Engine
                     east  = (_grid[row, col].Links[(int)Direction.East] != null) ? " " : "|";
                     south = (_grid[row, col].Links[(int)Direction.South] != null) ? "   " : "---";
 
-                    top += body + east;
+                    top    += body + east;
                     bottom += south + corner;
                 }
 

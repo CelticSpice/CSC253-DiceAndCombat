@@ -95,8 +95,8 @@ namespace Dice_and_Combat_Engine
 
                     // Rooms are now linked
                     linked = true;
-                    this.Linked = true;
-                    toLink.Linked = true;
+                    _linked = true;
+                    toLink._linked = true;
                 }
                 else
                 {

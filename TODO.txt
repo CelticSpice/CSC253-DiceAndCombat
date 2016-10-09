@@ -88,6 +88,6 @@ Remove List of creatures in room, as creatures will now be observed with the LOO
 
 ****** Flesh Out Items and Item Placement ******
 
-Randomly generate Treasure in Rooms (not just in last Room)
+#COMPLETE^^Randomly generate Treasure in Rooms (not just in last Room)
 
 Treasure should, when picked up, increase PC's score by a certain amount
