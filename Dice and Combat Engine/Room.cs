@@ -114,6 +114,43 @@ namespace Dice_and_Combat_Engine
         }
 
         /*
+            The OpenLink method opens the direction to another Room
+        */
+
+        public void OpenLink(Room link)
+        {
+            // Find which direction the linked Room is in relation
+            // to this Room so we can assign to the proper elements
+            bool found = false;
+            Direction direction = Direction.North;
+            while (!found && direction <= Direction.West)
+            {
+                if (_links[(int)direction] == link)
+                {
+                    found = true;
+
+                    _linksUnlocked[(int)direction] = true;
+
+                    // We open the links bidirectionally
+                    if (direction == Direction.North || direction == Direction.East)
+                    {
+                        link._linksUnlocked[(int)direction + 1] = true;
+                    }
+                    else
+                    {
+                        link._linksUnlocked[(int)direction - 1] = true;
+                    }
+
+                    // Rooms links are now opened
+                }
+                else
+                {
+                    direction++;
+                }
+            }
+        }
+
+        /*
             LinksUnlocked property
         */
 

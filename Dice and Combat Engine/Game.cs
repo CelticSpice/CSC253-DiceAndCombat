@@ -490,6 +490,10 @@ namespace Dice_and_Combat_Engine
                 {
                     good = true;
                 }
+                else
+                {
+                    i++;
+                }
             }
             return good;
         }
@@ -547,7 +551,7 @@ namespace Dice_and_Combat_Engine
             else
             {
                 // Set feedback to notify of bad command
-                _feedback += "Bad command: " + command + ".\r\n";
+                _feedback += "Bad command: " + command + "\r\n";
             }
         }
 
@@ -580,26 +584,26 @@ namespace Dice_and_Combat_Engine
                     Room currentRoom = _player.Location;
                     if (currentRoom.Links[(int)direction] == null)
                     {
-                        _feedback += "There is no exit leading " + direction.ToString() + ".\r\n";
+                        _feedback += "There is no exit leading " + direction.ToString() + "\r\n";
                     }
                     else if (!currentRoom.LinksUnlocked[(int)direction])
                     {
-                        _feedback += "The " + direction.ToString() + " exit is not open.\r\n";
+                        _feedback += "The " + direction.ToString() + " exit is not open\r\n";
                     }
                     else
                     {
                         _player.Location = currentRoom.Links[(int)direction];
-                        _feedback += "You went " + direction.ToString() + ".\r\n";
+                        _feedback += "You went " + direction.ToString() + "\r\n";
                     }
                 }
                 else
                 {
-                    _feedback += "Invalid parameter: Must be one of North, South, East, or West.\r\n";
+                    _feedback += "Invalid parameter: Must be one of North, South, East, or West\r\n";
                 }                
             }
             else
             {
-                _feedback += "Invalid number of parameters for command: go.\r\n";
+                _feedback += "Invalid number of parameters for command: go\r\n";
             }
         }
 
@@ -632,26 +636,27 @@ namespace Dice_and_Combat_Engine
                     Room currentRoom = _player.Location;
                     if (currentRoom.Links[(int)direction] == null)
                     {
-                        _feedback += "There is no exit leading " + direction.ToString() + " to open.\r\n";
+                        _feedback += "There is no exit leading " + direction.ToString() + " to open\r\n";
                     }
                     else if (currentRoom.LinksUnlocked[(int)direction])
                     {
-                        _feedback += "The " + direction.ToString() + " exit is already open.\r\n";
+                        _feedback += "The " + direction.ToString() + " exit is already open\r\n";
                     }
                     else
                     {
-                        currentRoom.LinksUnlocked[(int)direction] = true;
-                        _feedback += "You opened the" + direction.ToString() + " exit.\r\n";
+                        // Open link
+                        currentRoom.OpenLink(currentRoom.Links[(int)direction]);
+                        _feedback += "You opened the " + direction.ToString() + " exit\r\n";
                     }
                 }
                 else
                 {
-                    _feedback += "Invalid parameter: Must be one of North, South, East, or West.\r\n";
+                    _feedback += "Invalid parameter: Must be one of North, South, East, or West\r\n";
                 }
             }
             else
             {
-                _feedback += "Invalid number of parameters for command: open.\r\n";
+                _feedback += "Invalid number of parameters for command: open\r\n";
             }
         }
 

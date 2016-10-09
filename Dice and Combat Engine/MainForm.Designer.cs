@@ -48,8 +48,7 @@
             this.creatureImgBox = new System.Windows.Forms.PictureBox();
             this.roomNameLbl = new System.Windows.Forms.Label();
             this.commandTxtBox = new System.Windows.Forms.TextBox();
-            this.instructionLbl = new System.Windows.Forms.Label();
-            this.actionBtn = new System.Windows.Forms.Button();
+            this.goBtn = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.playerImgBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.creatureImgBox)).BeginInit();
             this.SuspendLayout();
@@ -239,34 +238,25 @@
             this.commandTxtBox.Size = new System.Drawing.Size(331, 26);
             this.commandTxtBox.TabIndex = 24;
             // 
-            // instructionLbl
+            // goBtn
             // 
-            this.instructionLbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.instructionLbl.Location = new System.Drawing.Point(342, 373);
-            this.instructionLbl.Name = "instructionLbl";
-            this.instructionLbl.Size = new System.Drawing.Size(206, 24);
-            this.instructionLbl.TabIndex = 25;
-            this.instructionLbl.Text = "Enter Command Below";
-            this.instructionLbl.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // actionBtn
-            // 
-            this.actionBtn.Location = new System.Drawing.Point(198, 400);
-            this.actionBtn.Name = "actionBtn";
-            this.actionBtn.Size = new System.Drawing.Size(75, 26);
-            this.actionBtn.TabIndex = 26;
-            this.actionBtn.Text = "Do Action";
-            this.actionBtn.UseVisualStyleBackColor = true;
+            this.goBtn.Location = new System.Drawing.Point(198, 400);
+            this.goBtn.Name = "goBtn";
+            this.goBtn.Size = new System.Drawing.Size(75, 26);
+            this.goBtn.TabIndex = 26;
+            this.goBtn.Text = "&Go";
+            this.goBtn.UseVisualStyleBackColor = true;
+            this.goBtn.Click += new System.EventHandler(this.goBtn_Click);
             // 
             // MainForm
             // 
+            this.AcceptButton = this.goBtn;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackgroundImage = global::Dice_and_Combat_Engine.Properties.Resources.backgroundBlur;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.ClientSize = new System.Drawing.Size(809, 438);
-            this.Controls.Add(this.actionBtn);
-            this.Controls.Add(this.instructionLbl);
+            this.Controls.Add(this.goBtn);
             this.Controls.Add(this.commandTxtBox);
             this.Controls.Add(this.roomNameLbl);
             this.Controls.Add(this.creatureImgBox);
@@ -317,8 +307,7 @@
         private System.Windows.Forms.PictureBox creatureImgBox;
         private System.Windows.Forms.Label roomNameLbl;
         private System.Windows.Forms.TextBox commandTxtBox;
-        private System.Windows.Forms.Label instructionLbl;
-        private System.Windows.Forms.Button actionBtn;
+        private System.Windows.Forms.Button goBtn;
     }
 }
 
