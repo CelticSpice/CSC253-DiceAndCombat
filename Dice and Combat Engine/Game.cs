@@ -16,12 +16,17 @@ namespace Dice_and_Combat_Engine
     class Game
     {
         // Fields
+        private static string[] commands = { "attack", "drop", "equip", "get", "go",
+                                             "inventory", "look", "open", "quit",
+                                             "score", "take" };
+
         private CombatEngine _combatEngine;     // Handles combat logic
         private Creature[] creatures;           // The creatures in the game
         private Item[] items;                   // The items in the game
         private Room[] rooms;                   // The rooms in the game
         private RoomGrid dungeon;               // The dungeon
         private Player _player;                 // The player character
+        private string _feedback;               // Feedback
 
         /*
             Constructor
@@ -39,6 +44,7 @@ namespace Dice_and_Combat_Engine
             LoadItems();
             LoadRooms();
             SortResources();
+            _feedback = "";
             dungeon = new RoomGrid(dungeonSize, dungeonSize, rooms, uniqueRooms);
             dungeon.GenerateRoomContents(creatures, items);
             GeneratePlayer();
@@ -470,6 +476,134 @@ namespace Dice_and_Combat_Engine
         }
 
         /*
+            The IsGoodCommand method determines if a user-input command is acceptable
+        */
+
+        private bool IsGoodCommand(string command)
+        {
+            // Find command being issued
+            bool good = false;
+            int i = 0;
+            while (!good && i < commands.Length)
+            {
+                if (command.Equals(commands[i]))
+                {
+                    good = true;
+                }
+            }
+            return good;
+        }
+
+        /*
+            The ParseCommand method parses a user-input command for some action to perform
+        */
+
+        public void ParseCommmand(string commandString)
+        {
+            string command = ExtractCommand(commandString);
+            
+            // Make sure that command is acceptable
+            if (IsGoodCommand(command))
+            {
+                string[] commandParams = commandString.Split(new string[] { command, " " },
+                                                             StringSplitOptions.RemoveEmptyEntries);
+                switch (command)
+                {
+                    case "attack":
+                        //ParseAttackCommand(commandParams);
+                        break;
+                    case "drop":
+                        //ParseDropCommand(commandParams);
+                        break;
+                    case "equip":
+                        //ParseEquipCommand(commandParams);
+                        break;
+                    case "get":
+                        //ParseGetCommand(commandParams);
+                        break;
+                    case "go":
+                        ParseGoCommand(commandParams);
+                        break;
+                    case "inventory":
+                        //ParseInventoryCommand();
+                        break;
+                    case "look":
+                        //ParseLookCommand(commandParams);
+                        break;
+                    case "open":
+                        //ParseOpenCommand(commandParams);
+                        break;
+                    case "quit":
+                        //ParseQuitCommand();
+                        break;
+                    case "score":
+                        //ParseScoreCommand();
+                        break;
+                    case "take":
+                        //ParseTakeCommand(commandParams);
+                        break;
+                }
+            }
+            else
+            {
+                // Set feedback to notify of bad command
+                _feedback += "Bad command: " + command + ".\r\n";
+            }
+        }
+
+        /*
+            The ParseGoCommand method parses a "go" command for some action to perform
+        */
+
+        private void ParseGoCommand(string[] commandParams)
+        {
+            // We expect only 1 parameter: The direction to travel in
+            if (commandParams.Length == 1)
+            {
+                // Make sure that parameter is a direction
+                Direction direction = Direction.North;
+                bool isDirection = false;
+                while (!isDirection && direction <= Direction.West)
+                {
+                    if (commandParams[0].Equals(direction.ToString().ToLower()))
+                    {
+                        isDirection = true;
+                    }
+                    else
+                    {
+                        direction++;
+                    }
+                }
+
+                if (isDirection)
+                {
+                    Room currentRoom = _player.Location;
+                    if (currentRoom.Links[(int)direction] == null)
+                    {
+                        _feedback += "There is no exit leading " + direction.ToString() + ".\r\n";
+                    }
+                    else if (!currentRoom.LinksUnlocked[(int)direction])
+                    {
+                        _feedback += "The " + direction.ToString() + "exit is not open.\r\n";
+                    }
+                    else
+                    {
+                        _player.Location = currentRoom.Links[(int)direction];
+                        _feedback += "You went " + direction.ToString() + ".\r\n";
+                    }
+                }
+                else
+                {
+                    _feedback += "Invalid parameter: Must be one of North, South, East, or West.\r\n";
+                }                
+            }
+            else
+            {
+                _feedback += "Invalid number of parameters for command: go.\r\n";
+            }
+        }
+
+        /*
             The GetDungeonASCII method returns the dungeon's layout in ASCII
             format
         */
@@ -477,6 +611,21 @@ namespace Dice_and_Combat_Engine
         public string GetDungeonASCII()
         {
             return dungeon.ToString();
+        }
+
+        /*
+            The ExtractCommand method extracts the command issued from a user-input string
+        */
+
+        private string ExtractCommand(string commandString)
+        {
+            // Separate command from parameters
+            int i = 0;
+            while (i < commandString.Length && !char.IsWhiteSpace(commandString[i]))
+            {
+                i++;
+            }
+            return commandString.Substring(0, i);
         }
 
         /*
@@ -495,6 +644,20 @@ namespace Dice_and_Combat_Engine
         public Player Player
         {
             get { return _player; }
+        }
+
+        /*
+            Feedback property
+        */
+
+        public string Feedback
+        {
+            get
+            {
+                string feedback = _feedback;
+                _feedback = "";
+                return feedback;
+            }
         }
     }
 }

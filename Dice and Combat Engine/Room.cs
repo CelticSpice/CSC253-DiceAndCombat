@@ -16,6 +16,7 @@ namespace Dice_and_Combat_Engine
 
         // Properties
         private bool _linked;
+        private bool[] _linksUnlocked;
         private int _weight, _xLoc, _yLoc;
         private string _roomName;
         private List<Creature> _denizens;
@@ -33,6 +34,7 @@ namespace Dice_and_Combat_Engine
             _denizens = new List<Creature>(numCreatures);
             _contents = new List<Item>(numItems);
             _linked = false;
+            _linksUnlocked = new bool[numNeighbors];
             _weight = -1;
             _xLoc = -1;
             _yLoc = -1;
@@ -53,6 +55,12 @@ namespace Dice_and_Combat_Engine
             _weight = room._weight;
             _xLoc = room._xLoc;
             _yLoc = room._yLoc;
+
+            _linksUnlocked = new bool[numNeighbors];
+            for (int i = 0; i < numNeighbors; i++)
+            {
+                _linksUnlocked[i] = room._linksUnlocked[i];
+            }
 
             _neighbors = new Room[numNeighbors];
             for (int i = 0; i < numNeighbors; i++)
@@ -103,6 +111,15 @@ namespace Dice_and_Combat_Engine
                     direction++;
                 }
             }
+        }
+
+        /*
+            LinksUnlocked property
+        */
+
+        public bool[] LinksUnlocked
+        {
+            get { return _linksUnlocked; }
         }
 
         /*
