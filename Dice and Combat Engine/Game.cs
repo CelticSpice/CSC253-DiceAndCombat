@@ -531,7 +531,7 @@ namespace Dice_and_Combat_Engine
                         //ParseLookCommand(commandParams);
                         break;
                     case "open":
-                        //ParseOpenCommand(commandParams);
+                        ParseOpenCommand(commandParams);
                         break;
                     case "quit":
                         //ParseQuitCommand();
@@ -584,7 +584,7 @@ namespace Dice_and_Combat_Engine
                     }
                     else if (!currentRoom.LinksUnlocked[(int)direction])
                     {
-                        _feedback += "The " + direction.ToString() + "exit is not open.\r\n";
+                        _feedback += "The " + direction.ToString() + " exit is not open.\r\n";
                     }
                     else
                     {
@@ -600,6 +600,58 @@ namespace Dice_and_Combat_Engine
             else
             {
                 _feedback += "Invalid number of parameters for command: go.\r\n";
+            }
+        }
+
+        /*
+            The ParseOpenCommand method parses an "open" command for some action to perform
+        */
+
+        private void ParseOpenCommand(string[] commandParams)
+        {
+            // We expect only 1 parameter: The direction of the exit to open
+            if (commandParams.Length == 1)
+            {
+                // Make sure that parameter is a direction
+                Direction direction = Direction.North;
+                bool isDirection = false;
+                while (!isDirection && direction <= Direction.West)
+                {
+                    if (commandParams[0].Equals(direction.ToString().ToLower()))
+                    {
+                        isDirection = true;
+                    }
+                    else
+                    {
+                        direction++;
+                    }
+                }
+
+                if (isDirection)
+                {
+                    Room currentRoom = _player.Location;
+                    if (currentRoom.Links[(int)direction] == null)
+                    {
+                        _feedback += "There is no exit leading " + direction.ToString() + " to open.\r\n";
+                    }
+                    else if (currentRoom.LinksUnlocked[(int)direction])
+                    {
+                        _feedback += "The " + direction.ToString() + " exit is already open.\r\n";
+                    }
+                    else
+                    {
+                        currentRoom.LinksUnlocked[(int)direction] = true;
+                        _feedback += "You opened the" + direction.ToString() + " exit.\r\n";
+                    }
+                }
+                else
+                {
+                    _feedback += "Invalid parameter: Must be one of North, South, East, or West.\r\n";
+                }
+            }
+            else
+            {
+                _feedback += "Invalid number of parameters for command: open.\r\n";
             }
         }
 

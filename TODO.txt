@@ -52,7 +52,7 @@ Implement DROP command, which should accept an integer argument specifying an it
 
 Flesh out DROP command to add dropped item to room's item list
 
-Implement OPEN command, which should accept a direction (North, South, East, West) as an argument
+#COMPLETE^^Implement OPEN command, which should accept a direction (North, South, East, West) as an argument
     specifying the exit of the current room to open door of.
 
 Implement INVENTORY command, which should display the PC's inventory as a numbered listing
