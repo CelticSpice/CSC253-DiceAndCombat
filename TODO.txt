@@ -36,7 +36,7 @@ TODO:    Mark task as complete as: #COMPLETE^^<task> e.g. #COMPLETE^^Write todo 
 
 #COMPLETE^^Implement GO command, which should accept an argument specifying the direction to travel
 
-Implement LOOK command, which should with no args display the current room's information (number
+#COMPLETE^^Implement LOOK command, which should with no args display the current room's information (number
     of creatures, items in room, exits, etc.)
 
 Extend LOOK command to accept an argument specifying the object to examine in more detail
