@@ -46,17 +46,40 @@ namespace Dice_and_Combat_Engine
         }
 
         /*
+            The UpdateViews method updates all of the views
+        */
+
+        private void UpdateViews()
+        {
+            playerHPTextBox.Text = game.Player.Stats.hitPoints.ToString();
+            playerABTextBox.Text = game.Player.Stats.attackBonus.ToString();
+            playerACTextBox.Text = game.Player.Stats.armorClass.ToString();
+
+            roomNameLbl.Text = game.Player.Location.RoomName;
+
+            if (game.Player.Target != null)
+            {
+                creatureImgBox.Image = game.Player.Target.Portrait;
+                creatureNameTextBox.Text = game.Player.Target.Stats.name;
+                creatureHPTextBox.Text = game.Player.Target.Stats.hitPoints.ToString();
+                creatureABTextBox.Text = game.Player.Target.Stats.attackBonus.ToString();
+                creatureACTextBox.Text = game.Player.Target.Stats.armorClass.ToString();
+            }
+        }
+
+        /*
             Handler for goBtn
         */
 
         private void goBtn_Click(object sender, EventArgs e)
         {
-            game.ParseCommmand(commandTxtBox.Text.Trim().ToLower());
-            feedbackList.Items.AddRange(game.Feedback.ToArray());
-            feedbackList.Items.Add("");
-            feedbackList.TopIndex = feedbackList.Items.Count - 1;
+            string[] output = game.ParseCommand(commandTxtBox.Text.Trim().ToLower());
+            outputLst.Items.AddRange(output);
+            outputLst.TopIndex = outputLst.Items.Count - 1;
             commandTxtBox.Text = "";
             commandTxtBox.Focus();
+
+            UpdateViews();
         }
     }
 }

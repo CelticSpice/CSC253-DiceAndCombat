@@ -43,7 +43,7 @@
             this.creatureHPTextBox = new System.Windows.Forms.TextBox();
             this.creatureABTextBox = new System.Windows.Forms.TextBox();
             this.creatureACTextBox = new System.Windows.Forms.TextBox();
-            this.feedbackList = new System.Windows.Forms.ListBox();
+            this.outputLst = new System.Windows.Forms.ListBox();
             this.playerImgBox = new System.Windows.Forms.PictureBox();
             this.creatureImgBox = new System.Windows.Forms.PictureBox();
             this.roomNameLbl = new System.Windows.Forms.Label();
@@ -194,14 +194,14 @@
             this.creatureACTextBox.TabIndex = 18;
             this.creatureACTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
-            // feedbackList
+            // outputLst
             // 
-            this.feedbackList.FormattingEnabled = true;
-            this.feedbackList.Location = new System.Drawing.Point(162, 55);
-            this.feedbackList.Name = "feedbackList";
-            this.feedbackList.SelectionMode = System.Windows.Forms.SelectionMode.None;
-            this.feedbackList.Size = new System.Drawing.Size(486, 303);
-            this.feedbackList.TabIndex = 19;
+            this.outputLst.FormattingEnabled = true;
+            this.outputLst.Location = new System.Drawing.Point(162, 55);
+            this.outputLst.Name = "outputLst";
+            this.outputLst.SelectionMode = System.Windows.Forms.SelectionMode.None;
+            this.outputLst.Size = new System.Drawing.Size(486, 303);
+            this.outputLst.TabIndex = 19;
             // 
             // playerImgBox
             // 
@@ -261,7 +261,7 @@
             this.Controls.Add(this.roomNameLbl);
             this.Controls.Add(this.creatureImgBox);
             this.Controls.Add(this.playerImgBox);
-            this.Controls.Add(this.feedbackList);
+            this.Controls.Add(this.outputLst);
             this.Controls.Add(this.creatureACTextBox);
             this.Controls.Add(this.creatureABTextBox);
             this.Controls.Add(this.creatureHPTextBox);
@@ -302,7 +302,7 @@
         private System.Windows.Forms.TextBox creatureHPTextBox;
         private System.Windows.Forms.TextBox creatureABTextBox;
         private System.Windows.Forms.TextBox creatureACTextBox;
-        private System.Windows.Forms.ListBox feedbackList;
+        private System.Windows.Forms.ListBox outputLst;
         private System.Windows.Forms.PictureBox playerImgBox;
         private System.Windows.Forms.PictureBox creatureImgBox;
         private System.Windows.Forms.Label roomNameLbl;

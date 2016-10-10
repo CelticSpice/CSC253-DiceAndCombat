@@ -16,17 +16,13 @@ namespace Dice_and_Combat_Engine
     class Game
     {
         // Fields
-        private static string[] commands = { "attack", "drop", "equip", "get", "go",
-                                             "inventory", "look", "open", "quit",
-                                             "score", "take" };
-
         private CombatEngine _combatEngine;     // Handles combat logic
+        private CommandParser parser;           // The command parser
         private Creature[] creatures;           // The creatures in the game
         private Item[] items;                   // The items in the game
         private Room[] rooms;                   // The rooms in the game
         private RoomGrid dungeon;               // The dungeon
         private Player _player;                 // The player character
-        private List<string> _feedback;         // Feedback
 
         /*
             Constructor
@@ -40,29 +36,14 @@ namespace Dice_and_Combat_Engine
         public Game(int dungeonSize, bool uniqueRooms = false)
         {
             _combatEngine = new CombatEngine();
+            parser = new CommandParser(this);
             LoadCreatures();
             LoadItems();
             LoadRooms();
             SortResources();
-            _feedback = new List<string>();
             dungeon = new RoomGrid(dungeonSize, dungeonSize, rooms, uniqueRooms);
             dungeon.GenerateRoomContents(creatures, items);
             GeneratePlayer();
-        }
-
-        /*
-            The ExtractCommand method extracts the command issued from a user-input string
-        */
-
-        private string ExtractCommand(string commandString)
-        {
-            // Separate command from parameters
-            int i = 0;
-            while (i < commandString.Length && !char.IsWhiteSpace(commandString[i]))
-            {
-                i++;
-            }
-            return commandString.Substring(0, i);
         }
 
         /*
@@ -112,29 +93,6 @@ namespace Dice_and_Combat_Engine
         public string GetDungeonASCII()
         {
             return dungeon.ToString();
-        }
-
-        /*
-            The IsGoodCommand method determines if a user-input command is acceptable
-        */
-
-        private bool IsGoodCommand(string command)
-        {
-            // Find command being issued
-            bool good = false;
-            int i = 0;
-            while (!good && i < commands.Length)
-            {
-                if (command.Equals(commands[i]))
-                {
-                    good = true;
-                }
-                else
-                {
-                    i++;
-                }
-            }
-            return good;
         }
 
         /*
@@ -474,243 +432,14 @@ namespace Dice_and_Combat_Engine
         }
 
         /*
-            The ParseCommand method parses a user-input command for some action to perform
+            The ParseCommand method parses a user-input command with the game's command parser
+
+            The method returns the lines of output as an array
         */
 
-        public void ParseCommmand(string commandString)
+        public string[] ParseCommand(string commandString)
         {
-            string command = ExtractCommand(commandString);
-            
-            // Make sure that command is acceptable
-            if (IsGoodCommand(command))
-            {
-                string[] commandParams = commandString.Split(new string[] { command, " " },
-                                                             StringSplitOptions.RemoveEmptyEntries);
-                switch (command)
-                {
-                    case "attack":
-                        //ParseAttackCommand(commandParams);
-                        break;
-                    case "drop":
-                        //ParseDropCommand(commandParams);
-                        break;
-                    case "equip":
-                        //ParseEquipCommand(commandParams);
-                        break;
-                    case "get":
-                        //ParseGetCommand(commandParams);
-                        break;
-                    case "go":
-                        ParseGoCommand(commandParams);
-                        break;
-                    case "inventory":
-                        //ParseInventoryCommand();
-                        break;
-                    case "look":
-                        ParseLookCommand(commandParams);
-                        break;
-                    case "open":
-                        ParseOpenCommand(commandParams);
-                        break;
-                    case "quit":
-                        //ParseQuitCommand();
-                        break;
-                    case "score":
-                        //ParseScoreCommand();
-                        break;
-                    case "take":
-                        //ParseTakeCommand(commandParams);
-                        break;
-                }
-            }
-            else
-            {
-                // Set feedback to notify of bad command
-                _feedback.Add("Bad command: " + command);
-            }
-        }
-
-        /*
-            The ParseGoCommand method parses a "go" command for some action to perform
-        */
-
-        private void ParseGoCommand(string[] commandParams)
-        {
-            // We expect only 1 parameter: The direction to travel in
-            if (commandParams.Length == 1)
-            {
-                // Make sure that parameter is a direction
-                Direction direction = Direction.North;
-                bool isDirection = false;
-                while (!isDirection && direction <= Direction.West)
-                {
-                    if (commandParams[0].Equals(direction.ToString().ToLower()))
-                    {
-                        isDirection = true;
-                    }
-                    else
-                    {
-                        direction++;
-                    }
-                }
-
-                if (isDirection)
-                {
-                    Room currentRoom = _player.Location;
-                    if (currentRoom.Links[(int)direction] == null)
-                    {
-                        _feedback.Add("There is no exit leading " + direction.ToString());
-                    }
-                    else if (!currentRoom.LinksUnlocked[(int)direction])
-                    {
-                        _feedback.Add("The " + direction.ToString() + " exit is not open");
-                    }
-                    else
-                    {
-                        _player.Location = currentRoom.Links[(int)direction];
-                        _feedback.Add("You went " + direction.ToString());
-                    }
-                }
-                else
-                {
-                    _feedback.Add("Invalid parameter: Must be one of North, South, East, or West");
-                }                
-            }
-            else
-            {
-                _feedback.Add("Invalid number of parameters for command: go");
-            }
-        }
-
-        /*
-            The ParseLookCommand method parses a "look" command for some action to perform
-        */
-
-        private void ParseLookCommand(string[] commandParams)
-        {
-            // We expect up to 2 parameters: The object to look at, and a number specifying the object
-            // out of many
-            if (commandParams.Length <= 2)
-            {
-                // Determine the number of parameters
-                if (commandParams.Length == 0)
-                {
-                    // We will provide general information about the current room
-                    string[] creatureInfo = _player.Location.GetContentInformation("creatures");
-                    string[] itemInfo = _player.Location.GetContentInformation("items");
-
-                    int numExits = 0;
-                    for (Direction direction = Direction.North; direction <= Direction.West; direction++)
-                    {
-                        if (_player.Location.Links[(int)direction] != null)
-                        {
-                            numExits++;
-                        }
-                    }
-
-                    // Build feedback
-                    // Creatures
-                    _feedback.Add("There are " + _player.Location.Denizens.Count + " creatures in this room:");
-                    for (int i = 0; i < creatureInfo.Length; i++)
-                    {
-                        if (creatureInfo.Length == 1)
-                        {
-                            _feedback.Add("  " + creatureInfo[i]);
-                        }
-                        else if (i != creatureInfo.Length - 1)
-                        {
-                            _feedback.Add("  " + creatureInfo[i] + ",");
-                        }
-                        else
-                        {
-                            _feedback.Add("  and " + creatureInfo[i]);
-                        }
-                    }
-
-                    // Items
-                    _feedback.Add("");
-                    _feedback.Add("There are " + _player.Location.Contents.Count + " items in this room:");
-                    for (int i = 0; i < itemInfo.Length; i++)
-                    {
-                        if (itemInfo.Length == 1)
-                        {
-                            _feedback.Add("  " + itemInfo[i]);
-                        }
-                        else if (i != itemInfo.Length - 1)
-                        {
-                            _feedback.Add("  " + itemInfo[i] + ",");
-                        }
-                        else
-                        {
-                            _feedback.Add("  and " + itemInfo[i]);
-                        }
-                    }
-
-                    // Exits
-                    _feedback.Add("");
-                    _feedback.Add("There are " + numExits + " exits in this room:");
-                    for (Direction direction = Direction.North; direction <= Direction.West; direction++)
-                    {
-                        if (_player.Location.Links[(int)direction] != null)
-                        {
-                            _feedback.Add("  " + direction.ToString());
-                        }
-                    }
-                }
-            }
-        }
-
-        /*
-            The ParseOpenCommand method parses an "open" command for some action to perform
-        */
-
-        private void ParseOpenCommand(string[] commandParams)
-        {
-            // We expect only 1 parameter: The direction of the exit to open
-            if (commandParams.Length == 1)
-            {
-                // Make sure that parameter is a direction
-                Direction direction = Direction.North;
-                bool isDirection = false;
-                while (!isDirection && direction <= Direction.West)
-                {
-                    if (commandParams[0].Equals(direction.ToString().ToLower()))
-                    {
-                        isDirection = true;
-                    }
-                    else
-                    {
-                        direction++;
-                    }
-                }
-
-                if (isDirection)
-                {
-                    Room currentRoom = _player.Location;
-                    if (currentRoom.Links[(int)direction] == null)
-                    {
-                        _feedback.Add("There is no exit leading " + direction.ToString() + " to open");
-                    }
-                    else if (currentRoom.LinksUnlocked[(int)direction])
-                    {
-                        _feedback.Add("The " + direction.ToString() + " exit is already open");
-                    }
-                    else
-                    {
-                        // Open link
-                        currentRoom.OpenLink(currentRoom.Links[(int)direction]);
-                        _feedback.Add("You opened the " + direction.ToString() + " exit");
-                    }
-                }
-                else
-                {
-                    _feedback.Add("Invalid parameter: Must be one of North, South, East, or West");
-                }
-            }
-            else
-            {
-                _feedback.Add("Invalid number of parameters for command: open");
-            }
+            return parser.Parse(commandString);
         }
 
         /*
@@ -778,21 +507,6 @@ namespace Dice_and_Combat_Engine
         public Player Player
         {
             get { return _player; }
-        }
-
-        /*
-            Feedback property
-        */
-
-        public List<string> Feedback
-        {
-            // When the feedback is retrieved, we will clear all entries
-            get
-            {
-                List<string> toReturn = new List<string>(_feedback);
-                _feedback.Clear();
-                return toReturn;
-            }
         }
     }
 }

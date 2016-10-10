@@ -62,6 +62,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CombatEngine.cs" />
+    <Compile Include="CommandParser.cs" />
     <Compile Include="Creature.cs" />
     <Compile Include="Direction.cs" />
     <Compile Include="RoomGrid.cs" />
