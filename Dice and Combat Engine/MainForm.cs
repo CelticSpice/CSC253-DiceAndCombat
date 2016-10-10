@@ -52,7 +52,9 @@ namespace Dice_and_Combat_Engine
         private void goBtn_Click(object sender, EventArgs e)
         {
             game.ParseCommmand(commandTxtBox.Text.Trim().ToLower());
-            feedbackList.Items.Add(game.Feedback);
+            feedbackList.Items.AddRange(game.Feedback.ToArray());
+            feedbackList.Items.Add("");
+            feedbackList.TopIndex = feedbackList.Items.Count - 1;
             commandTxtBox.Text = "";
             commandTxtBox.Focus();
         }

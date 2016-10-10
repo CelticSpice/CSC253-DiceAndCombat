@@ -26,7 +26,7 @@ namespace Dice_and_Combat_Engine
         private Room[] rooms;                   // The rooms in the game
         private RoomGrid dungeon;               // The dungeon
         private Player _player;                 // The player character
-        private string _feedback;               // Feedback
+        private List<string> _feedback;         // Feedback
 
         /*
             Constructor
@@ -44,7 +44,7 @@ namespace Dice_and_Combat_Engine
             LoadItems();
             LoadRooms();
             SortResources();
-            _feedback = "";
+            _feedback = new List<string>();
             dungeon = new RoomGrid(dungeonSize, dungeonSize, rooms, uniqueRooms);
             dungeon.GenerateRoomContents(creatures, items);
             GeneratePlayer();
@@ -507,7 +507,7 @@ namespace Dice_and_Combat_Engine
                         //ParseInventoryCommand();
                         break;
                     case "look":
-                        //ParseLookCommand(commandParams);
+                        ParseLookCommand(commandParams);
                         break;
                     case "open":
                         ParseOpenCommand(commandParams);
@@ -526,7 +526,7 @@ namespace Dice_and_Combat_Engine
             else
             {
                 // Set feedback to notify of bad command
-                _feedback += "Bad command: " + command + "\r\n";
+                _feedback.Add("Bad command: " + command);
             }
         }
 
@@ -559,26 +559,104 @@ namespace Dice_and_Combat_Engine
                     Room currentRoom = _player.Location;
                     if (currentRoom.Links[(int)direction] == null)
                     {
-                        _feedback += "There is no exit leading " + direction.ToString() + "\r\n";
+                        _feedback.Add("There is no exit leading " + direction.ToString());
                     }
                     else if (!currentRoom.LinksUnlocked[(int)direction])
                     {
-                        _feedback += "The " + direction.ToString() + " exit is not open\r\n";
+                        _feedback.Add("The " + direction.ToString() + " exit is not open");
                     }
                     else
                     {
                         _player.Location = currentRoom.Links[(int)direction];
-                        _feedback += "You went " + direction.ToString() + "\r\n";
+                        _feedback.Add("You went " + direction.ToString());
                     }
                 }
                 else
                 {
-                    _feedback += "Invalid parameter: Must be one of North, South, East, or West\r\n";
+                    _feedback.Add("Invalid parameter: Must be one of North, South, East, or West");
                 }                
             }
             else
             {
-                _feedback += "Invalid number of parameters for command: go\r\n";
+                _feedback.Add("Invalid number of parameters for command: go");
+            }
+        }
+
+        /*
+            The ParseLookCommand method parses a "look" command for some action to perform
+        */
+
+        private void ParseLookCommand(string[] commandParams)
+        {
+            // We expect up to 2 parameters: The object to look at, and a number specifying the object
+            // out of many
+            if (commandParams.Length <= 2)
+            {
+                // Determine the number of parameters
+                if (commandParams.Length == 0)
+                {
+                    // We will provide general information about the current room
+                    string[] creatureInfo = _player.Location.GetContentInformation("creatures");
+                    string[] itemInfo = _player.Location.GetContentInformation("items");
+
+                    int numExits = 0;
+                    for (Direction direction = Direction.North; direction <= Direction.West; direction++)
+                    {
+                        if (_player.Location.Links[(int)direction] != null)
+                        {
+                            numExits++;
+                        }
+                    }
+
+                    // Build feedback
+                    // Creatures
+                    _feedback.Add("There are " + _player.Location.Denizens.Count + " creatures in this room:");
+                    for (int i = 0; i < creatureInfo.Length; i++)
+                    {
+                        if (creatureInfo.Length == 1)
+                        {
+                            _feedback.Add("  " + creatureInfo[i]);
+                        }
+                        else if (i != creatureInfo.Length - 1)
+                        {
+                            _feedback.Add("  " + creatureInfo[i] + ",");
+                        }
+                        else
+                        {
+                            _feedback.Add("  and " + creatureInfo[i]);
+                        }
+                    }
+
+                    // Items
+                    _feedback.Add("");
+                    _feedback.Add("There are " + _player.Location.Contents.Count + " items in this room:");
+                    for (int i = 0; i < itemInfo.Length; i++)
+                    {
+                        if (itemInfo.Length == 1)
+                        {
+                            _feedback.Add("  " + itemInfo[i]);
+                        }
+                        else if (i != itemInfo.Length - 1)
+                        {
+                            _feedback.Add("  " + itemInfo[i] + ",");
+                        }
+                        else
+                        {
+                            _feedback.Add("  and " + itemInfo[i]);
+                        }
+                    }
+
+                    // Exits
+                    _feedback.Add("");
+                    _feedback.Add("There are " + numExits + " exits in this room:");
+                    for (Direction direction = Direction.North; direction <= Direction.West; direction++)
+                    {
+                        if (_player.Location.Links[(int)direction] != null)
+                        {
+                            _feedback.Add("  " + direction.ToString());
+                        }
+                    }
+                }
             }
         }
 
@@ -611,27 +689,27 @@ namespace Dice_and_Combat_Engine
                     Room currentRoom = _player.Location;
                     if (currentRoom.Links[(int)direction] == null)
                     {
-                        _feedback += "There is no exit leading " + direction.ToString() + " to open\r\n";
+                        _feedback.Add("There is no exit leading " + direction.ToString() + " to open");
                     }
                     else if (currentRoom.LinksUnlocked[(int)direction])
                     {
-                        _feedback += "The " + direction.ToString() + " exit is already open\r\n";
+                        _feedback.Add("The " + direction.ToString() + " exit is already open");
                     }
                     else
                     {
                         // Open link
                         currentRoom.OpenLink(currentRoom.Links[(int)direction]);
-                        _feedback += "You opened the " + direction.ToString() + " exit\r\n";
+                        _feedback.Add("You opened the " + direction.ToString() + " exit");
                     }
                 }
                 else
                 {
-                    _feedback += "Invalid parameter: Must be one of North, South, East, or West\r\n";
+                    _feedback.Add("Invalid parameter: Must be one of North, South, East, or West");
                 }
             }
             else
             {
-                _feedback += "Invalid number of parameters for command: open\r\n";
+                _feedback.Add("Invalid number of parameters for command: open");
             }
         }
 
@@ -706,14 +784,14 @@ namespace Dice_and_Combat_Engine
             Feedback property
         */
 
-        public string Feedback
+        public List<string> Feedback
         {
-            // When the feedback is retrieved, we will clear it
+            // When the feedback is retrieved, we will clear all entries
             get
             {
-                string feedback = _feedback;
-                _feedback = "";
-                return feedback;
+                List<string> toReturn = new List<string>(_feedback);
+                _feedback.Clear();
+                return toReturn;
             }
         }
     }

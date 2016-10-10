@@ -49,8 +49,8 @@ namespace Dice_and_Combat_Engine
         public Room(Room room)
         {
             _roomName = room._roomName;
-            _denizens = new List<Creature>(room._denizens);
-            _contents = new List<Item>(room._contents);
+            _denizens = new List<Creature>(room._denizens.Capacity);
+            _contents = new List<Item>(room._contents.Capacity);
             _linked = room._linked;
             _weight = room._weight;
             _xLoc = room._xLoc;
@@ -73,6 +73,92 @@ namespace Dice_and_Combat_Engine
             {
                 _links[i] = room._links[i];
             }
+        }
+
+        /*
+            The GetContentInformation method returns an array containing information
+            about the number of and types of specified objects in this room
+        */
+
+        public string[] GetContentInformation(string objs)
+        {
+            // Get names
+            List<string> names = new List<string>();
+
+            if (objs == "creatures")
+            {
+                foreach (Creature creature in _denizens)
+                {
+                    names.Add(creature.Stats.name);
+                }
+            }
+            else
+            {
+                foreach (Item item in _contents)
+                {
+                    names.Add(item.Name);
+                }
+            }
+
+            // Get unique names
+            List<string> uniqueNames = new List<string>();
+
+            // We will check for multiple occurances of a name
+            bool appears = false;
+            foreach (string name in names)
+            {
+                foreach (string uniqueName in uniqueNames)
+                {
+                    if (uniqueName == name)
+                    {
+                        appears = true;
+                    }
+                }
+
+                // Only add name to uniqueNames if it does not already appear
+                if (!appears)
+                {
+                    uniqueNames.Add(name);
+                }
+                else
+                {
+                    // Reset flag
+                    appears = false;
+                }
+            }
+            
+
+            // Prepare array to return
+            string[] info = new string[uniqueNames.Count];
+
+            // Build info array
+            int numOfObj = 0;
+            for (int i = 0; i < info.Length; i++)
+            {
+                foreach (string name in names)
+                {
+                    if (name == uniqueNames[i])
+                    {
+                        numOfObj++;
+                    }
+                }
+
+                // Add info to array
+                if (numOfObj == 1)
+                {
+                    info[i] = uniqueNames[i];
+                }
+                else
+                {
+                    info[i] = numOfObj + " " + uniqueNames[i] + "s";
+                }
+
+                // Reset obj counter
+                numOfObj = 0;
+            }
+
+            // Return
+            return info;
         }
 
         /*
