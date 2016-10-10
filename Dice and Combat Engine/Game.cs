@@ -48,7 +48,93 @@ namespace Dice_and_Combat_Engine
             dungeon = new RoomGrid(dungeonSize, dungeonSize, rooms, uniqueRooms);
             dungeon.GenerateRoomContents(creatures, items);
             GeneratePlayer();
+        }
 
+        /*
+            The ExtractCommand method extracts the command issued from a user-input string
+        */
+
+        private string ExtractCommand(string commandString)
+        {
+            // Separate command from parameters
+            int i = 0;
+            while (i < commandString.Length && !char.IsWhiteSpace(commandString[i]))
+            {
+                i++;
+            }
+            return commandString.Substring(0, i);
+        }
+
+        /*
+            The GeneratePlayer method generates the player character
+        */
+
+        private void GeneratePlayer()
+        {
+            BaseStats playerBaseStats = new BaseStats();
+            Attributes playerAttributes = new Attributes();
+            PlayerStats playerStats = new PlayerStats();
+
+            /*
+                Temp values to work with!
+            */
+
+            playerBaseStats.name = "Bobert";
+            playerBaseStats.hitPoints = 30;
+            playerBaseStats.maxHitPoints = 30;
+            playerBaseStats.attackBonus = 5;
+            playerBaseStats.armorClass = 12;
+            playerBaseStats.damage = new RandomDie();
+            playerBaseStats.xpValue = 100;
+            playerBaseStats.friendly = true;
+
+            playerAttributes.strength = 5;
+            playerAttributes.constitution = 5;
+            playerAttributes.dexterity = 5;
+            playerAttributes.intelligence = 5;
+            playerAttributes.wisdom = 5;
+            playerAttributes.charisma = 5;
+
+            playerStats.playerClass = "Fighter";
+            playerStats.race = "Human";
+            playerStats.experience = 0;
+            playerStats.level = 1;
+
+            _player = new Player(playerStats, playerBaseStats, playerAttributes);
+            _player.Location = dungeon.Grid[0, 0];
+        }
+
+        /*
+            The GetDungeonASCII method returns the dungeon's layout in ASCII
+            format
+        */
+
+        public string GetDungeonASCII()
+        {
+            return dungeon.ToString();
+        }
+
+        /*
+            The IsGoodCommand method determines if a user-input command is acceptable
+        */
+
+        private bool IsGoodCommand(string command)
+        {
+            // Find command being issued
+            bool good = false;
+            int i = 0;
+            while (!good && i < commands.Length)
+            {
+                if (command.Equals(commands[i]))
+                {
+                    good = true;
+                }
+                else
+                {
+                    i++;
+                }
+            }
+            return good;
         }
 
         /*
@@ -388,117 +474,6 @@ namespace Dice_and_Combat_Engine
         }
 
         /*
-            The SortResources method sorts the creatures, items, and rooms resource fields alphabetically
-        */
-
-        private void SortResources()
-        {
-            // Sort Creatures
-            for (int i = 0; i < creatures.Length - 1; i++)
-            {
-                for (int j = i + 1; j < creatures.Length; j++)
-                {
-                    if (creatures[i].Stats.name.CompareTo(creatures[j].Stats.name) == 1)
-                    {
-                        Creature tmpCreature = creatures[i];
-                        creatures[i] = creatures[j];
-                        creatures[j] = tmpCreature;
-                    }
-                }
-            }
-
-            // Sort Items
-            for (int i = 0; i < items.Length - 1; i++)
-            {
-                for (int j = i + 1; j < items.Length; j++)
-                {
-                    if (items[i].Name.CompareTo(items[j].Name) == 1)
-                    {
-                        Item tmpItem = items[i];
-                        items[i] = items[j];
-                        items[j] = tmpItem;
-                    }
-                }
-            }
-
-            // Sort Rooms
-            for (int i = 0; i < rooms.Length - 1; i++)
-            {
-                for (int j = i + 1; j < rooms.Length; j++)
-                {
-                    if (rooms[i].RoomName.CompareTo(rooms[j].RoomName) == 1)
-                    {
-                        Room tmpRoom = rooms[i];
-                        rooms[i] = rooms[j];
-                        rooms[j] = tmpRoom;
-                    }
-                }
-            }
-        }
-
-        /*
-            The GeneratePlayer method generates the player character
-        */
-
-        private void GeneratePlayer()
-        {
-            BaseStats playerBaseStats = new BaseStats();
-            Attributes playerAttributes = new Attributes();
-            PlayerStats playerStats = new PlayerStats();
-
-            /*
-                Temp values to work with!
-            */
-
-            playerBaseStats.name = "Bobert";
-            playerBaseStats.hitPoints = 30;
-            playerBaseStats.maxHitPoints = 30;
-            playerBaseStats.attackBonus = 5;
-            playerBaseStats.armorClass = 12;
-            playerBaseStats.damage = new RandomDie();
-            playerBaseStats.xpValue = 100;
-            playerBaseStats.friendly = true;
-
-            playerAttributes.strength = 5;
-            playerAttributes.constitution = 5;
-            playerAttributes.dexterity = 5;
-            playerAttributes.intelligence = 5;
-            playerAttributes.wisdom = 5;
-            playerAttributes.charisma = 5;
-
-            playerStats.playerClass = "Fighter";
-            playerStats.race = "Human";
-            playerStats.experience = 0;
-            playerStats.level = 1;
-
-            _player = new Player(playerStats, playerBaseStats, playerAttributes);
-            _player.Location = dungeon.Grid[0, 0];
-        }
-
-        /*
-            The IsGoodCommand method determines if a user-input command is acceptable
-        */
-
-        private bool IsGoodCommand(string command)
-        {
-            // Find command being issued
-            bool good = false;
-            int i = 0;
-            while (!good && i < commands.Length)
-            {
-                if (command.Equals(commands[i]))
-                {
-                    good = true;
-                }
-                else
-                {
-                    i++;
-                }
-            }
-            return good;
-        }
-
-        /*
             The ParseCommand method parses a user-input command for some action to perform
         */
 
@@ -661,28 +636,52 @@ namespace Dice_and_Combat_Engine
         }
 
         /*
-            The GetDungeonASCII method returns the dungeon's layout in ASCII
-            format
+            The SortResources method sorts the creatures, items, and rooms resource fields alphabetically
         */
 
-        public string GetDungeonASCII()
+        private void SortResources()
         {
-            return dungeon.ToString();
-        }
-
-        /*
-            The ExtractCommand method extracts the command issued from a user-input string
-        */
-
-        private string ExtractCommand(string commandString)
-        {
-            // Separate command from parameters
-            int i = 0;
-            while (i < commandString.Length && !char.IsWhiteSpace(commandString[i]))
+            // Sort Creatures
+            for (int i = 0; i < creatures.Length - 1; i++)
             {
-                i++;
+                for (int j = i + 1; j < creatures.Length; j++)
+                {
+                    if (creatures[i].Stats.name.CompareTo(creatures[j].Stats.name) == 1)
+                    {
+                        Creature tmpCreature = creatures[i];
+                        creatures[i] = creatures[j];
+                        creatures[j] = tmpCreature;
+                    }
+                }
             }
-            return commandString.Substring(0, i);
+
+            // Sort Items
+            for (int i = 0; i < items.Length - 1; i++)
+            {
+                for (int j = i + 1; j < items.Length; j++)
+                {
+                    if (items[i].Name.CompareTo(items[j].Name) == 1)
+                    {
+                        Item tmpItem = items[i];
+                        items[i] = items[j];
+                        items[j] = tmpItem;
+                    }
+                }
+            }
+
+            // Sort Rooms
+            for (int i = 0; i < rooms.Length - 1; i++)
+            {
+                for (int j = i + 1; j < rooms.Length; j++)
+                {
+                    if (rooms[i].RoomName.CompareTo(rooms[j].RoomName) == 1)
+                    {
+                        Room tmpRoom = rooms[i];
+                        rooms[i] = rooms[j];
+                        rooms[j] = tmpRoom;
+                    }
+                }
+            }
         }
 
         /*
@@ -709,6 +708,7 @@ namespace Dice_and_Combat_Engine
 
         public string Feedback
         {
+            // When the feedback is retrieved, we will clear it
             get
             {
                 string feedback = _feedback;
