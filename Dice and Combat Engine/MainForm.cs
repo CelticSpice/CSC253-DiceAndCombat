@@ -42,7 +42,7 @@ namespace Dice_and_Combat_Engine
             playerABTextBox.Text = game.Player.Stats.attackBonus.ToString();
             playerACTextBox.Text = game.Player.Stats.armorClass.ToString();
 
-            roomNameLbl.Text = game.Player.Location.RoomName;
+            roomNameLbl.Text = game.Player.Location.Name;
         }
 
         /*
@@ -55,7 +55,7 @@ namespace Dice_and_Combat_Engine
             playerABTextBox.Text = game.Player.Stats.attackBonus.ToString();
             playerACTextBox.Text = game.Player.Stats.armorClass.ToString();
 
-            roomNameLbl.Text = game.Player.Location.RoomName;
+            roomNameLbl.Text = game.Player.Location.Name;
 
             if (game.Player.Target != null)
             {

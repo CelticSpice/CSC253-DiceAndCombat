@@ -263,6 +263,10 @@ namespace Dice_and_Combat_Engine
                     room.Denizens.Add(new Creature(creatureToAdd));
                     creatureToAdd.Location = room;
                 }
+
+                // Sort contents (creatures and items) alphabetically
+                room.Denizens.Sort((Creature a, Creature b) => { return a.Stats.name.CompareTo(b.Stats.name); });
+                room.Contents.Sort((Item a, Item b) => { return a.Name.CompareTo(b.Name); });
             }
         }
 

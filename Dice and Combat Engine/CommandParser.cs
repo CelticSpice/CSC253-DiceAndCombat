@@ -207,15 +207,7 @@ namespace Dice_and_Combat_Engine
                     // We will provide general information about the current room
                     string[] creatureInfo = currentRoom.GetContentInformation("creatures");
                     string[] itemInfo = currentRoom.GetContentInformation("items");
-
-                    int numExits = 0;
-                    for (Direction direction = Direction.North; direction <= Direction.West; direction++)
-                    {
-                        if (currentRoom.Links[(int)direction] != null)
-                        {
-                            numExits++;
-                        }
-                    }
+                    int numExits = currentRoom.Links.Where(room => room != null).Count();
 
                     // Build output
                     string indent = "--  ";
@@ -270,35 +262,71 @@ namespace Dice_and_Combat_Engine
                 }
                 else
                 {
+                    string name = commandParams[0];
+                    Creature creature = null;
+
                     if (commandParams.Length == 1)
                     {
                         // We expect the name of a creature in the current room to examine
-                        // We will find the first instance of the named creature in the room
-                        Creature creature = null;
-                        int i = 0;
-                        while (i < currentRoom.Denizens.Count && creature == null)
+
+                        // We assign the first instance of the named creature in the room, if it exists
+                        creature = currentRoom.Denizens.Find(denizen => denizen.Stats.name.ToLower() == name);
+
+                        // If we did not find the creature, inform so
+                        if (creature == null)
                         {
-                            if (currentRoom.Denizens[i].Stats.name.ToLower() == commandParams[0])
-                            {
-                                creature = currentRoom.Denizens[i];
-                            }
-                            else
-                            {
-                                i++;
-                            }
+                            output.Add("No such creature, " + name + ", exists in this room");
                         }
 
-                        // If we found the creature requested, set the Player's target to this creature
-                        if (creature != null)
+                    }
+                    else
+                    {
+                        // We expect the name of a creature in the current room and a number specifying
+                        // the specific creature out of more than one of its kind to examine
+
+                        // First check that second parameter is an integer number specifying the nth
+                        // instance to get
+                        int instance;
+                        if (int.TryParse(commandParams[1], out instance) && instance > 0)
                         {
-                            game.Player.Target = creature;
-                            output.Add("You observe " + creature.Stats.name);
+                            // Get creatures with passed name
+                            Creature[] creatures = currentRoom.Denizens.Where(denizen => denizen.
+                                                                                         Stats.
+                                                                                         name.
+                                                                                         ToLower() == name).
+                                                                                         ToArray();
+
+                            // Assign the nth instance of creature, if it exists
+                            creature = (instance - 1 < creatures.Length) ? creatures[instance - 1] : null;
+
+                            // If we could not find the specified instance of the creature, inform so
+                            if (creature == null)
+                            {
+                                if (instance == 1)
+                                {
+                                    output.Add("A " + instance + "st " + name + " does not exist in this room");
+                                }
+                                else if (instance == 2)
+                                {
+                                    output.Add("A " + instance + "nd " + name + " does not exist in this room");
+                                }
+                                else if (instance == 3)
+                                {
+                                    output.Add("A " + instance + "rd " + name + " does not exist in this room");
+                                }
+                                else
+                                {
+                                    output.Add("A " + instance + "th " + name + " does not exist in this room");
+                                }
+                            }
                         }
-                        else
-                        {
-                            // Creature with passed name does not exist in this context
-                            output.Add("No such creature exists in this room");
-                        }
+                    }
+
+                    // If we found the creature requested, set the Player's target to this creature
+                    if (creature != null)
+                    {
+                        game.Player.Target = creature;
+                        output.Add("You observe " + creature.Stats.name);
                     }
                 }
             }

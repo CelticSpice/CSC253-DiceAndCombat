@@ -5,6 +5,7 @@
     Author: James Alves, Shane McCann, Timothy Burns
 */
 
+using System;
 using System.Collections.Generic;
 
 namespace Dice_and_Combat_Engine
@@ -18,7 +19,7 @@ namespace Dice_and_Combat_Engine
         private bool _linked;
         private bool[] _linksUnlocked;
         private int _weight, _xLoc, _yLoc;
-        private string _roomName;
+        private string _name;
         private List<Creature> _denizens;
         private List<Item> _contents;
         private Room[] _neighbors, _links;
@@ -30,7 +31,7 @@ namespace Dice_and_Combat_Engine
 
         public Room(string name, int numCreatures, int numItems)
         {
-            _roomName = name;
+            _name = name;
             _denizens = new List<Creature>(numCreatures);
             _contents = new List<Item>(numItems);
             _linked = false;
@@ -48,7 +49,7 @@ namespace Dice_and_Combat_Engine
 
         public Room(Room room)
         {
-            _roomName = room._roomName;
+            _name = room._name;
             _denizens = new List<Creature>(room._denizens.Capacity);
             _contents = new List<Item>(room._contents.Capacity);
             _linked = room._linked;
@@ -77,88 +78,79 @@ namespace Dice_and_Combat_Engine
 
         /*
             The GetContentInformation method returns an array containing information
-            about the number of and types of specified objects in this room
+            about the number and kind of objects in this room
         */
 
         public string[] GetContentInformation(string objs)
         {
-            // Get names
-            List<string> names = new List<string>();
+            List<string> info = new List<string>();
 
+            // Determine whether to get creature or item info
             if (objs == "creatures")
             {
+                // Get creature names
                 foreach (Creature creature in _denizens)
                 {
-                    names.Add(creature.Stats.name);
+                    if (!info.Contains(creature.Stats.name))
+                    {
+                        info.Add(creature.Stats.name);
+                    }
+                }
+
+                // Build info
+                int count = 0;
+                for (int i = 0; i < info.Count; i++)
+                {
+                    count = 0;
+
+                    foreach (Creature creature in _denizens)
+                    {
+                        if (creature.Stats.name == info[i])
+                        {
+                            count++;
+                        }
+                    }
+
+                    if (count > 1)
+                    {
+                        info[i] = count + " " + info[i] + "s";
+                    }
                 }
             }
-            else
+            else if (objs == "items")
             {
+                // Get item names
                 foreach (Item item in _contents)
                 {
-                    names.Add(item.Name);
-                }
-            }
-
-            // Get unique names
-            List<string> uniqueNames = new List<string>();
-
-            // We will check for multiple occurances of a name
-            bool appears = false;
-            foreach (string name in names)
-            {
-                foreach (string uniqueName in uniqueNames)
-                {
-                    if (uniqueName == name)
+                    if (!info.Contains(item.Name))
                     {
-                        appears = true;
+                        info.Add(item.Name);
                     }
                 }
 
-                // Only add name to uniqueNames if it does not already appear
-                if (!appears)
+                // Build info
+                int count = 0;
+                for (int i = 0; i < info.Count; i++)
                 {
-                    uniqueNames.Add(name);
-                }
-                else
-                {
-                    // Reset flag
-                    appears = false;
-                }
-            }
-            
+                    count = 0;
 
-            // Prepare array to return
-            string[] info = new string[uniqueNames.Count];
-
-            // Build info array
-            int numOfObj = 0;
-            for (int i = 0; i < info.Length; i++)
-            {
-                foreach (string name in names)
-                {
-                    if (name == uniqueNames[i])
+                    foreach (Item item in _contents)
                     {
-                        numOfObj++;
+                        if (item.Name == info[i])
+                        {
+                            count++;
+                        }
+                    }
+
+                    if (count > 1)
+                    {
+                        info[i] = count + " " + info[i] + "s";
                     }
                 }
-
-                // Add info to array
-                if (numOfObj == 1)
-                {
-                    info[i] = uniqueNames[i];
-                }
-                else
-                {
-                    info[i] = numOfObj + " " + uniqueNames[i] + "s";
-                }
-
-                // Reset obj counter
-                numOfObj = 0;
             }
 
             // Return
-            return info;
+            return info.ToArray();
         }
 
         /*
@@ -286,13 +278,13 @@ namespace Dice_and_Combat_Engine
         }
 
         /*
-            RoomName property
+            Name property
         */
 
-        public string RoomName
+        public string Name
         {
-            get { return _roomName; }
-            set { _roomName = value; }
+            get { return _name; }
+            set { _name = value; }
         }
 
         /*

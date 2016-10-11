@@ -40,7 +40,6 @@ namespace Dice_and_Combat_Engine
             LoadCreatures();
             LoadItems();
             LoadRooms();
-            SortResources();
             dungeon = new RoomGrid(dungeonSize, dungeonSize, rooms, uniqueRooms);
             dungeon.GenerateRoomContents(creatures, items);
             GeneratePlayer();
@@ -212,6 +211,9 @@ namespace Dice_and_Combat_Engine
             // Trim list
             loadList.TrimExcess();
 
+            // Sort list alphabetically
+            loadList.Sort((Creature a, Creature b) => a.Stats.name.CompareTo(b.Stats.name));
+
             // Set array
             creatures = loadList.ToArray();
         }
@@ -357,6 +359,9 @@ namespace Dice_and_Combat_Engine
             // Trim list
             loadList.TrimExcess();
 
+            // Sort list alphabetically
+            loadList.Sort((Item a, Item b) => { return a.Name.CompareTo(b.Name); });
+
             // Set array
             items = loadList.ToArray();
         }
@@ -427,6 +432,9 @@ namespace Dice_and_Combat_Engine
             // Trim list
             loadList.TrimExcess();
 
+            // Sort list alphabetically
+            loadList.Sort((Room a, Room b) => { return a.Name.CompareTo(b.Name); });
+
             // Set array
             rooms = loadList.ToArray();
         }
@@ -440,55 +448,6 @@ namespace Dice_and_Combat_Engine
         public string[] ParseCommand(string commandString)
         {
             return parser.Parse(commandString);
-        }
-
-        /*
-            The SortResources method sorts the creatures, items, and rooms resource fields alphabetically
-        */
-
-        private void SortResources()
-        {
-            // Sort Creatures
-            for (int i = 0; i < creatures.Length - 1; i++)
-            {
-                for (int j = i + 1; j < creatures.Length; j++)
-                {
-                    if (creatures[i].Stats.name.CompareTo(creatures[j].Stats.name) == 1)
-                    {
-                        Creature tmpCreature = creatures[i];
-                        creatures[i] = creatures[j];
-                        creatures[j] = tmpCreature;
-                    }
-                }
-            }
-
-            // Sort Items
-            for (int i = 0; i < items.Length - 1; i++)
-            {
-                for (int j = i + 1; j < items.Length; j++)
-                {
-                    if (items[i].Name.CompareTo(items[j].Name) == 1)
-                    {
-                        Item tmpItem = items[i];
-                        items[i] = items[j];
-                        items[j] = tmpItem;
-                    }
-                }
-            }
-
-            // Sort Rooms
-            for (int i = 0; i < rooms.Length - 1; i++)
-            {
-                for (int j = i + 1; j < rooms.Length; j++)
-                {
-                    if (rooms[i].RoomName.CompareTo(rooms[j].RoomName) == 1)
-                    {
-                        Room tmpRoom = rooms[i];
-                        rooms[i] = rooms[j];
-                        rooms[j] = tmpRoom;
-                    }
-                }
-            }
         }
 
         /*
