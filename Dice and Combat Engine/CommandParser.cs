@@ -218,21 +218,23 @@ namespace Dice_and_Combat_Engine
                     }
 
                     // Build output
+                    string indent = "--  ";
+
                     // Creatures
                     output.Add("There are " + currentRoom.Denizens.Count + " creatures in this room:");
                     for (int i = 0; i < creatureInfo.Length; i++)
                     {
                         if (creatureInfo.Length == 1)
                         {
-                            output.Add("  " + creatureInfo[i]);
+                            output.Add(indent + creatureInfo[i]);
                         }
                         else if (i != creatureInfo.Length - 1)
                         {
-                            output.Add("  " + creatureInfo[i] + ",");
+                            output.Add(indent + creatureInfo[i] + ",");
                         }
                         else
                         {
-                            output.Add("  and " + creatureInfo[i]);
+                            output.Add(indent + "and " + creatureInfo[i]);
                         }
                     }
 
@@ -243,15 +245,15 @@ namespace Dice_and_Combat_Engine
                     {
                         if (itemInfo.Length == 1)
                         {
-                            output.Add("  " + itemInfo[i]);
+                            output.Add(indent + itemInfo[i]);
                         }
                         else if (i != itemInfo.Length - 1)
                         {
-                            output.Add("  " + itemInfo[i] + ",");
+                            output.Add(indent + itemInfo[i] + ",");
                         }
                         else
                         {
-                            output.Add("  and " + itemInfo[i]);
+                            output.Add(indent + "and " + itemInfo[i]);
                         }
                     }
 
@@ -262,7 +264,7 @@ namespace Dice_and_Combat_Engine
                     {
                         if (currentRoom.Links[(int)direction] != null)
                         {
-                            output.Add("  " + direction.ToString());
+                            output.Add(indent + direction.ToString());
                         }
                     }
                 }
