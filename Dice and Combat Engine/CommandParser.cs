@@ -124,7 +124,7 @@ namespace Dice_and_Combat_Engine
                         //ParseScoreCommand();
                         break;
                     case "take":
-                        //ParseTakeCommand(commandParams);
+                        ParseTakeCommand(commandParams);
                         break;
                 }
             }
@@ -382,6 +382,84 @@ namespace Dice_and_Combat_Engine
             else
             {
                 output.Add("Invalid number of parameters for command: open");
+            }
+        }
+
+        /*
+            The ParseTakeCommand method parses a "take" command for some action to perform
+        */
+
+        private void ParseTakeCommand(string[] commandParams)
+        {
+            // We expect up to 2 parameters, and at least 1
+            if (commandParams.Length == 0)
+            {
+                // Output error
+                output.Add("Error: Command \"take\" takes at least 1 parameter - name of item to take");
+            }
+            else
+            {
+                List<Item> playerInventory = game.Player.Inventory;
+                List<Item> roomContents = game.Player.Location.Contents;
+
+                // Check if item name or "all" keyword
+                if (commandParams[0] == "all")
+                {
+                    // Check if name of item is supplied
+                    if (commandParams.Length == 2)
+                    {
+                        // Add every item with the specified name from the room
+                        // into the PC's inventory
+                        Item[] items = roomContents.Where(item => item.Name.ToLower() == commandParams[1]).ToArray();
+
+                        // If we found items with the specified name, continue; else, output error
+                        if (items.Length > 0)
+                        {
+                            playerInventory.AddRange(items);
+                            output.Add("You take every " + items[0].Name + " from the room");
+                            foreach (Item item in items)
+                            {
+                                roomContents.Remove(item);
+                            }
+                        }
+                        else
+                        {
+                            // Output error
+                            output.Add("No such items of " + commandParams[1] + " exist in this room");
+                        }
+                    }
+                    else
+                    {
+                        // Add every item in the current room to the PC's inventory
+                        if (roomContents.Count != 0)
+                        {
+                            playerInventory.AddRange(roomContents);
+                            output.Add("You take every item in the room");
+                            roomContents.Clear();
+                        }
+                        else
+                        {
+                            // Output error
+                            output.Add("There are no items in this room to take");
+                        }
+                    }
+                }
+                else
+                {
+                    // Check if user is specifying which item of named item to take
+                    if (commandParams.Length == 2)
+                    {
+                        // First check that second parameter is an integer
+                        int instance;
+                        if (int.TryParse(commandParams[1], out instance))
+                        {
+                            // Get listing of items with passed name
+                            Item[] items = roomContents.Where(item => item.Name.ToLower() == commandParams[1]).ToArray();
+
+                            // Get item
+                        }
+                    }
+                }
             }
         }
     }
