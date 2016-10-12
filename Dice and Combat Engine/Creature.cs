@@ -57,10 +57,10 @@ namespace Dice_and_Combat_Engine
 
         /*
             Constructor
-            Defines starting stats and attributes, and portrait
+            Defines starting stats and attributes
         */
 
-        public Creature(BaseStats stats, Attributes attribs, Image portrait)
+        public Creature(BaseStats stats, Attributes attribs)
         {
             _stats = stats;
             _attributes = attribs;

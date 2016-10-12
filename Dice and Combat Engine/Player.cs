@@ -33,8 +33,8 @@ namespace Dice_and_Combat_Engine
             Accepts Player-specific stats, base stats, attributes, and a portrait of the player
         */
 
-        public Player(PlayerStats playerStats, BaseStats baseStats, Attributes attribs, Image portrait = null)
-            : base(baseStats, attribs, portrait)
+        public Player(PlayerStats playerStats, BaseStats baseStats, Attributes attribs)
+            : base(baseStats, attribs)
         {
             _playerStats = playerStats;
             _inventory = new List<Item>();
