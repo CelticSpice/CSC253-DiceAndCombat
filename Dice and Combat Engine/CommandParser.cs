@@ -126,7 +126,6 @@ namespace Dice_and_Combat_Engine
         public string[] Parse(string commandString)
         {
             output.Clear();
-            output.TrimExcess();
 
             string command = ExtractCommand(commandString);
 
@@ -135,6 +134,7 @@ namespace Dice_and_Combat_Engine
             {
                 string[] commandParams = commandString.Split(new string[] { command, " " },
                                                              StringSplitOptions.RemoveEmptyEntries);
+
                 switch (command)
                 {
                     case "attack":

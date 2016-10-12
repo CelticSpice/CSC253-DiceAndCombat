@@ -454,6 +454,15 @@ namespace Dice_and_Combat_Engine
         }
 
         /*
+            Items property
+        */
+
+        public Item[] Items
+        {
+            get { return _items; }
+        }
+
+        /*
             Player property
         */
 
