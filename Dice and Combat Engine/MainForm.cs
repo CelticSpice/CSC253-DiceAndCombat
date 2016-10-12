@@ -59,7 +59,6 @@ namespace Dice_and_Combat_Engine
 
             if (game.Player.Target != null)
             {
-                creatureImgBox.Image = game.Player.Target.Portrait;
                 creatureNameTextBox.Text = game.Player.Target.Stats.name;
                 creatureHPTextBox.Text = game.Player.Target.Stats.hitPoints.ToString();
                 creatureABTextBox.Text = game.Player.Target.Stats.attackBonus.ToString();

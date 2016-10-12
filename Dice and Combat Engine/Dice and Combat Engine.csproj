@@ -115,12 +115,6 @@
     <EmbeddedResource Include="Resources\creatures.txt" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\kobold.jpg" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\dragon.jpg" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Resources\rooms.txt" />
   </ItemGroup>
   <ItemGroup>
@@ -140,15 +134,6 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\backgroundBlur.jpg" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\goblin.jpg" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\orc.jpg" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\zombie.jpg" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

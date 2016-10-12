@@ -16,7 +16,7 @@ namespace Dice_and_Combat_Engine
     class Game
     {
         // Fields
-        private CombatEngine _combatEngine;     // Handles combat logic
+        private CombatEngine combatEngine;      // Handles combat logic
         private CommandParser parser;           // The command parser
         private Creature[] creatures;           // The creatures in the game
         private Item[] items;                   // The items in the game
@@ -35,7 +35,7 @@ namespace Dice_and_Combat_Engine
 
         public Game(int dungeonSize, bool uniqueRooms = false)
         {
-            _combatEngine = new CombatEngine();
+            combatEngine = new CombatEngine();
             parser = new CommandParser(this);
             LoadCreatures();
             LoadItems();
@@ -102,7 +102,6 @@ namespace Dice_and_Combat_Engine
         {
             // Consts
             const string CREATURE_RESOURCE = "Dice_and_Combat_Engine.Resources.creatures.txt";
-            const string CREATURE_IMG_DIRECTORY = "Dice_and_Combat_Engine.Resources.";
 
             List<Creature> loadList = new List<Creature>();
 
@@ -193,13 +192,8 @@ namespace Dice_and_Combat_Engine
                     }
                     else
                     {
-                        // Get new creature's image
-                        Stream imageStream = assembly.GetManifestResourceStream(CREATURE_IMG_DIRECTORY +
-                                                      creatureStats.name.ToLower() + ".jpg");
-                        Image creatureImage = Image.FromStream(imageStream);
-
                         // Create new creature with collected data
-                        loadList.Add(new Creature(creatureStats, creatureAttribs, creatureImage));
+                        loadList.Add(new Creature(creatureStats, creatureAttribs));
                     }
                 }
             }
@@ -212,7 +206,7 @@ namespace Dice_and_Combat_Engine
             loadList.TrimExcess();
 
             // Sort list alphabetically
-            loadList.Sort((Creature a, Creature b) => a.Stats.name.CompareTo(b.Stats.name));
+            loadList.Sort((Creature creatureA, Creature creatureB) => creatureA.Stats.name.CompareTo(creatureB.Stats.name));
 
             // Set array
             creatures = loadList.ToArray();
@@ -448,15 +442,6 @@ namespace Dice_and_Combat_Engine
         public string[] ParseCommand(string commandString)
         {
             return parser.Parse(commandString);
-        }
-
-        /*
-            CombatEngine property
-        */
-
-        public CombatEngine CombatEngine
-        {
-           get { return _combatEngine; }
         }
 
         /*

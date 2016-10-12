@@ -124,26 +124,6 @@ namespace Dice_and_Combat_Engine.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap dragon {
-            get {
-                object obj = ResourceManager.GetObject("dragon", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap goblin {
-            get {
-                object obj = ResourceManager.GetObject("goblin", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to ID: 1
         ///Name: Short Sword
         ///Durability: 10
@@ -196,26 +176,6 @@ namespace Dice_and_Combat_Engine.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap kobold {
-            get {
-                object obj = ResourceManager.GetObject("kobold", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap orc {
-            get {
-                object obj = ResourceManager.GetObject("orc", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Name: Hall of Sophia
         ///NumCreatures: 3
         ///NumItems: 3
@@ -239,16 +199,6 @@ namespace Dice_and_Combat_Engine.Properties {
         internal static string rooms {
             get {
                 return ResourceManager.GetString("rooms", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap zombie {
-            get {
-                object obj = ResourceManager.GetObject("zombie", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
             }
         }
     }

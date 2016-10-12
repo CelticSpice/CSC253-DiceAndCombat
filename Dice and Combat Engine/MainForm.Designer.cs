@@ -44,19 +44,15 @@
             this.creatureABTextBox = new System.Windows.Forms.TextBox();
             this.creatureACTextBox = new System.Windows.Forms.TextBox();
             this.outputLst = new System.Windows.Forms.ListBox();
-            this.playerImgBox = new System.Windows.Forms.PictureBox();
-            this.creatureImgBox = new System.Windows.Forms.PictureBox();
             this.roomNameLbl = new System.Windows.Forms.Label();
             this.commandTxtBox = new System.Windows.Forms.TextBox();
             this.goBtn = new System.Windows.Forms.Button();
-            ((System.ComponentModel.ISupportInitialize)(this.playerImgBox)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.creatureImgBox)).BeginInit();
             this.SuspendLayout();
             // 
             // playerNameTextBox
             // 
             this.playerNameTextBox.Enabled = false;
-            this.playerNameTextBox.Location = new System.Drawing.Point(12, 97);
+            this.playerNameTextBox.Location = new System.Drawing.Point(12, 12);
             this.playerNameTextBox.Name = "playerNameTextBox";
             this.playerNameTextBox.Size = new System.Drawing.Size(100, 20);
             this.playerNameTextBox.TabIndex = 4;
@@ -65,7 +61,7 @@
             // playerHPTextBox
             // 
             this.playerHPTextBox.Enabled = false;
-            this.playerHPTextBox.Location = new System.Drawing.Point(40, 139);
+            this.playerHPTextBox.Location = new System.Drawing.Point(40, 54);
             this.playerHPTextBox.Name = "playerHPTextBox";
             this.playerHPTextBox.Size = new System.Drawing.Size(35, 20);
             this.playerHPTextBox.TabIndex = 5;
@@ -75,7 +71,7 @@
             // 
             this.playerHPLabel.AutoSize = true;
             this.playerHPLabel.BackColor = System.Drawing.SystemColors.ControlLightLight;
-            this.playerHPLabel.Location = new System.Drawing.Point(9, 142);
+            this.playerHPLabel.Location = new System.Drawing.Point(9, 57);
             this.playerHPLabel.Name = "playerHPLabel";
             this.playerHPLabel.Size = new System.Drawing.Size(25, 13);
             this.playerHPLabel.TabIndex = 6;
@@ -84,7 +80,7 @@
             // playerRaceClassTextBox
             // 
             this.playerRaceClassTextBox.Enabled = false;
-            this.playerRaceClassTextBox.Location = new System.Drawing.Point(12, 119);
+            this.playerRaceClassTextBox.Location = new System.Drawing.Point(12, 34);
             this.playerRaceClassTextBox.Name = "playerRaceClassTextBox";
             this.playerRaceClassTextBox.Size = new System.Drawing.Size(100, 20);
             this.playerRaceClassTextBox.TabIndex = 7;
@@ -93,7 +89,7 @@
             // playerABTextBox
             // 
             this.playerABTextBox.Enabled = false;
-            this.playerABTextBox.Location = new System.Drawing.Point(40, 161);
+            this.playerABTextBox.Location = new System.Drawing.Point(40, 76);
             this.playerABTextBox.Name = "playerABTextBox";
             this.playerABTextBox.Size = new System.Drawing.Size(35, 20);
             this.playerABTextBox.TabIndex = 8;
@@ -103,7 +99,7 @@
             // 
             this.playerABLabel.AutoSize = true;
             this.playerABLabel.BackColor = System.Drawing.SystemColors.ControlLightLight;
-            this.playerABLabel.Location = new System.Drawing.Point(9, 164);
+            this.playerABLabel.Location = new System.Drawing.Point(9, 79);
             this.playerABLabel.Name = "playerABLabel";
             this.playerABLabel.Size = new System.Drawing.Size(24, 13);
             this.playerABLabel.TabIndex = 9;
@@ -112,7 +108,7 @@
             // playerACTextBox
             // 
             this.playerACTextBox.Enabled = false;
-            this.playerACTextBox.Location = new System.Drawing.Point(40, 183);
+            this.playerACTextBox.Location = new System.Drawing.Point(40, 98);
             this.playerACTextBox.Name = "playerACTextBox";
             this.playerACTextBox.Size = new System.Drawing.Size(35, 20);
             this.playerACTextBox.TabIndex = 10;
@@ -122,7 +118,7 @@
             // 
             this.playerACLabel.AutoSize = true;
             this.playerACLabel.BackColor = System.Drawing.SystemColors.ControlLightLight;
-            this.playerACLabel.Location = new System.Drawing.Point(9, 186);
+            this.playerACLabel.Location = new System.Drawing.Point(9, 101);
             this.playerACLabel.Name = "playerACLabel";
             this.playerACLabel.Size = new System.Drawing.Size(24, 13);
             this.playerACLabel.TabIndex = 11;
@@ -131,7 +127,7 @@
             // creatureNameTextBox
             // 
             this.creatureNameTextBox.Enabled = false;
-            this.creatureNameTextBox.Location = new System.Drawing.Point(697, 97);
+            this.creatureNameTextBox.Location = new System.Drawing.Point(697, 12);
             this.creatureNameTextBox.Name = "creatureNameTextBox";
             this.creatureNameTextBox.Size = new System.Drawing.Size(100, 20);
             this.creatureNameTextBox.TabIndex = 12;
@@ -141,7 +137,7 @@
             // 
             this.creatureHPLabel.AutoSize = true;
             this.creatureHPLabel.BackColor = System.Drawing.SystemColors.ControlLightLight;
-            this.creatureHPLabel.Location = new System.Drawing.Point(765, 122);
+            this.creatureHPLabel.Location = new System.Drawing.Point(765, 37);
             this.creatureHPLabel.Name = "creatureHPLabel";
             this.creatureHPLabel.Size = new System.Drawing.Size(25, 13);
             this.creatureHPLabel.TabIndex = 13;
@@ -151,7 +147,7 @@
             // 
             this.creatureABLabel.AutoSize = true;
             this.creatureABLabel.BackColor = System.Drawing.SystemColors.ControlLightLight;
-            this.creatureABLabel.Location = new System.Drawing.Point(766, 141);
+            this.creatureABLabel.Location = new System.Drawing.Point(766, 56);
             this.creatureABLabel.Name = "creatureABLabel";
             this.creatureABLabel.Size = new System.Drawing.Size(24, 13);
             this.creatureABLabel.TabIndex = 14;
@@ -161,7 +157,7 @@
             // 
             this.creatureACLabel.AutoSize = true;
             this.creatureACLabel.BackColor = System.Drawing.SystemColors.ControlLightLight;
-            this.creatureACLabel.Location = new System.Drawing.Point(766, 163);
+            this.creatureACLabel.Location = new System.Drawing.Point(766, 78);
             this.creatureACLabel.Name = "creatureACLabel";
             this.creatureACLabel.Size = new System.Drawing.Size(24, 13);
             this.creatureACLabel.TabIndex = 15;
@@ -170,7 +166,7 @@
             // creatureHPTextBox
             // 
             this.creatureHPTextBox.Enabled = false;
-            this.creatureHPTextBox.Location = new System.Drawing.Point(725, 119);
+            this.creatureHPTextBox.Location = new System.Drawing.Point(725, 34);
             this.creatureHPTextBox.Name = "creatureHPTextBox";
             this.creatureHPTextBox.Size = new System.Drawing.Size(35, 20);
             this.creatureHPTextBox.TabIndex = 16;
@@ -179,7 +175,7 @@
             // creatureABTextBox
             // 
             this.creatureABTextBox.Enabled = false;
-            this.creatureABTextBox.Location = new System.Drawing.Point(725, 141);
+            this.creatureABTextBox.Location = new System.Drawing.Point(725, 56);
             this.creatureABTextBox.Name = "creatureABTextBox";
             this.creatureABTextBox.Size = new System.Drawing.Size(35, 20);
             this.creatureABTextBox.TabIndex = 17;
@@ -188,7 +184,7 @@
             // creatureACTextBox
             // 
             this.creatureACTextBox.Enabled = false;
-            this.creatureACTextBox.Location = new System.Drawing.Point(725, 163);
+            this.creatureACTextBox.Location = new System.Drawing.Point(725, 78);
             this.creatureACTextBox.Name = "creatureACTextBox";
             this.creatureACTextBox.Size = new System.Drawing.Size(35, 20);
             this.creatureACTextBox.TabIndex = 18;
@@ -202,22 +198,6 @@
             this.outputLst.SelectionMode = System.Windows.Forms.SelectionMode.None;
             this.outputLst.Size = new System.Drawing.Size(486, 303);
             this.outputLst.TabIndex = 19;
-            // 
-            // playerImgBox
-            // 
-            this.playerImgBox.Location = new System.Drawing.Point(12, 12);
-            this.playerImgBox.Name = "playerImgBox";
-            this.playerImgBox.Size = new System.Drawing.Size(75, 75);
-            this.playerImgBox.TabIndex = 20;
-            this.playerImgBox.TabStop = false;
-            // 
-            // creatureImgBox
-            // 
-            this.creatureImgBox.Location = new System.Drawing.Point(722, 12);
-            this.creatureImgBox.Name = "creatureImgBox";
-            this.creatureImgBox.Size = new System.Drawing.Size(75, 75);
-            this.creatureImgBox.TabIndex = 21;
-            this.creatureImgBox.TabStop = false;
             // 
             // roomNameLbl
             // 
@@ -259,8 +239,6 @@
             this.Controls.Add(this.goBtn);
             this.Controls.Add(this.commandTxtBox);
             this.Controls.Add(this.roomNameLbl);
-            this.Controls.Add(this.creatureImgBox);
-            this.Controls.Add(this.playerImgBox);
             this.Controls.Add(this.outputLst);
             this.Controls.Add(this.creatureACTextBox);
             this.Controls.Add(this.creatureABTextBox);
@@ -279,8 +257,6 @@
             this.Controls.Add(this.playerNameTextBox);
             this.Name = "MainForm";
             this.Text = "Dice and Combat Engine - Fight";
-            ((System.ComponentModel.ISupportInitialize)(this.playerImgBox)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.creatureImgBox)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -303,8 +279,6 @@
         private System.Windows.Forms.TextBox creatureABTextBox;
         private System.Windows.Forms.TextBox creatureACTextBox;
         private System.Windows.Forms.ListBox outputLst;
-        private System.Windows.Forms.PictureBox playerImgBox;
-        private System.Windows.Forms.PictureBox creatureImgBox;
         private System.Windows.Forms.Label roomNameLbl;
         private System.Windows.Forms.TextBox commandTxtBox;
         private System.Windows.Forms.Button goBtn;
