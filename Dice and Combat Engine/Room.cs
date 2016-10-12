@@ -7,6 +7,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Dice_and_Combat_Engine
 {
@@ -78,62 +79,35 @@ namespace Dice_and_Combat_Engine
 
         /*
             The GetContentInformation method returns an array containing information
-            about the number and kind of objects in this room
+            about the number and kind of items in this room
         */
 
-        public string[] GetContentInformation(string objs)
+        private string[] GetContentInformation()
         {
             List<string> info = new List<string>();
 
-            // Determine whether to get creature or item info
-            if (objs == "creatures")
+            info.Add("There are " + _contents.Count + " items in this room");
+
+            // Get item names
+            foreach (Item item in _contents)
             {
-                // Get creature names
-                foreach (Creature creature in _denizens)
+                if (!info.Contains(item.Name))
                 {
-                    if (!info.Contains(creature.Stats.name))
-                    {
-                        info.Add(creature.Stats.name);
-                    }
-                }
-
-                // Build info
-                int count = 0;
-                for (int i = 0; i < info.Count; i++)
-                {
-                    count = 0;
-
-                    foreach (Creature creature in _denizens)
-                    {
-                        if (creature.Stats.name == info[i])
-                        {
-                            count++;
-                        }
-                    }
-
-                    if (count > 1)
-                    {
-                        info[i] = count + " " + info[i] + "s";
-                    }
+                    info.Add(item.Name);
                 }
             }
-            else if (objs == "items")
-            {
-                // Get item names
-                foreach (Item item in _contents)
-                {
-                    if (!info.Contains(item.Name))
-                    {
-                        info.Add(item.Name);
-                    }
-                }
 
-                // Build info
+            // Build info
+            if (info.Count > 1)
+            {
+                string indent = "--  ";
+
+                info[0] += ":";
+
                 int count = 0;
-                for (int i = 0; i < info.Count; i++)
+                for (int i = 1; i < info.Count; i++)
                 {
                     count = 0;
-
                     foreach (Item item in _contents)
                     {
                         if (item.Name == info[i])
@@ -142,15 +116,151 @@ namespace Dice_and_Combat_Engine
                         }
                     }
 
+                    // Make plural if necessary
                     if (count > 1)
                     {
-                        info[i] = count + " " + info[i] + "s";
+                        info[i] += "s";
+                    }
+
+                    // Determine number of distinct types of items in room for formatting purposes
+                    if (info.Count == 2)
+                    {
+                        info[i] = indent + count + " " + info[i];
+                    }
+                    else if (i < info.Count - 1)
+                    {
+                        info[i] = indent + count + " " + info[i] + ",";
+                    }
+                    else
+                    {
+                        info[i] = indent + "and " + count + " " + info[i];
                     }
                 }
             }
 
-            // Return
             return info.ToArray();
+        }
+
+        /*
+            The GetDenizenInformation method returns an array containing information
+            about the number and kind of creatures in this room
+        */
+
+        private string[] GetDenizenInformation()
+        {
+            List<string> info = new List<string>();
+
+            info.Add("There are " + _denizens.Count + " creatures in this room");
+
+            // Get creature names
+            foreach (Creature creature in _denizens)
+            {
+                if (!info.Contains(creature.Stats.name))
+                {
+                    info.Add(creature.Stats.name);
+                }
+            }
+
+            // Build info
+            if (info.Count > 1)
+            {
+                string indent = "--  ";
+
+                info[0] += ":";
+
+                int count = 0;
+                for (int i = 1; i < info.Count; i++)
+                {
+                    count = 0;
+                    foreach (Creature creature in _denizens)
+                    {
+                        if (creature.Stats.name == info[i])
+                        {
+                            count++;
+                        }
+                    }
+
+                    // Make plural if necessary
+                    if (count > 1)
+                    {
+                        info[i] += "s";
+                    }
+
+                    // Determine number of distinct types of creatures in room for formatting purposes
+                    if (info.Count == 2)
+                    {
+                        info[i] = indent + count + " " + info[i];
+                    }
+                    else if (i < info.Count - 1)
+                    {
+                        info[i] = indent + count + " " + info[i] + ",";
+                    }
+                    else
+                    {
+                        info[i] = indent + "and " + count + " " + info[i];
+                    }
+                }
+            }
+
+            return info.ToArray();
+        }
+
+        /*
+            The GetExitInformation method returns an array containing information about
+            the directions in which exits exist
+        */
+
+        private string[] GetExitInfomation()
+        {
+            string[] info = new string[_links.Where(link => link != null).Count() + 1];
+            info[0] = "There are " + (info.Length - 1) + " exits in this room:";
+
+            string indent = "--  ";
+
+            int i = 1;
+            for (Direction direction = Direction.North; direction <= Direction.West; direction++)
+            {
+                if (_links[(int)direction] != null)
+                {
+                    if (info.Length == 2)
+                    {
+                        info[i] = indent + direction.ToString();
+                    }
+                    else if (i < info.Length - 1)
+                    {
+                        info[i] = indent + direction.ToString() + ",";
+                        i++;
+                    }
+                    else
+                    {
+                        info[i] = indent + "and " + direction.ToString();
+                        i++;
+                    }
+                }
+            }
+
+            return info;
+        }
+
+        /*
+            The GetInfo method returns a jagged array containing information about
+            the number and kinds of creatures and items in this room, and 
+            the directions in which exits exist
+        */
+
+        public string[][] GetInfo()
+        {
+            string[] creatureInfo = GetDenizenInformation();
+            string[] itemInfo = GetContentInformation();
+            string[] exitInfo = GetExitInfomation();
+
+            const int NUM_INFO = 3;
+            string[][] info = new string[NUM_INFO][];
+            info[0] = creatureInfo;
+            info[1] = itemInfo;
+            info[2] = exitInfo;
+
+            return info;
         }
 
         /*

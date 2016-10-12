@@ -51,6 +51,49 @@ namespace Dice_and_Combat_Engine
         }
 
         /*
+            The GetOrdinalSuffix method returns the appropriate suffix for an
+            integer number
+        */
+
+        private string GetOrdinalSuffix(int num)
+        {
+            string suffix = "";
+            
+            // Numbers in the range of 10-19 always have the suffix "th"
+            if (num >= 10 && num <= 19)
+            {
+                suffix = "th";
+            }
+            else
+            {
+                // Get the number in the 1st place
+                while (num / 10 != 0)
+                {
+                    num /= 10;
+                }
+
+                // Determine suffix
+                switch (num)
+                {
+                    case 1:
+                        suffix = "st";
+                        break;
+                    case 2:
+                        suffix = "nd";
+                        break;
+                    case 3:
+                        suffix = "rd";
+                        break;
+                    default:
+                        suffix = "th";
+                        break;
+                }
+            }
+
+            return suffix;
+        }
+
+        /*
             The IsGoodCommand method determines if a user-input command is acceptable
         */
 
@@ -83,6 +126,7 @@ namespace Dice_and_Combat_Engine
         public string[] Parse(string commandString)
         {
             output.Clear();
+            output.TrimExcess();
 
             string command = ExtractCommand(commandString);
 
@@ -161,17 +205,22 @@ namespace Dice_and_Combat_Engine
                     }
                 }
 
+                // If the parameter is a proper direction, continue
                 if (isDirection)
                 {
                     Room currentRoom = game.Player.Location;
+
+                    // If a room in the specified direction does not exist
                     if (currentRoom.Links[(int)direction] == null)
                     {
                         output.Add("There is no exit leading " + direction.ToString());
                     }
+                    // If the link to the room in the specified direction is not open
                     else if (!currentRoom.LinksUnlocked[(int)direction])
                     {
                         output.Add("The " + direction.ToString() + " exit is not open");
                     }
+                    // If the room in the specified direction both exists and is open
                     else
                     {
                         game.Player.Location = currentRoom.Links[(int)direction];
@@ -180,11 +229,13 @@ namespace Dice_and_Combat_Engine
                 }
                 else
                 {
+                    // Output error because the parameter is not a proper direction
                     output.Add("Invalid parameter: Must be one of North, South, East, or West");
                 }
             }
             else
             {
+                // Output error because there are an invalid number of parameters
                 output.Add("Invalid number of parameters for command: go");
             }
         }
@@ -195,8 +246,8 @@ namespace Dice_and_Combat_Engine
 
         private void ParseLookCommand(string[] commandParams)
         {
-            // We expect up to 2 parameters: The object to look at, and a number specifying the object
-            // out of many
+            // We expect up to 2 parameters: The object to look at, and
+            // an integer specifying the instance of the object
             if (commandParams.Length <= 2)
             {
                 Room currentRoom = game.Player.Location;
@@ -205,128 +256,82 @@ namespace Dice_and_Combat_Engine
                 if (commandParams.Length == 0)
                 {
                     // We will provide general information about the current room
-                    string[] creatureInfo = currentRoom.GetContentInformation("creatures");
-                    string[] itemInfo = currentRoom.GetContentInformation("items");
-                    int numExits = currentRoom.Links.Where(room => room != null).Count();
-
-                    // Build output
-                    string indent = "--  ";
-
-                    // Creatures
-                    output.Add("There are " + currentRoom.Denizens.Count + " creatures in this room:");
-                    for (int i = 0; i < creatureInfo.Length; i++)
+                    string[][] info = currentRoom.GetInfo();
+                    for (int i = 0; i < info.GetLength(0); i++)
                     {
-                        if (creatureInfo.Length == 1)
+                        for (int j = 0; j < info[i].Length; j++)
                         {
-                            output.Add(indent + creatureInfo[i]);
+                            output.Add(info[i][j]);
                         }
-                        else if (i != creatureInfo.Length - 1)
-                        {
-                            output.Add(indent + creatureInfo[i] + ",");
-                        }
-                        else
-                        {
-                            output.Add(indent + "and " + creatureInfo[i]);
-                        }
-                    }
 
-                    // Items
-                    output.Add("");     // New line
-                    output.Add("There are " + currentRoom.Contents.Count + " items in this room:");
-                    for (int i = 0; i < itemInfo.Length; i++)
-                    {
-                        if (itemInfo.Length == 1)
+                        // If we haven't yet output the last set of information
+                        if (i != info.GetLength(0) - 1)
                         {
-                            output.Add(indent + itemInfo[i]);
-                        }
-                        else if (i != itemInfo.Length - 1)
-                        {
-                            output.Add(indent + itemInfo[i] + ",");
-                        }
-                        else
-                        {
-                            output.Add(indent + "and " + itemInfo[i]);
-                        }
-                    }
-
-                    // Exits
-                    output.Add("");     // New line
-                    output.Add("There are " + numExits + " exits in this room:");
-                    for (Direction direction = Direction.North; direction <= Direction.West; direction++)
-                    {
-                        if (currentRoom.Links[(int)direction] != null)
-                        {
-                            output.Add(indent + direction.ToString());
+                            // Add newline
+                            output.Add("");
                         }
                     }
                 }
                 else
                 {
-                    string name = commandParams[0];
-                    Creature creature = null;
+                    List<Creature> roomDenizens = currentRoom.Denizens;
+                    Player player = game.Player;
 
                     if (commandParams.Length == 1)
                     {
                         // We expect the name of a creature in the current room to examine
 
-                        // We assign the first instance of the named creature in the room, if it exists
-                        creature = currentRoom.Denizens.Find(denizen => denizen.Stats.name.ToLower() == name);
+                        // We get the first instance of the named creature in the room
+                        Creature creature = roomDenizens.Find(denizen => denizen.Stats.name.ToLower() == commandParams[0]);
 
-                        // If we did not find the creature, inform so
-                        if (creature == null)
+                        // If we found the creature, set PC's target and inform so; else, output error
+                        if (creature != null)
                         {
-                            output.Add("No such creature, " + name + ", exists in this room");
+                            player.Target = creature;
+                            output.Add("You observe " + creature.Stats.name);
                         }
-
+                        else
+                        {
+                            output.Add("No such creature, " + commandParams[0] + ", exists in this room");
+                        }
                     }
                     else
                     {
-                        // We expect the name of a creature in the current room and a number specifying
-                        // the specific creature out of more than one of its kind to examine
+                        // We expect the name of a creature in the current room and an integer specifying
+                        // the instance of the named creature to examine
 
                         // First check that second parameter is an integer number specifying the nth
                         // instance to get
                         int instance;
                         if (int.TryParse(commandParams[1], out instance) && instance > 0)
                         {
+                            // Get instance suffix
+                            string suffix = GetOrdinalSuffix(instance);
+
+                            // We do not expect instance to be 0-based, so make it so
+                            instance -= 1;
+
                             // Get creatures with passed name
-                            Creature[] creatures = currentRoom.Denizens.Where(denizen => denizen.
-                                                                                         Stats.
-                                                                                         name.
-                                                                                         ToLower() == name).
-                                                                                         ToArray();
+                            Creature[] creatures = roomDenizens.Where(denizen => denizen.
+                                                                                 Stats.
+                                                                                 name.
+                                                                                 ToLower() == commandParams[0]).
+                                                                                 ToArray();
 
                             // Assign the nth instance of creature, if it exists
-                            creature = (instance - 1 < creatures.Length) ? creatures[instance - 1] : null;
+                            Creature creature = (instance < creatures.Length) ? creatures[instance] : null;
 
-                            // If we could not find the specified instance of the creature, inform so
-                            if (creature == null)
+                            // If we found the creature, set PC's target and inform so; else, output error
+                            if (creature != null)
                             {
-                                if (instance == 1)
-                                {
-                                    output.Add("A " + instance + "st " + name + " does not exist in this room");
-                                }
-                                else if (instance == 2)
-                                {
-                                    output.Add("A " + instance + "nd " + name + " does not exist in this room");
-                                }
-                                else if (instance == 3)
-                                {
-                                    output.Add("A " + instance + "rd " + name + " does not exist in this room");
-                                }
-                                else
-                                {
-                                    output.Add("A " + instance + "th " + name + " does not exist in this room");
-                                }
+                                player.Target = creature;
+                                output.Add("You observe " + creature.Stats.name);
+                            }
+                            else
+                            {
+                                output.Add("No such creature, " + commandParams[0] + ", exists in this room");
                             }
                         }
-                    }
-
-                    // If we found the creature requested, set the Player's target to this creature
-                    if (creature != null)
-                    {
-                        game.Player.Target = creature;
-                        output.Add("You observe " + creature.Stats.name);
                     }
                 }
             }
@@ -394,22 +399,21 @@ namespace Dice_and_Combat_Engine
             // We expect up to 2 parameters, and at least 1
             if (commandParams.Length == 0)
             {
-                // Output error
-                output.Add("Error: Command \"take\" takes at least 1 parameter - name of item to take");
+                // Output error because there is an invalid number of parameters
+                output.Add("Error: Command \"take\" takes at least 1 parameter: name of item to take");
             }
             else
             {
                 List<Item> playerInventory = game.Player.Inventory;
                 List<Item> roomContents = game.Player.Location.Contents;
 
-                // Check if item name or "all" keyword
+                // Check if first parameter is item name or "all" keyword
                 if (commandParams[0] == "all")
                 {
-                    // Check if name of item is supplied
+                    // Check if second parameter of names of items to take is supplied
                     if (commandParams.Length == 2)
                     {
-                        // Add every item with the specified name from the room
-                        // into the PC's inventory
+                        // Get all items with the specified name from the room
                         Item[] items = roomContents.Where(item => item.Name.ToLower() == commandParams[1]).ToArray();
 
                         // If we found items with the specified name, continue; else, output error
@@ -424,7 +428,7 @@ namespace Dice_and_Combat_Engine
                         }
                         else
                         {
-                            // Output error
+                            // Output error because no items with the specifed name were found
                             output.Add("No such items of " + commandParams[1] + " exist in this room");
                         }
                     }
@@ -439,24 +443,66 @@ namespace Dice_and_Combat_Engine
                         }
                         else
                         {
-                            // Output error
+                            // Output error because there are no items in this room to take
                             output.Add("There are no items in this room to take");
                         }
                     }
                 }
                 else
                 {
-                    // Check if user is specifying which item of named item to take
+                    // Check if user is specifying which instance of named item to take
                     if (commandParams.Length == 2)
                     {
                         // First check that second parameter is an integer
                         int instance;
                         if (int.TryParse(commandParams[1], out instance))
                         {
+                            // Get suffix of instance
+                            string suffix = GetOrdinalSuffix(instance);
+
+                            // We don't expect instance to be 0-based, so make it so
+                            instance -= 1;
+
                             // Get listing of items with passed name
                             Item[] items = roomContents.Where(item => item.Name.ToLower() == commandParams[1]).ToArray();
 
-                            // Get item
+                            // Get nth instance of item
+                            Item itemToTake = (instance < items.Length) ? items[instance] : null;
+                            if (itemToTake != null)
+                            {
+                                playerInventory.Add(itemToTake);
+                                output.Add("You take the " + instance + suffix + " " + itemToTake.Name);
+                                roomContents.Remove(itemToTake);
+                            }
+                            else
+                            {
+                                // Output error because nth instance of named item does not exist in this room
+                                output.Add("There is no " + instance + suffix + " " + itemToTake.Name +
+                                           " in this room");
+                            }
+                        }
+                        else
+                        {
+                            // Output error because second parameter is not an integer specifying the instance
+                            // of named item to take
+                            output.Add("Error: Second parameter must be an integer specifying the instance " +
+                                       "of the item to take");
+                        }
+                    }
+                    else
+                    {
+                        // Take first instance of named item from room
+                        Item itemToTake = roomContents.Find(item => item.Name == commandParams[0]);
+                        if (itemToTake != null)
+                        {
+                            playerInventory.Add(itemToTake);
+                            output.Add("You take " + itemToTake.Name);
+                            roomContents.Remove(itemToTake);
+                        }
+                        else
+                        {
+                            // Output error because named item was not found in this room
+                            output.Add("Item of name " + commandParams[0] + " does not exist in this room");
                         }
                     }
                 }

@@ -18,8 +18,8 @@ namespace Dice_and_Combat_Engine
         // Fields
         private CombatEngine combatEngine;      // Handles combat logic
         private CommandParser parser;           // The command parser
-        private Creature[] creatures;           // The creatures in the game
-        private Item[] items;                   // The items in the game
+        private Creature[] _creatures;           // The creatures in the game
+        private Item[] _items;                   // The items in the game
         private Room[] rooms;                   // The rooms in the game
         private RoomGrid dungeon;               // The dungeon
         private Player _player;                 // The player character
@@ -41,7 +41,7 @@ namespace Dice_and_Combat_Engine
             LoadItems();
             LoadRooms();
             dungeon = new RoomGrid(dungeonSize, dungeonSize, rooms, uniqueRooms);
-            dungeon.GenerateRoomContents(creatures, items);
+            dungeon.GenerateRoomContents(_creatures, _items);
             GeneratePlayer();
         }
 
@@ -209,7 +209,7 @@ namespace Dice_and_Combat_Engine
             loadList.Sort((Creature creatureA, Creature creatureB) => creatureA.Stats.name.CompareTo(creatureB.Stats.name));
 
             // Set array
-            creatures = loadList.ToArray();
+            _creatures = loadList.ToArray();
         }
 
         /*
@@ -357,7 +357,7 @@ namespace Dice_and_Combat_Engine
             loadList.Sort((Item a, Item b) => { return a.Name.CompareTo(b.Name); });
 
             // Set array
-            items = loadList.ToArray();
+            _items = loadList.ToArray();
         }
 
         /*
@@ -442,6 +442,15 @@ namespace Dice_and_Combat_Engine
         public string[] ParseCommand(string commandString)
         {
             return parser.Parse(commandString);
+        }
+
+        /*
+            Creatures property
+        */
+
+        public Creature[] Creatures
+        {
+            get { return _creatures; }
         }
 
         /*
