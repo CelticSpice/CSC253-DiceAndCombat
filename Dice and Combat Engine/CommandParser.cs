@@ -132,8 +132,7 @@ namespace Dice_and_Combat_Engine
             // Make sure that command is acceptable
             if (IsGoodCommand(command))
             {
-                string[] commandParams = commandString.Split(new string[] { command, " " },
-                                                             StringSplitOptions.RemoveEmptyEntries);
+                string[] commandParams = Parameterize(commandString);
 
                 switch (command)
                 {
@@ -332,6 +331,12 @@ namespace Dice_and_Combat_Engine
                                 output.Add("No such creature, " + commandParams[0] + ", exists in this room");
                             }
                         }
+                        else
+                        {
+                            // Output error
+                            output.Add("Error: Second parameter must be an integer specifying the instance " +
+                                       "of the creature to look at");
+                        }
                     }
                 }
             }
@@ -464,20 +469,20 @@ namespace Dice_and_Combat_Engine
                             instance -= 1;
 
                             // Get listing of items with passed name
-                            Item[] items = roomContents.Where(item => item.Name.ToLower() == commandParams[1]).ToArray();
+                            Item[] items = roomContents.Where(item => item.Name.ToLower() == commandParams[0]).ToArray();
 
                             // Get nth instance of item
-                            Item itemToTake = (instance < items.Length) ? items[instance] : null;
+                            Item itemToTake = (instance >= 0 && instance < items.Length) ? items[instance] : null;
                             if (itemToTake != null)
                             {
                                 playerInventory.Add(itemToTake);
-                                output.Add("You take the " + instance + suffix + " " + itemToTake.Name);
+                                output.Add("You take the " + (instance + 1) + suffix + " " + itemToTake.Name);
                                 roomContents.Remove(itemToTake);
                             }
                             else
                             {
                                 // Output error because nth instance of named item does not exist in this room
-                                output.Add("There is no " + instance + suffix + " " + itemToTake.Name +
+                                output.Add("There is no " + (instance + 1) + suffix + " " + commandParams[0] +
                                            " in this room");
                             }
                         }
@@ -492,7 +497,7 @@ namespace Dice_and_Combat_Engine
                     else
                     {
                         // Take first instance of named item from room
-                        Item itemToTake = roomContents.Find(item => item.Name == commandParams[0]);
+                        Item itemToTake = roomContents.Find(item => item.Name.ToLower() == commandParams[0]);
                         if (itemToTake != null)
                         {
                             playerInventory.Add(itemToTake);
@@ -507,6 +512,112 @@ namespace Dice_and_Combat_Engine
                     }
                 }
             }
+        }
+
+        /*
+            The Parameterize method converts a command string into an array of parameters
+        */
+
+        private string[] Parameterize(string commandString)
+        {
+            // Get command
+            string command = ExtractCommand(commandString);
+
+            // Prepare parameter list
+            List<string> parameters = new List<string>(commandString.Split(new string[] { command, " " },
+                                                       StringSplitOptions.RemoveEmptyEntries));
+
+            if (parameters.Count >= 2)
+            {
+                // These indexes represent the starting and ending parameters
+                // for purposes of resolving compound parameters, or those
+                // parameters separated by spaces but meant as a single parameter
+                int startIndex = 0;
+                int endIndex = 0;
+
+                while (startIndex < parameters.Count)
+                {
+                    string resolvedParam = parameters[startIndex];
+
+                    // Get list of creature names that begin with resolvedParam
+                    List<string> names = new List<string>();
+                    foreach (Creature creature in game.Creatures)
+                    {
+                        if (creature.Stats.name.ToLower().StartsWith(resolvedParam))
+                        {
+                            names.Add(creature.Stats.name.ToLower());
+                        }
+                    }
+
+                    // Get list of item names that begin with resolvedParam
+                    foreach (Item item in game.Items)
+                    {
+                        if (item.Name.ToLower().StartsWith(resolvedParam))
+                        {
+                            names.Add(item.Name.ToLower());
+                        }
+                    }
+
+                    // While matching names list is not empty and there are more parameters
+                    while (names.Count != 0 && endIndex != parameters.Count - 1)
+                    {
+                        // If list contains an element that begins with resolvedParam + space + next parameter
+                        if (names.Find(name => name.StartsWith(resolvedParam + " " + parameters[endIndex + 1])) != null)
+                        {
+                            // Let resolvedParam = resolvedParam + space + next parameter
+                            resolvedParam += " " + parameters[endIndex + 1];
+                            endIndex++;
+
+                            // Refresh list of names that begin with resolvedParam
+                            // Get list of creature names that begin with resolvedParam
+                            names.Clear();
+                            foreach (Creature creature in game.Creatures)
+                            {
+                                if (creature.Stats.name.ToLower().StartsWith(resolvedParam))
+                                {
+                                    names.Add(creature.Stats.name.ToLower());
+                                }
+                            }
+
+                            // Get list of item names that begin with resolvedParam
+                            foreach (Item item in game.Items)
+                            {
+                                if (item.Name.ToLower().StartsWith(resolvedParam))
+                                {
+                                    names.Add(item.Name.ToLower());
+                                }
+                            }
+                        }
+                        else
+                        {
+                            // Clear match list
+                            names.Clear();
+                        }
+                    }
+
+                    // Check if compound parameters were resolved
+                    if (startIndex != endIndex)
+                    {
+                        // Set element at startIndex in parameter list to new resolved parameter
+                        parameters[startIndex] = resolvedParam;
+
+                        // Remove the elements of the parameter list that were resolved with the
+                        // element at the starting index
+                        while (endIndex != startIndex)
+                        {
+                            parameters.RemoveAt(endIndex);
+                            endIndex--;
+                        }
+                    }
+
+                    // Increment startIndex and endIndex to point to next parameter in list
+                    startIndex++;
+                    endIndex++;
+                }
+            }
+
+            // Return parameters
+            return parameters.ToArray();
         }
     }
 }
