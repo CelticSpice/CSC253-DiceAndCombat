@@ -118,6 +118,112 @@ namespace Dice_and_Combat_Engine
         }
 
         /*
+            The Parameterize method converts a command string into an array of parameters
+        */
+
+        private string[] Parameterize(string commandString)
+        {
+            // Get command
+            string command = ExtractCommand(commandString);
+
+            // Prepare parameter list
+            List<string> parameters = new List<string>(commandString.Split(new string[] { command, " " },
+                                                       StringSplitOptions.RemoveEmptyEntries));
+
+            if (parameters.Count >= 2)
+            {
+                // These indexes represent the starting and ending parameters
+                // for purposes of resolving compound parameters, or those
+                // parameters separated by spaces but meant as a single parameter
+                int startIndex = 0;
+                int endIndex = 0;
+
+                while (startIndex < parameters.Count)
+                {
+                    string resolvedParam = parameters[startIndex];
+
+                    // Get list of creature names that begin with resolvedParam
+                    List<string> names = new List<string>();
+                    foreach (Creature creature in game.Creatures)
+                    {
+                        if (creature.Stats.name.ToLower().StartsWith(resolvedParam))
+                        {
+                            names.Add(creature.Stats.name.ToLower());
+                        }
+                    }
+
+                    // Get list of item names that begin with resolvedParam
+                    foreach (Item item in game.Items)
+                    {
+                        if (item.Name.ToLower().StartsWith(resolvedParam))
+                        {
+                            names.Add(item.Name.ToLower());
+                        }
+                    }
+
+                    // While matching names list is not empty and there are more parameters
+                    while (names.Count != 0 && endIndex != parameters.Count - 1)
+                    {
+                        // If list contains an element that begins with resolvedParam + space + next parameter
+                        if (names.Find(name => name.StartsWith(resolvedParam + " " + parameters[endIndex + 1])) != null)
+                        {
+                            // Let resolvedParam = resolvedParam + space + next parameter
+                            resolvedParam += " " + parameters[endIndex + 1];
+                            endIndex++;
+
+                            // Refresh list of names that begin with resolvedParam
+                            // Get list of creature names that begin with resolvedParam
+                            names.Clear();
+                            foreach (Creature creature in game.Creatures)
+                            {
+                                if (creature.Stats.name.ToLower().StartsWith(resolvedParam))
+                                {
+                                    names.Add(creature.Stats.name.ToLower());
+                                }
+                            }
+
+                            // Get list of item names that begin with resolvedParam
+                            foreach (Item item in game.Items)
+                            {
+                                if (item.Name.ToLower().StartsWith(resolvedParam))
+                                {
+                                    names.Add(item.Name.ToLower());
+                                }
+                            }
+                        }
+                        else
+                        {
+                            // Clear match list
+                            names.Clear();
+                        }
+                    }
+
+                    // Check if compound parameters were resolved
+                    if (startIndex != endIndex)
+                    {
+                        // Set element at startIndex in parameter list to new resolved parameter
+                        parameters[startIndex] = resolvedParam;
+
+                        // Remove the elements of the parameter list that were resolved with the
+                        // element at the starting index
+                        while (endIndex != startIndex)
+                        {
+                            parameters.RemoveAt(endIndex);
+                            endIndex--;
+                        }
+                    }
+
+                    // Increment startIndex and endIndex to point to next parameter in list
+                    startIndex++;
+                    endIndex++;
+                }
+            }
+
+            // Return parameters
+            return parameters.ToArray();
+        }
+
+        /*
             The Parse method parses a user-input command for some action to perform
 
             The method returns the lines of output as an array
@@ -161,7 +267,7 @@ namespace Dice_and_Combat_Engine
                         ParseOpenCommand(commandParams);
                         break;
                     case "quit":
-                        //ParseQuitCommand();
+                        ParseQuitCommand(commandParams);
                         break;
                     case "score":
                         //ParseScoreCommand();
@@ -396,6 +502,25 @@ namespace Dice_and_Combat_Engine
         }
 
         /*
+            The ParseQuitCommand method parses a "quit" command for some action to perform
+        */
+
+        private void ParseQuitCommand(string[] commandParams)
+        {
+            // We expect no parameters
+            if (commandParams.Length == 0)
+            {
+                // Confirm quit
+                output.Add("Quitting...");
+            }
+            else
+            {
+                // Output error
+                output.Add("Error: Command \"quit\" takes no parameters");
+            }
+        }
+
+        /*
             The ParseTakeCommand method parses a "take" command for some action to perform
         */
 
@@ -512,112 +637,6 @@ namespace Dice_and_Combat_Engine
                     }
                 }
             }
-        }
-
-        /*
-            The Parameterize method converts a command string into an array of parameters
-        */
-
-        private string[] Parameterize(string commandString)
-        {
-            // Get command
-            string command = ExtractCommand(commandString);
-
-            // Prepare parameter list
-            List<string> parameters = new List<string>(commandString.Split(new string[] { command, " " },
-                                                       StringSplitOptions.RemoveEmptyEntries));
-
-            if (parameters.Count >= 2)
-            {
-                // These indexes represent the starting and ending parameters
-                // for purposes of resolving compound parameters, or those
-                // parameters separated by spaces but meant as a single parameter
-                int startIndex = 0;
-                int endIndex = 0;
-
-                while (startIndex < parameters.Count)
-                {
-                    string resolvedParam = parameters[startIndex];
-
-                    // Get list of creature names that begin with resolvedParam
-                    List<string> names = new List<string>();
-                    foreach (Creature creature in game.Creatures)
-                    {
-                        if (creature.Stats.name.ToLower().StartsWith(resolvedParam))
-                        {
-                            names.Add(creature.Stats.name.ToLower());
-                        }
-                    }
-
-                    // Get list of item names that begin with resolvedParam
-                    foreach (Item item in game.Items)
-                    {
-                        if (item.Name.ToLower().StartsWith(resolvedParam))
-                        {
-                            names.Add(item.Name.ToLower());
-                        }
-                    }
-
-                    // While matching names list is not empty and there are more parameters
-                    while (names.Count != 0 && endIndex != parameters.Count - 1)
-                    {
-                        // If list contains an element that begins with resolvedParam + space + next parameter
-                        if (names.Find(name => name.StartsWith(resolvedParam + " " + parameters[endIndex + 1])) != null)
-                        {
-                            // Let resolvedParam = resolvedParam + space + next parameter
-                            resolvedParam += " " + parameters[endIndex + 1];
-                            endIndex++;
-
-                            // Refresh list of names that begin with resolvedParam
-                            // Get list of creature names that begin with resolvedParam
-                            names.Clear();
-                            foreach (Creature creature in game.Creatures)
-                            {
-                                if (creature.Stats.name.ToLower().StartsWith(resolvedParam))
-                                {
-                                    names.Add(creature.Stats.name.ToLower());
-                                }
-                            }
-
-                            // Get list of item names that begin with resolvedParam
-                            foreach (Item item in game.Items)
-                            {
-                                if (item.Name.ToLower().StartsWith(resolvedParam))
-                                {
-                                    names.Add(item.Name.ToLower());
-                                }
-                            }
-                        }
-                        else
-                        {
-                            // Clear match list
-                            names.Clear();
-                        }
-                    }
-
-                    // Check if compound parameters were resolved
-                    if (startIndex != endIndex)
-                    {
-                        // Set element at startIndex in parameter list to new resolved parameter
-                        parameters[startIndex] = resolvedParam;
-
-                        // Remove the elements of the parameter list that were resolved with the
-                        // element at the starting index
-                        while (endIndex != startIndex)
-                        {
-                            parameters.RemoveAt(endIndex);
-                            endIndex--;
-                        }
-                    }
-
-                    // Increment startIndex and endIndex to point to next parameter in list
-                    startIndex++;
-                    endIndex++;
-                }
-            }
-
-            // Return parameters
-            return parameters.ToArray();
         }
     }
 }

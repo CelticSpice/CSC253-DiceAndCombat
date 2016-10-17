@@ -79,6 +79,19 @@ namespace Dice_and_Combat_Engine
             commandTxtBox.Focus();
 
             UpdateViews();
+
+            // Check if user requested to quit
+            if (output[0] == "Quitting...")
+            {
+                DialogResult result = MessageBox.Show("Are you sure you want to quit?", "Dice and Combat",
+                                                      MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+                if (result == DialogResult.Yes)
+                {
+                    // Exit
+                    this.Close();
+                }
+            }
         }
     }
 }
