@@ -10,7 +10,8 @@ namespace Dice_and_Combat_Engine
     abstract class Item
     {
         // Fields
-        private string _name;
+        private string _name,
+                       _description;
 
         private int _durability, 
                     _value,
@@ -20,9 +21,10 @@ namespace Dice_and_Combat_Engine
             Constructor
         */
 
-        public Item(string n, int d, int v, int i)
+        public Item(string n, string desc, int d, int v, int i)
         {
             _name = n;
+            _description = desc;
             _durability = d;
             _value = v;
             _id = i;
@@ -35,6 +37,7 @@ namespace Dice_and_Combat_Engine
         public Item()
         {
             _name = "spork";
+            _description = "Complete junk";
             _durability = -1;
             _value = 0;
             _id = -1;
@@ -48,6 +51,16 @@ namespace Dice_and_Combat_Engine
         {
             get { return _name; }
             set { _name = value; }
+        }
+
+        /*
+            Description property
+        */
+
+        public string Description
+        {
+            get { return _description; }
+            set { _description = value; }
         }
 
         /*

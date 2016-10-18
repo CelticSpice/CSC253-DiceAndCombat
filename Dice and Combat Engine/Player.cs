@@ -133,6 +133,38 @@ namespace Dice_and_Combat_Engine
         }
 
         /*
+            The UseItem method has the Player use a specifed item
+        */
+
+        public string UseItem(Item item)
+        {
+            string output = "";
+
+            // Determine the type of item
+            if (item is Weapon)
+            {
+                // Equip weapon
+                EquipWeapon((Weapon)item);
+
+                output = "You equip " + item.Name;
+            }
+            else if (item is Potion)
+            {
+                // Use potion
+                UsePotion((Potion)item);
+
+                output = "You use " + item.Name;
+            }
+            else
+            {
+                // Examine treasure
+                output = item.Description;
+            }
+
+            return output;
+        }
+
+        /*
             The UsePotion method simulates the player using a potion
         */
 

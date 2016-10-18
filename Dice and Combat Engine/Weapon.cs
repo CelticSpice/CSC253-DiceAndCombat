@@ -17,11 +17,11 @@ namespace Dice_and_Combat_Engine
 
         /*
             Constructor
-            Accepts the name, durability, value, and attack bonus of the weapon
+            Accepts the name, description, durability, value, and attack bonus of the weapon
         */
 
-        public Weapon(string name, int durability, int value, int damage)
-            : base(name, durability, value, WEAPON_ID)
+        public Weapon(string name, string desc, int durability, int value, int damage)
+            : base(name, desc, durability, value, WEAPON_ID)
         {
             _damageBonus = damage;
         }
@@ -34,6 +34,7 @@ namespace Dice_and_Combat_Engine
         public Weapon(Weapon w)
         {
             this.Name = w.Name;
+            this.Description = w.Description;
             this.Durability = w.Durability;
             this.Value = w.Value;
             this._damageBonus = w._damageBonus;

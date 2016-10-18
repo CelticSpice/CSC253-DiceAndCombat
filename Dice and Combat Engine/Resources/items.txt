@@ -1,80 +1,94 @@
 ﻿ID: 1
 Name: Short Sword
+Description: A short slashing utility
 Durability: 10
 Value: 15
 DamageBonus: 5
 
 ID: 1
 Name: Long Sword 
+Description: A long slashing utility
 Durability: 12
 Value: 15
 DamageBonus: 6
 
 ID: 1
 Name: Bastard Sword
+Description: Bastard child of blades
 Durability: 6
 Value 40
 DamageBonus: 10
 
 ID: 1
 Name: Reinforced Spork
+Description: Eat with might
 Durability: 666
 Value: 420
 DamageBonus: 0
 
 ID: 1
 Name: Anti Dragon Tech
+Description: You're doomed without it
 Durability: 1
 Value: 40
 DamageBonus: 555
 
 ID: 2
 Name: Small Weak Potion
+Description: Heal yourself a tiny bit
 Durability: 1
 Value: 6
 HealthRestored: 3
 
 ID: 2
 Name: Small Strong Potion
+Description: Heal yourself a bit more
 Durability: 1
 Value: 9
 HealthRestored: 6
 
 ID: 2
 Name: Small Powerful Potion
+Description: Heal yourself a lot more
 Durability: 1
 Value: 15
 HealthRestored: 9
 
 ID: 2
 Name: Large Weak Potion
+Description: Heal yourself a tiny bit - 100% more!
 Durability: 2
 Value: 6
 HealthRestored: 3
 
 ID: 2
 Name: Large Strong Potion
+Description: Heal yourself a bit more - 100% more!
 Durability: 2
 Value: 12
 HealthRestored: 6
 
 ID: 2
 Name: Large Powerful Potion
+Description: Heal yourself a lot more - 100% more
 Durability: 2
 Value: 30
 HealthRestored: 9 
 
 ID: 3
 Name: Australium Nugget
+Description: A nugget - fine piece of Australia
 Durability: 15
 Value: 100
 
 ID: 3
 Name: Australium Bar
+Description: A bar... of Australia
 Durability: 30
 Value: 300
 
 ID: 3
 Name: Australium Boulder
+Description: MOAR AUSTRALIA!!
 Durability: 9001
 Value: 8675309

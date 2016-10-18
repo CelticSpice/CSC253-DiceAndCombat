@@ -19,8 +19,8 @@ namespace Dice_and_Combat_Engine
              Accepts the name, durability, and value
         */
 
-        public Treasure(string name, int durability, int value)
-            : base(name, durability, value, TREASURE_ID)
+        public Treasure(string name, string desc, int durability, int value)
+            : base(name, desc, durability, value, TREASURE_ID)
         {
             // ???  XD
         }
@@ -32,19 +32,9 @@ namespace Dice_and_Combat_Engine
         public Treasure(Treasure t)
         {
             this.Name = t.Name;
+            this.Description = t.Description;
             this.Durability = t.Durability;
             this.Value = t.Value;
-        }
-
-        /*
-            The Use method simulates using treasure.
-            Shall we have it end the game for now?
-        */
-
-        public void Use()
-        {
-            MessageBox.Show("You conquered the dungeon!");
-            Application.Exit();
         }
     }
 }

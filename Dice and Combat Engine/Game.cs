@@ -22,6 +22,7 @@ namespace Dice_and_Combat_Engine
         private Item[] _items;                  // The items in the game
         private Room[] rooms;                   // The rooms in the game
         private RoomGrid dungeon;               // The dungeon
+        private List<string> output;            // Output feedback
         private Player _player;                 // The player character
 
         /*
@@ -43,6 +44,7 @@ namespace Dice_and_Combat_Engine
             dungeon = new RoomGrid(dungeonSize, dungeonSize, rooms, uniqueRooms);
             dungeon.GenerateRoomContents(_creatures, _items);
             GeneratePlayer();
+            output = new List<string>();
         }
 
         /*
@@ -256,7 +258,8 @@ namespace Dice_and_Combat_Engine
                 char[] delim = { ':' };
 
                 // Prepare new item
-                string itemName = "";
+                string itemName = "",
+                       itemDesc = "";
 
                 int itemValue = 0,
                     itemDurability = 0;
@@ -294,6 +297,9 @@ namespace Dice_and_Combat_Engine
                                     case "Name":
                                         itemName = splitLine[1].Trim();
                                         break;
+                                    case "Description":
+                                        itemDesc = splitLine[1].Trim();
+                                        break;
                                     case "Durability":
                                         itemDurability = int.Parse(splitLine[1]);
                                         break;
@@ -307,7 +313,7 @@ namespace Dice_and_Combat_Engine
                             }
 
                             // Create weapon
-                            loadList.Add(new Weapon(itemName, itemDurability, itemValue, damageBonus));
+                            loadList.Add(new Weapon(itemName, itemDesc, itemDurability, itemValue, damageBonus));
                             break;
                         case POTION:
                             // Item is potion
@@ -323,6 +329,9 @@ namespace Dice_and_Combat_Engine
                                     case "Name":
                                         itemName = splitLine[1].Trim();
                                         break;
+                                    case "Description":
+                                        itemDesc = splitLine[1].Trim();
+                                        break;
                                     case "Durability":
                                         itemDurability = int.Parse(splitLine[1]);
                                         break;
@@ -336,7 +345,7 @@ namespace Dice_and_Combat_Engine
                             }
 
                             // Create potion
-                            loadList.Add(new Potion(itemName, itemDurability, itemValue, healthRestored));
+                            loadList.Add(new Potion(itemName, itemDesc, itemDurability, itemValue, healthRestored));
                             break;
                         case TREASURE:
                             // Item is treasure
@@ -350,6 +359,9 @@ namespace Dice_and_Combat_Engine
                                     case "Name":
                                         itemName = splitLine[1].Trim();
                                         break;
+                                    case "Description":
+                                        itemDesc = splitLine[1].Trim();
+                                        break;
                                     case "Durability":
                                         itemDurability = int.Parse(splitLine[1]);
                                         break;
@@ -360,7 +372,7 @@ namespace Dice_and_Combat_Engine
                             }
 
                             // Create treasure
-                            loadList.Add(new Treasure(itemName, itemDurability, itemValue));
+                            loadList.Add(new Treasure(itemName, itemDesc, itemDurability, itemValue));
                             break;
                     }
                 }

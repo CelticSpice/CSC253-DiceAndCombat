@@ -169,7 +169,7 @@ namespace Dice_and_Combat_Engine
                         //ParseEquipCommand(commandParams);
                         break;
                     case "get":
-                        //ParseGetCommand(commandParams);
+                        ParseGetCommand(commandParams);
                         break;
                     case "go":
                         ParseGoCommand(commandParams);
@@ -201,6 +201,64 @@ namespace Dice_and_Combat_Engine
             }
 
             return output.ToArray();
+        }
+
+        /*
+            The ParseGetCommand method parses a "get" command for some action to perform
+        */
+
+        private void ParseGetCommand(string[] commandParams)
+        {
+            // We expect at least 1 and up to 2 parameters
+            if (commandParams.Length >= 1 && commandParams.Length <= 2)
+            {
+                // Determine number of parameters
+                if (commandParams.Length == 1)
+                {
+                    // Get first instance of named item from PC's inventory to use
+                    Item item = game.Player.Inventory.Find(i => i.Name.ToLower() == commandParams[0]);
+                    
+                    if (item != null)
+                    {
+                        string feedback = game.Player.UseItem(item);
+                        output.Add(feedback);
+                    }
+                    else
+                    {
+                        output.Add("No such item exists in your inventory");
+                    }
+                }
+                else
+                {
+                    // Get nth instance of named item from PC's inventory to use
+                    int instance;
+                    if (int.TryParse(commandParams[1], out instance))
+                    {
+                        string suffix = GetOrdinalSuffix(instance);
+                        instance--;
+                        Item[] items = game.Player.Inventory.Where(i => i.Name.ToLower() ==
+                                                                   commandParams[0]).ToArray();
+
+                        Item item = (instance >= 0 && instance < items.Length) ? items[instance] : null;
+
+                        if (item != null)
+                        {
+                            string feedback = game.Player.UseItem(item);
+                            output.Add(feedback);
+                        }
+                        else
+                        {
+                            output.Add("No " + (instance + 1) + suffix + " instance of such " +
+                                       "an item exists in your inventory");
+                        }
+                    }
+                    else
+                    {
+                        output.Add("Second parameter must be an integer specifying the instace " +
+                                   "of the item in your inventory to get");
+                    }
+                }
+            }
         }
 
         /*

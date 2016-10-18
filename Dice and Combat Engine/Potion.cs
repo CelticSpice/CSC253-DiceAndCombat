@@ -17,10 +17,10 @@ namespace Dice_and_Combat_Engine
 
         /*
             Constructor
-            Accepts the name, durability, value, and amount of health restored
+            Accepts the name, description, durability, value, and amount of health restored
         */
-        public Potion(string name, int durability, int value, int heal)
-            : base(name, durability, value, POTION_ID)
+        public Potion(string name, string desc, int durability, int value, int heal)
+            : base(name, desc, durability, value, POTION_ID)
         {
             _healthRestored = heal;
         }
@@ -32,6 +32,7 @@ namespace Dice_and_Combat_Engine
         public Potion(Potion p)
         {
             this.Name = p.Name;
+            this.Description = p.Description;
             this.Durability = p.Durability;
             this.Value = p.Value;
             this._healthRestored = p._healthRestored;
