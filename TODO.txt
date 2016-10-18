@@ -44,7 +44,7 @@ TODO:    Mark task as complete as: #COMPLETE^^<task> e.g. #COMPLETE^^Write todo 
 #COMPLETE^^Implement TAKE command, which should accept an argument specifying an item in the current room
     to pick up (take).
 
-Implement GET command, which should accept an integer argument specifying an item in the PC's
+#COMPLETE^^Implement GET command, which should accept an argument specifying an item in the PC's
     inventory to retrieve or activate
 
 Implement DROP command, which should accept an integer argument specifying an item in the PC's
