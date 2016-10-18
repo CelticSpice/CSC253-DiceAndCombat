@@ -104,7 +104,7 @@ namespace Dice_and_Combat_Engine
             int i = 0;
             while (!good && i < commands.Length)
             {
-                if (command.Equals(commands[i]))
+                if (command == commands[i])
                 {
                     good = true;
                 }
@@ -126,101 +126,17 @@ namespace Dice_and_Combat_Engine
             // Get command
             string command = ExtractCommand(commandString);
 
-            // Prepare parameter list
-            List<string> parameters = new List<string>(commandString.Split(new string[] { command, " " },
-                                                       StringSplitOptions.RemoveEmptyEntries));
+            // Specify delimits as the command and space characters
+            string[] delims = { command, " " };
 
-            if (parameters.Count >= 2)
-            {
-                // These indexes represent the starting and ending parameters
-                // for purposes of resolving compound parameters, or those
-                // parameters separated by spaces but meant as a single parameter
-                int startIndex = 0;
-                int endIndex = 0;
+            // Split the command string into parameters
+            string[] parameters = commandString.Split(delims, StringSplitOptions.RemoveEmptyEntries);
 
-                while (startIndex < parameters.Count)
-                {
-                    string resolvedParam = parameters[startIndex];
+            // Resolve any compound parameters
+            parameters = ResolveCompoundParameters(parameters);
 
-                    // Get list of creature names that begin with resolvedParam
-                    List<string> names = new List<string>();
-                    foreach (Creature creature in game.Creatures)
-                    {
-                        if (creature.Stats.name.ToLower().StartsWith(resolvedParam))
-                        {
-                            names.Add(creature.Stats.name.ToLower());
-                        }
-                    }
-
-                    // Get list of item names that begin with resolvedParam
-                    foreach (Item item in game.Items)
-                    {
-                        if (item.Name.ToLower().StartsWith(resolvedParam))
-                        {
-                            names.Add(item.Name.ToLower());
-                        }
-                    }
-
-                    // While matching names list is not empty and there are more parameters
-                    while (names.Count != 0 && endIndex != parameters.Count - 1)
-                    {
-                        // If list contains an element that begins with resolvedParam + space + next parameter
-                        if (names.Find(name => name.StartsWith(resolvedParam + " " + parameters[endIndex + 1])) != null)
-                        {
-                            // Let resolvedParam = resolvedParam + space + next parameter
-                            resolvedParam += " " + parameters[endIndex + 1];
-                            endIndex++;
-
-                            // Refresh list of names that begin with resolvedParam
-                            // Get list of creature names that begin with resolvedParam
-                            names.Clear();
-                            foreach (Creature creature in game.Creatures)
-                            {
-                                if (creature.Stats.name.ToLower().StartsWith(resolvedParam))
-                                {
-                                    names.Add(creature.Stats.name.ToLower());
-                                }
-                            }
-
-                            // Get list of item names that begin with resolvedParam
-                            foreach (Item item in game.Items)
-                            {
-                                if (item.Name.ToLower().StartsWith(resolvedParam))
-                                {
-                                    names.Add(item.Name.ToLower());
-                                }
-                            }
-                        }
-                        else
-                        {
-                            // Clear match list
-                            names.Clear();
-                        }
-                    }
-
-                    // Check if compound parameters were resolved
-                    if (startIndex != endIndex)
-                    {
-                        // Set element at startIndex in parameter list to new resolved parameter
-                        parameters[startIndex] = resolvedParam;
-
-                        // Remove the elements of the parameter list that were resolved with the
-                        // element at the starting index
-                        while (endIndex != startIndex)
-                        {
-                            parameters.RemoveAt(endIndex);
-                            endIndex--;
-                        }
-                    }
-
-                    // Increment startIndex and endIndex to point to next parameter in list
-                    startIndex++;
-                    endIndex++;
-                }
-            }
-
-            // Return parameters
-            return parameters.ToArray();
+            // Return
+            return parameters;
         }
 
         /*
@@ -231,6 +147,7 @@ namespace Dice_and_Combat_Engine
 
         public string[] Parse(string commandString)
         {
+            // Clear output for fresh feedback
             output.Clear();
 
             string command = ExtractCommand(commandString);
@@ -341,7 +258,7 @@ namespace Dice_and_Combat_Engine
             else
             {
                 // Output error because there are an invalid number of parameters
-                output.Add("Invalid number of parameters for command: go");
+                output.Add("Command \"go\" takes 1 parameter");
             }
         }
 
@@ -397,7 +314,7 @@ namespace Dice_and_Combat_Engine
                         }
                         else
                         {
-                            output.Add("No such creature, " + commandParams[0] + ", exists in this room");
+                            output.Add("No such creature exists in this room");
                         }
                     }
                     else
@@ -434,13 +351,14 @@ namespace Dice_and_Combat_Engine
                             }
                             else
                             {
-                                output.Add("No such creature, " + commandParams[0] + ", exists in this room");
+                                output.Add("No " + (instance + 1) + suffix + " instance of such a creature " +
+                                           "exists in this room");
                             }
                         }
                         else
                         {
                             // Output error
-                            output.Add("Error: Second parameter must be an integer specifying the instance " +
+                            output.Add("Second parameter must be an integer specifying the instance " +
                                        "of the creature to look at");
                         }
                     }
@@ -497,7 +415,7 @@ namespace Dice_and_Combat_Engine
             }
             else
             {
-                output.Add("Invalid number of parameters for command: open");
+                output.Add("Command \"open\" takes 1 parameter");
             }
         }
 
@@ -527,10 +445,10 @@ namespace Dice_and_Combat_Engine
         private void ParseTakeCommand(string[] commandParams)
         {
             // We expect up to 2 parameters, and at least 1
-            if (commandParams.Length == 0)
+            if (commandParams.Length == 0 || commandParams.Length > 2)
             {
                 // Output error because there is an invalid number of parameters
-                output.Add("Error: Command \"take\" takes at least 1 parameter: name of item to take");
+                output.Add("Command \"take\" takes at least 1 and up to 2 parameters");
             }
             else
             {
@@ -559,7 +477,7 @@ namespace Dice_and_Combat_Engine
                         else
                         {
                             // Output error because no items with the specifed name were found
-                            output.Add("No such items of " + commandParams[1] + " exist in this room");
+                            output.Add("No such items exist in this room");
                         }
                     }
                     else
@@ -607,15 +525,15 @@ namespace Dice_and_Combat_Engine
                             else
                             {
                                 // Output error because nth instance of named item does not exist in this room
-                                output.Add("There is no " + (instance + 1) + suffix + " " + commandParams[0] +
-                                           " in this room");
+                                output.Add("No " + (instance + 1) + suffix + " instance of such an item " +
+                                           "exists in this room");
                             }
                         }
                         else
                         {
                             // Output error because second parameter is not an integer specifying the instance
                             // of named item to take
-                            output.Add("Error: Second parameter must be an integer specifying the instance " +
+                            output.Add("Second parameter must be an integer specifying the instance " +
                                        "of the item to take");
                         }
                     }
@@ -632,11 +550,106 @@ namespace Dice_and_Combat_Engine
                         else
                         {
                             // Output error because named item was not found in this room
-                            output.Add("Item of name " + commandParams[0] + " does not exist in this room");
+                            output.Add("No such items exist in this room");
                         }
                     }
                 }
             }
+        }
+
+        /*
+            The ResolveCompoundParameters method handles merging two or more elements
+            of an array that represent a single parameter into a single parameter
+
+            If there are 1 or 0 parameters, the array is returned unchanged
+        */
+
+        private string[] ResolveCompoundParameters(string[] parameters)
+        {
+            // The array to return
+            string[] toReturn;
+
+            if (parameters.Length >= 2)
+            {
+                // Prepare list for the purposes of modifying the array
+                List<string> paramList = new List<string>(parameters);
+
+                // Prepare list of object names
+                List<string> names = new List<string>();
+
+                // Candidate for a compound parameter name, built as name matches are found
+                StringBuilder builtParameter = new StringBuilder();               
+
+                // Index of the parameter we begin checking names against
+                int start = 0;
+
+                // The current index of the element in the parameter list we have expanded to
+                int current = 0;
+
+                // While there are more parameters
+                while (start < paramList.Count)
+                {
+                    // Start off built parameter with the start parameter
+                    builtParameter.Append(paramList[start]);
+
+                    // Get list of object names that start with the start parameter
+                    names.AddRange(game.GetObjectNames().Where(name => name.StartsWith(paramList[start])));
+
+                    // While matching names list is not empty and there are more parameters
+                    while (names.Count != 0 && current != paramList.Count - 1)
+                    {
+                        // If name list contains elements that start with the built parameter and the next parameter joined together
+                        if (names.Find(name => name.StartsWith(builtParameter.ToString() + " " + paramList[current + 1])) != null)
+                        {
+                            // Join the built parameter and the next parameter together into a single parameter
+                            builtParameter.Append(" " + paramList[current + 1]);
+
+                            // Increment current to point to the next parameter which we have expanded to
+                            current++;
+
+                            // Check if the currently built parameter matches exactly with an object name
+                            // In which case, a compound parameter has definitely been resolved
+                            if (names.Contains(builtParameter.ToString()))
+                            {
+                                // Set start parameter to the resolved parameter
+                                paramList[start] = builtParameter.ToString();
+
+                                // Remove all parameters from the parameter list starting at
+                                // the current index and down to but not including the start
+                                // index
+                                while (current != start)
+                                {
+                                    paramList.RemoveAt(current);
+                                    current--;
+                                }
+                            }
+
+                            // Refresh list of names that begin with the built parameter
+                            names.RemoveAll(name => !name.StartsWith(builtParameter.ToString()));
+                        }
+                        else
+                        {
+                            // Clear names
+                            names.Clear();
+                        }
+                    }
+
+                    // Increment start to point to the next parameter in the parameter list
+                    start++;
+                    builtParameter.Clear();
+                }
+
+                // Prepare to return possibly modifed array
+                toReturn = paramList.ToArray();
+            }
+            else
+            {
+                // Parameters are unchanged
+                toReturn = parameters;
+            }
+
+            // Return
+            return toReturn;
         }
     }
 }

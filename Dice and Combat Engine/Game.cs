@@ -18,8 +18,8 @@ namespace Dice_and_Combat_Engine
         // Fields
         private CombatEngine combatEngine;      // Handles combat logic
         private CommandParser parser;           // The command parser
-        private Creature[] _creatures;           // The creatures in the game
-        private Item[] _items;                   // The items in the game
+        private Creature[] _creatures;          // The creatures in the game
+        private Item[] _items;                  // The items in the game
         private Room[] rooms;                   // The rooms in the game
         private RoomGrid dungeon;               // The dungeon
         private Player _player;                 // The player character
@@ -92,6 +92,26 @@ namespace Dice_and_Combat_Engine
         public string GetDungeonASCII()
         {
             return dungeon.ToString();
+        }
+
+        /*
+            The GetObjectNames method returns an array containing the names of every
+            object in the game, sorted in alphabetical order
+        */
+
+        public string[] GetObjectNames()
+        {
+            List<string> names = new List<string>();
+            foreach (Creature creature in _creatures)
+            {
+                names.Add(creature.Stats.name.ToLower());
+            }
+            foreach (Item item in _items)
+            {
+                names.Add(item.Name.ToLower());
+            }
+            names.Sort((string a, string b) => { return a.CompareTo(b); });
+            return names.ToArray();
         }
 
         /*
