@@ -6,7 +6,7 @@
 */
 
 using System.Collections.Generic;
-using System.Drawing;
+using System.Linq;
 
 namespace Dice_and_Combat_Engine
 {
@@ -40,6 +40,39 @@ namespace Dice_and_Combat_Engine
             _inventory = new List<Item>();
             _equippedWeapon = null;
             _leveledUp = false;
+        }
+
+        /*
+            The Attack method has the Player execute an attack against a Creature,
+            reducing the defender's hitpoints and returning the damage dealth
+        */
+
+        public override int Attack(Creature defender)
+        {
+            Stats.damage.Roll();
+            int damage = Stats.damage.DieResult;
+            BaseStats newDefenderStats = defender.Stats;
+            newDefenderStats.hitPoints -= damage;
+
+            if (newDefenderStats.hitPoints <= 0)
+            {
+                Location.Denizens.Remove(defender);
+            }
+            else
+            {
+                defender.Stats = newDefenderStats;
+            }
+
+            if (_equippedWeapon != null)
+            {
+                _equippedWeapon.Use();
+                if (_equippedWeapon.Durability == 0)
+                {
+                    _inventory.Remove(_equippedWeapon);
+                    UnequipWeapon();
+                }
+            }
+            return damage;
         }
 
         /*
@@ -109,7 +142,7 @@ namespace Dice_and_Combat_Engine
         }
 
         /*
-            The EquipWeapon method simulates the player equipping a weapon
+            The EquipWeapon method has the player equip a weapon
             It returns the damage bonus the weapon grants
         */
 
@@ -123,7 +156,48 @@ namespace Dice_and_Combat_Engine
         }
 
         /*
-            The UnequipWeapon method simulates the player unequipping a weapon
+            The Take method has the Player take an item from the Player's current location
+            and place it into the Player's inventory
+        */
+
+        public string Take(Item item, bool takeAll = false)
+        {
+            string feedback = "";
+            if (Location.Contents.Contains(item))
+            {
+                if (!takeAll)
+                {
+                    Location.Contents.Remove(item);
+                    _inventory.Add(item);
+                    feedback += "You take " + item.Name + "\n";
+                }
+                else
+                {
+                    _inventory.AddRange(Location.Contents.Where(i => i.Name == item.Name));
+                    Location.Contents.RemoveAll(i => i.Name == item.Name);
+                    feedback += "You take every " + item.Name + " from the room\n";
+                }
+            }
+            else
+            {
+                feedback += "There is no " + item.Name + " in this room to take\n";
+            }
+            return feedback;
+        }
+
+        /*
+            The Take method has the Player take a specified instance of an item from
+            the Player's location and place it into the Player's inventory
+        */
+
+        public string Take(Item item, int instance)
+        {
+            string feedback = "";
+            if (instance >= 1)
+        }
+
+        /*
+            The UnequipWeapon method has the player unequip a weapon
         */
 
         public void UnequipWeapon()

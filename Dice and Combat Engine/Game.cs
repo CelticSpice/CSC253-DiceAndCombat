@@ -16,7 +16,7 @@ namespace Dice_and_Combat_Engine
     class Game
     {
         // Fields
-        private CombatEngine combatEngine;      // Handles combat logic
+        private CombatEngine _combatEngine;      // Handles combat logic
         private CommandParser parser;           // The command parser
         private Creature[] _creatures;          // The creatures in the game
         private Item[] _items;                  // The items in the game
@@ -36,7 +36,7 @@ namespace Dice_and_Combat_Engine
 
         public Game(int dungeonSize, bool uniqueRooms = false)
         {
-            combatEngine = new CombatEngine();
+            _combatEngine = new CombatEngine();
             parser = new CommandParser(this);
             LoadCreatures();
             LoadItems();
@@ -114,6 +114,48 @@ namespace Dice_and_Combat_Engine
             }
             names.Sort((string a, string b) => { return a.CompareTo(b); });
             return names.ToArray();
+        }
+
+        /*
+            The GetOrdinalSuffix method returns the appropriate suffix for an
+            integer number
+        */
+
+        private string GetOrdinalSuffix(int num)
+        {
+            string suffix = "";
+
+            // Numbers in the range of 10-19 always have the suffix "th"
+            if (num >= 10 && num <= 19)
+            {
+                suffix = "th";
+            }
+            else
+            {
+                // Get the number in the 1st place
+                while (num / 10 != 0)
+                {
+                    num /= 10;
+                }
+
+                // Determine suffix
+                switch (num)
+                {
+                    case 1:
+                        suffix = "st";
+                        break;
+                    case 2:
+                        suffix = "nd";
+                        break;
+                    case 3:
+                        suffix = "rd";
+                        break;
+                    default:
+                        suffix = "th";
+                        break;
+                }
+            }
+            return suffix;
         }
 
         /*
@@ -474,6 +516,15 @@ namespace Dice_and_Combat_Engine
         public string ParseCommand(string commandString)
         {
             return parser.Parse(commandString.Trim().ToLower());
+        }
+
+        /*
+            CombatEngine property
+        */
+
+        public CombatEngine CombatEngine
+        {
+            get { return _combatEngine; }
         }
 
         /*

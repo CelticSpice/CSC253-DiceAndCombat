@@ -80,6 +80,23 @@ namespace Dice_and_Combat_Engine
         }
 
         /*
+            The Attack method has the Creature execute an attack against another Creature,
+            reducing the attacked Creature's hitpoints and returning the damage dealt
+        */
+
+        public virtual int Attack(Creature defender)
+        {
+            _stats.damage.Roll();
+            int damage = _stats.damage.DieResult;
+            defender._stats.hitPoints -= damage;
+            if (defender._stats.hitPoints <= 0)
+            {
+                _location.Denizens.Remove(defender);
+            }
+            return damage;
+        }
+
+        /*
             Stats property
         */
 

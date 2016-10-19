@@ -49,48 +49,6 @@ namespace Dice_and_Combat_Engine
         }
 
         /*
-            The GetOrdinalSuffix method returns the appropriate suffix for an
-            integer number
-        */
-
-        private string GetOrdinalSuffix(int num)
-        {
-            string suffix = "";
-            
-            // Numbers in the range of 10-19 always have the suffix "th"
-            if (num >= 10 && num <= 19)
-            {
-                suffix = "th";
-            }
-            else
-            {
-                // Get the number in the 1st place
-                while (num / 10 != 0)
-                {
-                    num /= 10;
-                }
-
-                // Determine suffix
-                switch (num)
-                {
-                    case 1:
-                        suffix = "st";
-                        break;
-                    case 2:
-                        suffix = "nd";
-                        break;
-                    case 3:
-                        suffix = "rd";
-                        break;
-                    default:
-                        suffix = "th";
-                        break;
-                }
-            }
-            return suffix;
-        }
-
-        /*
             The IsGoodCommand method determines if a user-input command is acceptable
         */
 
@@ -180,9 +138,75 @@ namespace Dice_and_Combat_Engine
             }
             else
             {
-                output += "Bad command: " + command;
+                output += "Bad command: " + command + "\n";
             }
             return output;
+        }
+
+        /*
+            The ParseAttackCommand method parses an "attack" command for some action to perform
+        */
+
+        private void ParseAttackCommand(string[] commandParams)
+        {
+            // We expect at least 1 and up to 2 parameters
+            if (commandParams.Length == 1 || commandParams.Length == 2)
+            {
+                List<Creature> roomDenizens = game.Player.Location.Denizens;
+                Player player = game.Player;
+
+                // Determine number of parameters
+                if (commandParams.Length == 1)
+                {
+                    // Player attacks first instance of named creature
+                    Creature creature = roomDenizens.Find(c => c.Stats.name.ToLower() == commandParams[0]);
+                    if (creature != null)
+                    {
+                        player.Target = creature;
+                        creature.Target = player;
+                        output += game.CombatEngine.DoCombat(player, player.Target);
+                        output += game.CombatEngine.DoCombat(creature, creature.Target);
+                    }
+                    else
+                    {
+                        output += "No such creature, " + commandParams[0] + ", exists in this room\n";
+                    }
+                }
+                else
+                {
+                    // Player attacks nth instance of named creature
+                    int instance;
+                    if (int.TryParse(commandParams[1], out instance))
+                    {
+                        string suffix = GetOrdinalSuffix(instance);
+                        instance -= 1;       // We don't expect instance to be 0-based, so make it so
+                        Creature[] creatures = roomDenizens.Where(c => c.Stats.name.ToLower() ==
+                                                                  commandParams[0]).ToArray();
+                        Creature creature = (instance >= 0 && instance < creatures.Length) ? creatures[instance] : null;
+                        if (creature != null)
+                        {
+                            player.Target = creature;
+                            creature.Target = player;
+                            output += game.CombatEngine.DoCombat(player, player.Target);
+                            output += game.CombatEngine.DoCombat(creature, creature.Target);
+                        }
+                        else
+                        {
+                            output += "No " + (instance + 1) + suffix + " " +
+                                      commandParams[0] + " exists in this room\n";
+                        }
+                    }
+                    else
+                    {
+                        output += "Second parameter must be an integer specifying which " +
+                                  "of " + commandParams[0] + " to attack\n";
+                    }
+                }
+            }
+            else
+            {
+                output += "Command \"attack\" syntax: [ creatureToAttack: Creature ] { instanceOf: int }\n";
+            }
         }
 
         /*
@@ -206,11 +230,11 @@ namespace Dice_and_Combat_Engine
                     {
                         playerInventory.Remove(item);
                         roomContents.Add(item);
-                        output += "You drop " + item.Name;
+                        output += "You drop " + item.Name + "\n";
                     }
                     else
                     {
-                        output += "No such item exists in your inventory";
+                        output += "No such item exists in your inventory\n";
                     }
                 }
                 else
@@ -228,24 +252,24 @@ namespace Dice_and_Combat_Engine
                             playerInventory.Remove(item);
                             roomContents.Add(item);
                             output += "You drop the " + (instance + 1) + suffix + " " +
-                                      item.Name + " from your inventory";
+                                      item.Name + " from your inventory\n";
                         }
                         else
                         {
                             output += "You don't have a " + (instance + 1) + suffix + " " +
-                                      commandParams[0] + " in your inventory to drop";
+                                      commandParams[0] + " in your inventory to drop\n";
                         }
                     }
                     else
                     {
                         output += "Second parameter must be an integer specifying which " +
-                                   "of " + commandParams[0] + " in your inventory to drop";
+                                   "of " + commandParams[0] + " in your inventory to drop\n";
                     }
                 }
             }
             else
             {
-                output += "Command \"drop\" syntax: [ itemName: string ] { instanceOf: int }";
+                output += "Command \"drop\" syntax: [ itemName: string ] { instanceOf: int }\n";
             }
         }
 
@@ -271,7 +295,7 @@ namespace Dice_and_Combat_Engine
                         if (item is Weapon)
                         {
                             int bonus = player.EquipWeapon((Weapon)item);
-                            output += "You equip " + item.Name + ", increasing your damage by " + bonus;
+                            output += "You equip " + item.Name + ", increasing your damage by " + bonus + "\n";
                         }
                         else if (item is Potion)
                         {
