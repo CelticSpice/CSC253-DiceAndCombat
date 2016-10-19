@@ -47,10 +47,8 @@ TODO:    Mark task as complete as: #COMPLETE^^<task> e.g. #COMPLETE^^Write todo 
 #COMPLETE^^Implement GET command, which should accept an argument specifying an item in the PC's
     inventory to retrieve or activate
 
-Implement DROP command, which should accept an integer argument specifying an item in the PC's
+#COMPLETE^^Implement DROP command, which should accept an argument specifying an item in the PC's
     inventory to drop in the current room.
-
-Flesh out DROP command to add dropped item to room's item list
 
 #COMPLETE^^Implement OPEN command, which should accept a direction (North, South, East, West) as an argument
     specifying the exit of the current room to open door of.

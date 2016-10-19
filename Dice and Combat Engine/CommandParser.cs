@@ -163,7 +163,7 @@ namespace Dice_and_Combat_Engine
                         //ParseAttackCommand(commandParams);
                         break;
                     case "drop":
-                        //ParseDropCommand(commandParams);
+                        ParseDropCommand(commandParams);
                         break;
                     case "equip":
                         //ParseEquipCommand(commandParams);
@@ -201,6 +201,69 @@ namespace Dice_and_Combat_Engine
             }
 
             return output.ToArray();
+        }
+
+        /*
+            The ParseDropCommand method parses a "drop" command for some action to perform
+        */
+
+        private void ParseDropCommand(string[] commandParams)
+        {
+            // We expect at least 1 and up to 2 parmeters
+            if (commandParams.Length >= 1 && commandParams.Length <= 2)
+            {
+                List<Item> roomContents = game.Player.Location.Contents;
+                List<Item> playerInventory = game.Player.Inventory;
+
+                // Determine the number of parameters
+                if (commandParams.Length == 1)
+                {
+                    // Drop first instance of named item from PC's inventory in the current room
+                    Item item = playerInventory.Find(i => i.Name.ToLower() == commandParams[0]);
+                    if (item != null)
+                    {
+                        playerInventory.Remove(item);
+                        roomContents.Add(item);
+                        output.Add("You drop " + item.Name);
+                    }
+                    else
+                    {
+                        output.Add("No such item exists in your inventory");
+                    }
+                }
+                else
+                {
+                    // Drop nth instance of named item from PC's inventory in the current room
+                    int instance;
+                    if (int.TryParse(commandParams[1], out instance))
+                    {
+                        string suffix = GetOrdinalSuffix(instance);
+                        instance -= 1;      // We don't expect instance to be 0-based, so make it so
+                        Item[] items = playerInventory.Where(i => i.Name.ToLower() == commandParams[0]).ToArray();
+                        Item item = (instance >= 0 && instance < items.Length) ? items[instance] : null;
+                        if (item != null)
+                        {
+                            playerInventory.Remove(item);
+                            roomContents.Add(item);
+                            output.Add("You drop the " + (instance + 1) + suffix + " instance of " + item.Name);
+                        }
+                        else
+                        {
+                            output.Add("No " + (instance + 1) + suffix + " instance of such " +
+                                       "an item exists in your inventory");
+                        }
+                    }
+                    else
+                    {
+                        output.Add("Second parameter must be an integer specifying the instance " +
+                                   "of the item in your inventory to drop");
+                    }
+                }
+            }
+            else
+            {
+                output.Add("Command \"drop\" syntax: [itemName: string] {instanceOf: int}");
+            }
         }
 
         /*
