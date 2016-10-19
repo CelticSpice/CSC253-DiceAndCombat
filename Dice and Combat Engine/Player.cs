@@ -110,14 +110,16 @@ namespace Dice_and_Combat_Engine
 
         /*
             The EquipWeapon method simulates the player equipping a weapon
+            It returns the damage bonus the weapon grants
         */
 
-        public void EquipWeapon(Weapon weapon)
+        public int EquipWeapon(Weapon weapon)
         {
             _equippedWeapon = weapon;
             BaseStats newStats = Stats;
             newStats.damage.DieSize += _equippedWeapon.DamageBonus;
             Stats = newStats;
+            return weapon.DamageBonus;
         }
 
         /*
@@ -133,62 +135,24 @@ namespace Dice_and_Combat_Engine
         }
 
         /*
-            The UseItem method has the Player use a specifed item
+            The UsePotion method has the player use a potion
+            It returns the amount of health restored
         */
 
-        public string UseItem(Item item)
+        public int UsePotion(Potion potion)
         {
-            string output = "";
-
-            // Determine the type of item
-            if (item is Weapon)
-            {
-                // Equip weapon
-                EquipWeapon((Weapon)item);
-
-                output = "You equip " + item.Name;
-            }
-            else if (item is Potion)
-            {
-                // Use potion
-                UsePotion((Potion)item);
-
-                output = "You use " + item.Name;
-            }
-            else
-            {
-                // Examine treasure
-                output = item.Description;
-            }
-
-            return output;
-        }
-
-        /*
-            The UsePotion method simulates the player using a potion
-        */
-
-        public void UsePotion(Potion potion)
-        {
-            // Update player's hp appropriately
             BaseStats newStats = Stats;
             newStats.hitPoints += potion.Use();
-
-            // Make sure hp does not exceed max
             if (newStats.hitPoints > Stats.maxHitPoints)
             {
                 newStats.hitPoints = Stats.maxHitPoints;
             }
-
-            // Set new stats
             Stats = newStats;
-
-            // Check if potion is destroyed
             if (potion.Durability == 0)
             {
-                // Remove potion from inventory
                 _inventory.Remove(potion);
             }
+            return potion.HealthRestored;
         }
 
         /*

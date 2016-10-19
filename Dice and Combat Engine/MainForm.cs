@@ -13,7 +13,7 @@ namespace Dice_and_Combat_Engine
     public partial class MainForm : Form
     {
         // Fields
-        Game game;  // Handles game logic
+        Game game;
 
         /*
             Constructor
@@ -24,7 +24,6 @@ namespace Dice_and_Combat_Engine
             InitializeComponent();
             const int SIZE = 5;
             game = new Game(SIZE);
-
             Console.WriteLine(game.GetDungeonASCII());
             StartGame();
         }
@@ -41,7 +40,6 @@ namespace Dice_and_Combat_Engine
             playerHPTextBox.Text = game.Player.Stats.hitPoints.ToString();
             playerABTextBox.Text = game.Player.Stats.attackBonus.ToString();
             playerACTextBox.Text = game.Player.Stats.armorClass.ToString();
-
             roomNameLbl.Text = game.Player.Location.Name;
         }
 
@@ -54,7 +52,6 @@ namespace Dice_and_Combat_Engine
             playerHPTextBox.Text = game.Player.Stats.hitPoints.ToString();
             playerABTextBox.Text = game.Player.Stats.attackBonus.ToString();
             playerACTextBox.Text = game.Player.Stats.armorClass.ToString();
-
             roomNameLbl.Text = game.Player.Location.Name;
 
             if (game.Player.Target != null)
@@ -72,16 +69,16 @@ namespace Dice_and_Combat_Engine
 
         private void goBtn_Click(object sender, EventArgs e)
         {
-            string[] output = game.ParseCommand(commandTxtBox.Text.Trim().ToLower());
-            outputLst.Items.AddRange(output);
-            outputLst.TopIndex = outputLst.Items.Count - 1;
+            string output = game.ParseCommand(commandTxtBox.Text);
+            outputRTxtBox.Text += output + "\n";
+            outputRTxtBox.SelectionStart = outputRTxtBox.Text.Length;
+            outputRTxtBox.ScrollToCaret();
             commandTxtBox.Text = "";
             commandTxtBox.Focus();
-
             UpdateViews();
 
             // Check if user requested to quit
-            if (output[0] == "Quitting...")
+            if (output == "Quitting...")
             {
                 DialogResult result = MessageBox.Show("Are you sure you want to quit?", "Dice and Combat",
                                                       MessageBoxButtons.YesNo, MessageBoxIcon.Question);

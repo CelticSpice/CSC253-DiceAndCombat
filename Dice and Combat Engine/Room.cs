@@ -100,10 +100,7 @@ namespace Dice_and_Combat_Engine
             // Build info
             if (info.Count > 1)
             {
-                string indent = "--  ";
-
-                info[0] += ":";
-
+                info[0] += ": ";
                 int count = 0;
                 for (int i = 1; i < info.Count; i++)
                 {
@@ -122,22 +119,21 @@ namespace Dice_and_Combat_Engine
                         info[i] += "s";
                     }
 
-                    // Determine number of distinct types of items in room for formatting purposes
+                    // Format
                     if (info.Count == 2)
                     {
-                        info[i] = indent + count + " " + info[i];
+                        info[i] = count + " " + info[i];
                     }
                     else if (i < info.Count - 1)
                     {
-                        info[i] = indent + count + " " + info[i] + ",";
+                        info[i] = count + " " + info[i] + ", ";
                     }
                     else
                     {
-                        info[i] = indent + "and " + count + " " + info[i];
+                        info[i] = "and " + count + " " + info[i];
                     }
                 }
             }
-
             return info.ToArray();
         }
 
@@ -164,10 +160,7 @@ namespace Dice_and_Combat_Engine
             // Build info
             if (info.Count > 1)
             {
-                string indent = "--  ";
-
-                info[0] += ":";
-
+                info[0] += ": ";
                 int count = 0;
                 for (int i = 1; i < info.Count; i++)
                 {
@@ -186,22 +179,21 @@ namespace Dice_and_Combat_Engine
                         info[i] += "s";
                     }
 
-                    // Determine number of distinct types of creatures in room for formatting purposes
+                    // Format
                     if (info.Count == 2)
                     {
-                        info[i] = indent + count + " " + info[i];
+                        info[i] = count + " " + info[i];
                     }
                     else if (i < info.Count - 1)
                     {
-                        info[i] = indent + count + " " + info[i] + ",";
+                        info[i] = count + " " + info[i] + ", ";
                     }
                     else
                     {
-                        info[i] = indent + "and " + count + " " + info[i];
+                        info[i] = "and " + count + " " + info[i];
                     }
                 }
             }
-
             return info.ToArray();
         }
 
@@ -213,10 +205,7 @@ namespace Dice_and_Combat_Engine
         private string[] GetExitInfomation()
         {
             string[] info = new string[_links.Where(link => link != null).Count() + 1];
-            info[0] = "There are " + (info.Length - 1) + " exits in this room:";
-
-            string indent = "--  ";
-
+            info[0] = "There are " + (info.Length - 1) + " exits in this room: ";
             int i = 1;
             for (Direction direction = Direction.North; direction <= Direction.West; direction++)
             {
@@ -224,21 +213,20 @@ namespace Dice_and_Combat_Engine
                 {
                     if (info.Length == 2)
                     {
-                        info[i] = indent + direction.ToString();
+                        info[i] = direction.ToString();
                     }
                     else if (i < info.Length - 1)
                     {
-                        info[i] = indent + direction.ToString() + ",";
+                        info[i] = direction.ToString() + ", ";
                         i++;
                     }
                     else
                     {
-                        info[i] = indent + "and " + direction.ToString();
+                        info[i] = "and " + direction.ToString();
                         i++;
                     }
                 }
             }
-
             return info;
         }
 
@@ -302,7 +290,7 @@ namespace Dice_and_Combat_Engine
         }
 
         /*
-            The OpenLink method opens the direction to another Room
+            The OpenLink method opens the link to another Room
         */
 
         public void OpenLink(Room link)
@@ -316,7 +304,6 @@ namespace Dice_and_Combat_Engine
                 if (_links[(int)direction] == link)
                 {
                     found = true;
-
                     _linksUnlocked[(int)direction] = true;
 
                     // We open the links bidirectionally
@@ -328,8 +315,6 @@ namespace Dice_and_Combat_Engine
                     {
                         link._linksUnlocked[(int)direction - 1] = true;
                     }
-
-                    // Rooms links are now opened
                 }
                 else
                 {

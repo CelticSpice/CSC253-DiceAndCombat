@@ -468,12 +468,12 @@ namespace Dice_and_Combat_Engine
         /*
             The ParseCommand method parses a user-input command with the game's command parser
 
-            The method returns the lines of output as an array
+            The method returns the output
         */
 
-        public string[] ParseCommand(string commandString)
+        public string ParseCommand(string commandString)
         {
-            return parser.Parse(commandString);
+            return parser.Parse(commandString.Trim().ToLower());
         }
 
         /*

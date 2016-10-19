@@ -43,10 +43,10 @@
             this.creatureHPTextBox = new System.Windows.Forms.TextBox();
             this.creatureABTextBox = new System.Windows.Forms.TextBox();
             this.creatureACTextBox = new System.Windows.Forms.TextBox();
-            this.outputLst = new System.Windows.Forms.ListBox();
             this.roomNameLbl = new System.Windows.Forms.Label();
             this.commandTxtBox = new System.Windows.Forms.TextBox();
             this.goBtn = new System.Windows.Forms.Button();
+            this.outputRTxtBox = new System.Windows.Forms.RichTextBox();
             this.SuspendLayout();
             // 
             // playerNameTextBox
@@ -190,15 +190,6 @@
             this.creatureACTextBox.TabIndex = 18;
             this.creatureACTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
-            // outputLst
-            // 
-            this.outputLst.FormattingEnabled = true;
-            this.outputLst.Location = new System.Drawing.Point(162, 55);
-            this.outputLst.Name = "outputLst";
-            this.outputLst.SelectionMode = System.Windows.Forms.SelectionMode.None;
-            this.outputLst.Size = new System.Drawing.Size(486, 303);
-            this.outputLst.TabIndex = 19;
-            // 
             // roomNameLbl
             // 
             this.roomNameLbl.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
@@ -228,6 +219,15 @@
             this.goBtn.UseVisualStyleBackColor = true;
             this.goBtn.Click += new System.EventHandler(this.goBtn_Click);
             // 
+            // outputRTxtBox
+            // 
+            this.outputRTxtBox.Location = new System.Drawing.Point(198, 50);
+            this.outputRTxtBox.Name = "outputRTxtBox";
+            this.outputRTxtBox.ReadOnly = true;
+            this.outputRTxtBox.Size = new System.Drawing.Size(412, 339);
+            this.outputRTxtBox.TabIndex = 27;
+            this.outputRTxtBox.Text = "";
+            // 
             // MainForm
             // 
             this.AcceptButton = this.goBtn;
@@ -236,10 +236,10 @@
             this.BackgroundImage = global::Dice_and_Combat_Engine.Properties.Resources.backgroundBlur;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.ClientSize = new System.Drawing.Size(809, 438);
+            this.Controls.Add(this.outputRTxtBox);
             this.Controls.Add(this.goBtn);
             this.Controls.Add(this.commandTxtBox);
             this.Controls.Add(this.roomNameLbl);
-            this.Controls.Add(this.outputLst);
             this.Controls.Add(this.creatureACTextBox);
             this.Controls.Add(this.creatureABTextBox);
             this.Controls.Add(this.creatureHPTextBox);
@@ -278,10 +278,10 @@
         private System.Windows.Forms.TextBox creatureHPTextBox;
         private System.Windows.Forms.TextBox creatureABTextBox;
         private System.Windows.Forms.TextBox creatureACTextBox;
-        private System.Windows.Forms.ListBox outputLst;
         private System.Windows.Forms.Label roomNameLbl;
         private System.Windows.Forms.TextBox commandTxtBox;
         private System.Windows.Forms.Button goBtn;
+        private System.Windows.Forms.RichTextBox outputRTxtBox;
     }
 }
 

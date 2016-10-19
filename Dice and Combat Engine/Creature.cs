@@ -5,8 +5,6 @@
     Author: James Alves, Shane McCann, Timothy Burns
 */
 
-using System.Drawing;
-
 namespace Dice_and_Combat_Engine
 {
     // Structs
