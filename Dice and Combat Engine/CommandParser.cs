@@ -148,7 +148,7 @@ namespace Dice_and_Combat_Engine
                         ParseDropCommand(commandParams);
                         break;
                     case "equip":
-                        //ParseEquipCommand(commandParams);
+                        ParseEquipCommand(commandParams);
                         break;
                     case "get":
                     case "use":
@@ -317,7 +317,7 @@ namespace Dice_and_Combat_Engine
         }
 
         /*
-            The ParseEquipCommand method parses a "get" command for equiping a weapon
+            The ParseEquipCommand method parses an "equip" command for some action to perform
         */
 
         private void ParseEquipCommand(string[] commandParams)
@@ -341,13 +341,13 @@ namespace Dice_and_Combat_Engine
                     {
                         if (item is Weapon)
                         {
-                            player.Get(item);
+                            player.EquipWeapon((Weapon)item);
                             int bonus = ((Weapon)item).DamageBonus;
                             output += "You equip " + item.Name + ", increasing your damage by " + bonus + "\n";
                         }
                         else
                         {
-                            output += "You cannot equip the item, " + item + "\n";
+                            output += "You cannot equip the item, " + commandParams[0] + "\n";
                         }
                     }
                     else
@@ -369,13 +369,13 @@ namespace Dice_and_Combat_Engine
                         {
                             if (item is Weapon)
                             {
-                                player.Get(item);
+                                player.EquipWeapon((Weapon)item);
                                 int bonus = ((Weapon)item).DamageBonus;
                                 output += "You equip " + item.Name + ", increasing your damage by " + bonus + "\n";
                             }
                             else
                             {
-                                output += "You cannot equip the item, " + item + "\n";
+                                output += "You cannot equip the item, " + commandParams[0] + "\n";
                             }
                         }
                         else
@@ -509,7 +509,8 @@ namespace Dice_and_Combat_Engine
                 // If the parameter is a proper direction, continue
                 if (isDirection)
                 {
-                    Room currentRoom = game.Player.Location;
+                    Player player = game.Player;
+                    Room currentRoom = player.Location;
 
                     // If a room in the specified direction does not exist
                     if (currentRoom.Links[(int)direction] == null)
@@ -524,7 +525,7 @@ namespace Dice_and_Combat_Engine
                     // If the room in the specified direction both exists and is open
                     else
                     {
-                        game.Player.Location = currentRoom.Links[(int)direction];
+                        player.Go(direction);
                         output += "You went " + direction.ToString();
                     }
                 }

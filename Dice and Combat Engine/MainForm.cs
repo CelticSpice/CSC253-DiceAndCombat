@@ -61,6 +61,13 @@ namespace Dice_and_Combat_Engine
                 creatureABTextBox.Text = game.Player.Target.Stats.attackBonus.ToString();
                 creatureACTextBox.Text = game.Player.Target.Stats.armorClass.ToString();
             }
+            else
+            {
+                creatureNameTextBox.Text = "";
+                creatureHPTextBox.Text = "";
+                creatureABTextBox.Text = "";
+                creatureACTextBox.Text = "";
+            }
         }
 
         /*
@@ -88,6 +95,13 @@ namespace Dice_and_Combat_Engine
                     // Exit
                     this.Close();
                 }
+            }
+
+            // Check if Player is dead
+            if (game.Player.Stats.hitPoints <= 0)
+            {
+                MessageBox.Show("You have died!");
+                this.Close();
             }
         }
     }

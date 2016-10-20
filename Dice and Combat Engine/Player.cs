@@ -96,7 +96,7 @@ namespace Dice_and_Combat_Engine
             BaseStats newStats = Stats;
             newStats.damage.DieSize += _equippedWeapon.DamageBonus;
             Stats = newStats;
-        }3
+        }
 
         /*
             The GainExperience method simulates the player gaining experience points
