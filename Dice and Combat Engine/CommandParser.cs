@@ -49,6 +49,48 @@ namespace Dice_and_Combat_Engine
         }
 
         /*
+            The GetOrdinalSuffix method returns the appropriate suffix for an
+            integer number
+        */
+
+        public string GetOrdinalSuffix(int num)
+        {
+            string suffix = "";
+
+            // Numbers in the range of 10-19 always have the suffix "th"
+            if (num >= 10 && num <= 19)
+            {
+                suffix = "th";
+            }
+            else
+            {
+                // Get the number in the 1st place
+                while (num / 10 != 0)
+                {
+                    num /= 10;
+                }
+
+                // Determine suffix
+                switch (num)
+                {
+                    case 1:
+                        suffix = "st";
+                        break;
+                    case 2:
+                        suffix = "nd";
+                        break;
+                    case 3:
+                        suffix = "rd";
+                        break;
+                    default:
+                        suffix = "th";
+                        break;
+                }
+            }
+            return suffix;
+        }
+
+        /*
             The IsGoodCommand method determines if a user-input command is acceptable
         */
 
@@ -100,7 +142,7 @@ namespace Dice_and_Combat_Engine
                 switch (command)
                 {
                     case "attack":
-                        //ParseAttackCommand(commandParams);
+                        ParseAttackCommand(commandParams);
                         break;
                     case "drop":
                         ParseDropCommand(commandParams);
@@ -144,7 +186,7 @@ namespace Dice_and_Combat_Engine
         }
 
         /*
-            The ParseAttackCommand method parses an "attack" command for some action to perform
+            The ParseAttackCommand method parses an "attack" command
         */
 
         private void ParseAttackCommand(string[] commandParams)
@@ -216,10 +258,14 @@ namespace Dice_and_Combat_Engine
         private void ParseDropCommand(string[] commandParams)
         {
             // We expect at least 1 and up to 2 parmeters
-            if (commandParams.Length >= 1 && commandParams.Length <= 2)
+            if (commandParams.Length == 0 || commandParams.Length > 2)
             {
-                List<Item> roomContents = game.Player.Location.Contents;
+                output += "Command \"drop\" syntax: [ itemName: string ] { instanceOf: int }\n";
+            }
+            else
+            {
                 List<Item> playerInventory = game.Player.Inventory;
+                Player player = game.Player;
 
                 // Determine the number of parameters
                 if (commandParams.Length == 1)
@@ -228,8 +274,7 @@ namespace Dice_and_Combat_Engine
                     Item item = playerInventory.Find(i => i.Name.ToLower() == commandParams[0]);
                     if (item != null)
                     {
-                        playerInventory.Remove(item);
-                        roomContents.Add(item);
+                        player.Drop(item);
                         output += "You drop " + item.Name + "\n";
                     }
                     else
@@ -249,8 +294,7 @@ namespace Dice_and_Combat_Engine
                         Item item = (instance >= 0 && instance < items.Length) ? items[instance] : null;
                         if (item != null)
                         {
-                            playerInventory.Remove(item);
-                            roomContents.Add(item);
+                            player.Drop(item);
                             output += "You drop the " + (instance + 1) + suffix + " " +
                                       item.Name + " from your inventory\n";
                         }
@@ -267,10 +311,6 @@ namespace Dice_and_Combat_Engine
                     }
                 }
             }
-            else
-            {
-                output += "Command \"drop\" syntax: [ itemName: string ] { instanceOf: int }\n";
-            }
         }
 
         /*
@@ -280,7 +320,11 @@ namespace Dice_and_Combat_Engine
         private void ParseGetCommand(string[] commandParams)
         {
             // We expect at least 1 and up to 2 parameters
-            if (commandParams.Length >= 1 && commandParams.Length <= 2)
+            if (commandParams.Length == 0 || commandParams.Length > 2)
+            {
+                output += "Command \"get\" syntax: [ itemName: string ] { instanceOf: int }\n";
+            }
+            else
             {
                 List<Item> playerInventory = game.Player.Inventory;
                 Player player = game.Player;
@@ -294,22 +338,24 @@ namespace Dice_and_Combat_Engine
                     {
                         if (item is Weapon)
                         {
-                            int bonus = player.EquipWeapon((Weapon)item);
+                            player.Get(item);
+                            int bonus = ((Weapon)item).DamageBonus;
                             output += "You equip " + item.Name + ", increasing your damage by " + bonus + "\n";
                         }
                         else if (item is Potion)
                         {
-                            int restored = player.UsePotion((Potion)item);
-                            output += "You use " + item.Name + ", restoring your health by " + restored;
+                            player.Get(item);
+                            int restored = ((Potion)item).HealthRestored;
+                            output += "You use " + item.Name + ", restoring your health by " + restored + "\n";
                         }
                         else
                         {
-                            output += "You cannot use the item, " + item.Name;
+                            output += "You cannot use the item, " + item.Name + "\n";
                         }
                     }
                     else
                     {
-                        output += "No such item exists in your inventory";
+                        output += "No such item exists in your inventory\n";
                     }
                 }
                 else
@@ -326,35 +372,33 @@ namespace Dice_and_Combat_Engine
                         {
                             if (item is Weapon)
                             {
-                                int bonus = player.EquipWeapon((Weapon)item);
-                                output += "You equip " + item.Name + ", increasing your damage by " + bonus;
+                                player.Get(item);
+                                int bonus = ((Weapon)item).DamageBonus;
+                                output += "You equip " + item.Name + ", increasing your damage by " + bonus + "\n";
                             }
                             else if (item is Potion)
                             {
-                                int restored = player.UsePotion((Potion)item);
-                                output += "You use " + item.Name + ", restoring your health by " + restored;
+                                player.Get(item);
+                                int restored = ((Potion)item).HealthRestored;
+                                output += "You use " + item.Name + ", restoring your health by " + restored + "\n";
                             }
                             else
                             {
-                                output += "You cannot use the item, " + item.Name;
+                                output += "You cannot use the item, " + item.Name + "\n";
                             }
                         }
                         else
                         {
                             output += "You don't have a " + (instance + 1) + suffix + " " +
-                                      commandParams[0] + " in your inventory to get";
+                                      commandParams[0] + " in your inventory to get\n";
                         }
                     }
                     else
                     {
                         output += "Second parameter must be an integer specifying which " +
-                                   "of " + commandParams[0] + " in your inventory to get";
+                                   "of " + commandParams[0] + " in your inventory to get\n";
                     }
                 }
-            }
-            else
-            {
-                output += "Command \"get\" syntax: [ itemName: string ] { instanceOf: int }";
             }
         }
 
@@ -582,113 +626,88 @@ namespace Dice_and_Combat_Engine
 
         private void ParseTakeCommand(string[] commandParams)
         {
-            // We expect up to 2 parameters, and at least 1
+            // We expect at least 1 and up to 2 parameters
             if (commandParams.Length == 0 || commandParams.Length > 2)
             {
-                // Output error because there is an invalid number of parameters
-                output += "Command \"take\" takes at least 1 and up to 2 parameters";
+                output += "Command \"take\" syntax: [ itemToTake: Item ] { instanceOf: int }\n";
             }
             else
             {
-                List<Item> playerInventory = game.Player.Inventory;
                 List<Item> roomContents = game.Player.Location.Contents;
+                Player player = game.Player;
 
-                // Check if first parameter is item name or "all" keyword
+                // Check for "all" keyword
                 if (commandParams[0] == "all")
                 {
-                    // Check if second parameter of names of items to take is supplied
+                    // Determine number of parameters
                     if (commandParams.Length == 2)
                     {
-                        // Get all items with the specified name from the room
-                        Item[] items = roomContents.Where(item => item.Name.ToLower() == commandParams[1]).ToArray();
-
-                        // If we found items with the specified name, continue; else, output error
-                        if (items.Length > 0)
+                        if (roomContents.Exists(item => item.Name.ToLower() == commandParams[1]))
                         {
-                            playerInventory.AddRange(items);
-                            output += "You take every " + items[0].Name + " from the room";
-                            foreach (Item item in items)
-                            {
-                                roomContents.Remove(item);
-                            }
+                            player.TakeAll(commandParams[1]);
+                            output += "You take every " + commandParams[1] + " from the room\n";
                         }
                         else
                         {
-                            // Output error because no items with the specifed name were found
-                            output += "No such items exist in this room";
+                            output += "There are no " + commandParams[1] + "s in this room to take\n";
                         }
                     }
                     else
                     {
-                        // Add every item in the current room to the PC's inventory
                         if (roomContents.Count != 0)
                         {
-                            playerInventory.AddRange(roomContents);
-                            output += "You take every item in the room";
-                            roomContents.Clear();
+                            player.TakeAll();
+                            output += "You take every item in the room\n";
                         }
                         else
                         {
-                            // Output error because there are no items in this room to take
-                            output += "There are no items in this room to take";
+                            output += "There are no items in this room to take\n";
                         }
                     }
                 }
                 else
                 {
-                    // Check if user is specifying which instance of named item to take
+                    // Determine number of parameters
                     if (commandParams.Length == 2)
                     {
-                        // First check that second parameter is an integer
+                        // Take nth instance of named item from room
                         int instance;
                         if (int.TryParse(commandParams[1], out instance))
                         {
-                            // Get suffix of instance
                             string suffix = GetOrdinalSuffix(instance);
-
-                            // We don't expect instance to be 0-based, so make it so
-                            instance -= 1;
-
-                            // Get listing of items with passed name
-                            Item[] items = roomContents.Where(item => item.Name.ToLower() == commandParams[0]).ToArray();
-
-                            // Get nth instance of item
-                            Item itemToTake = (instance >= 0 && instance < items.Length) ? items[instance] : null;
-                            if (itemToTake != null)
+                            instance -= 1;      // We don't expect instance to be 0-based, so make it so
+                            Item[] items = roomContents.Where(i => i.Name.ToLower() == commandParams[0]).ToArray();
+                            Item item = (instance >= 0 && instance < items.Length) ? items[instance] : null;
+                            if (item != null)
                             {
-                                playerInventory.Add(itemToTake);
-                                output += "You take the " + (instance + 1) + suffix + " " + itemToTake.Name;
-                                roomContents.Remove(itemToTake);
+                                player.Take(item);
+                                output += "You take the " + (instance + 1) + suffix + " " +
+                                          item.Name + " from the room\n";
                             }
                             else
                             {
-                                // Output error because nth instance of named item does not exist in this room
-                                output += "No " + (instance + 1) + suffix + " instance of such an item " +
-                                           "exists in this room";
+                                output += "No " + (instance + 1) + suffix + " " +
+                                          commandParams[0] + " exists in this room\n";
                             }
                         }
                         else
                         {
-                            // Output error because second parameter is not an integer specifying the instance
-                            // of named item to take
-                            output += "Second parameter must be an integer specifying the instance " +
-                                       "of the item to take";
+                            output += "Second parameter must be an integer specifying which " +
+                                       "of " + commandParams[0] + " to take\n";
                         }
                     }
                     else
                     {
                         // Take first instance of named item from room
-                        Item itemToTake = roomContents.Find(item => item.Name.ToLower() == commandParams[0]);
-                        if (itemToTake != null)
+                        Item item = roomContents.Find(i => i.Name.ToLower() == commandParams[0]);
+                        if (item != null)
                         {
-                            playerInventory.Add(itemToTake);
-                            output += "You take " + itemToTake.Name;
-                            roomContents.Remove(itemToTake);
+                            player.Take(item);
+                            output += "You take " + item.Name + "\n";
                         }
                         else
                         {
-                            // Output error because named item was not found in this room
-                            output += "No such items exist in this room";
+                            output += "There is no " + commandParams[0] + " in this room to take\n";
                         }
                     }
                 }

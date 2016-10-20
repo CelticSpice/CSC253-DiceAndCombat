@@ -22,7 +22,6 @@ namespace Dice_and_Combat_Engine
         private Item[] _items;                  // The items in the game
         private Room[] rooms;                   // The rooms in the game
         private RoomGrid dungeon;               // The dungeon
-        private List<string> output;            // Output feedback
         private Player _player;                 // The player character
 
         /*
@@ -44,7 +43,6 @@ namespace Dice_and_Combat_Engine
             dungeon = new RoomGrid(dungeonSize, dungeonSize, rooms, uniqueRooms);
             dungeon.GenerateRoomContents(_creatures, _items);
             GeneratePlayer();
-            output = new List<string>();
         }
 
         /*
@@ -114,48 +112,6 @@ namespace Dice_and_Combat_Engine
             }
             names.Sort((string a, string b) => { return a.CompareTo(b); });
             return names.ToArray();
-        }
-
-        /*
-            The GetOrdinalSuffix method returns the appropriate suffix for an
-            integer number
-        */
-
-        private string GetOrdinalSuffix(int num)
-        {
-            string suffix = "";
-
-            // Numbers in the range of 10-19 always have the suffix "th"
-            if (num >= 10 && num <= 19)
-            {
-                suffix = "th";
-            }
-            else
-            {
-                // Get the number in the 1st place
-                while (num / 10 != 0)
-                {
-                    num /= 10;
-                }
-
-                // Determine suffix
-                switch (num)
-                {
-                    case 1:
-                        suffix = "st";
-                        break;
-                    case 2:
-                        suffix = "nd";
-                        break;
-                    case 3:
-                        suffix = "rd";
-                        break;
-                    default:
-                        suffix = "th";
-                        break;
-                }
-            }
-            return suffix;
         }
 
         /*

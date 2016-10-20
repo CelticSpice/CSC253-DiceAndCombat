@@ -44,7 +44,7 @@ namespace Dice_and_Combat_Engine
 
         /*
             The Attack method has the Player execute an attack against a Creature,
-            reducing the defender's hitpoints and returning the damage dealth
+            reducing the defender's hitpoints and returning the damage dealt
         */
 
         public override int Attack(Creature defender)
@@ -76,6 +76,17 @@ namespace Dice_and_Combat_Engine
         }
 
         /*
+            The Drop method has the Player drop an item from the Player's inventory into
+            the Player's current location
+        */
+
+        public void Drop(Item item)
+        {
+            _inventory.Remove(item);
+            Location.Contents.Add(item);
+        }
+
+        /*
             The GainExperience method simulates the player gaining experience points
             The method accepts the number of experience points earned as an argument
         */
@@ -93,6 +104,23 @@ namespace Dice_and_Combat_Engine
             {
                 // Set level up notifier to true
                 _leveledUp = true;
+            }
+        }
+
+        /*
+            The Get method has the Player get an item from the Player's inventory
+            to use
+        */
+
+        public void Get(Item item)
+        {
+            if (item is Weapon)
+            {
+                EquipWeapon((Weapon)item);
+            }
+            else if (item is Potion)
+            {
+                UsePotion((Potion)item);
             }
         }
 
@@ -143,16 +171,14 @@ namespace Dice_and_Combat_Engine
 
         /*
             The EquipWeapon method has the player equip a weapon
-            It returns the damage bonus the weapon grants
         */
 
-        public int EquipWeapon(Weapon weapon)
+        public void EquipWeapon(Weapon weapon)
         {
             _equippedWeapon = weapon;
             BaseStats newStats = Stats;
             newStats.damage.DieSize += _equippedWeapon.DamageBonus;
             Stats = newStats;
-            return weapon.DamageBonus;
         }
 
         /*
@@ -160,40 +186,32 @@ namespace Dice_and_Combat_Engine
             and place it into the Player's inventory
         */
 
-        public string Take(Item item, bool takeAll = false)
+        public void Take(Item item)
         {
-            string feedback = "";
-            if (Location.Contents.Contains(item))
-            {
-                if (!takeAll)
-                {
-                    Location.Contents.Remove(item);
-                    _inventory.Add(item);
-                    feedback += "You take " + item.Name + "\n";
-                }
-                else
-                {
-                    _inventory.AddRange(Location.Contents.Where(i => i.Name == item.Name));
-                    Location.Contents.RemoveAll(i => i.Name == item.Name);
-                    feedback += "You take every " + item.Name + " from the room\n";
-                }
-            }
-            else
-            {
-                feedback += "There is no " + item.Name + " in this room to take\n";
-            }
-            return feedback;
+            Location.Contents.Remove(item);
+            _inventory.Add(item);
         }
 
         /*
-            The Take method has the Player take a specified instance of an item from
-            the Player's location and place it into the Player's inventory
+            The TakeAll method has the Player take all items from the Player's current
+            location and place them into the Player's inventory
         */
 
-        public string Take(Item item, int instance)
+        public void TakeAll()
         {
-            string feedback = "";
-            if (instance >= 1)
+            _inventory.AddRange(Location.Contents);
+            Location.Contents.Clear();
+        }
+
+        /*
+            The TakeAll method has the Player take all items of a specified name from
+            the Player's current location and place them into the Player's inventory
+        */
+
+        public void TakeAll(string itemNames)
+        {
+            _inventory.AddRange(Location.Contents.Where(item => item.Name.ToLower() == itemNames.ToLower()));
+            Location.Contents.RemoveAll(item => item.Name.ToLower() == itemNames.ToLower());
         }
 
         /*
@@ -210,10 +228,9 @@ namespace Dice_and_Combat_Engine
 
         /*
             The UsePotion method has the player use a potion
-            It returns the amount of health restored
         */
 
-        public int UsePotion(Potion potion)
+        public void UsePotion(Potion potion)
         {
             BaseStats newStats = Stats;
             newStats.hitPoints += potion.Use();
@@ -226,7 +243,6 @@ namespace Dice_and_Combat_Engine
             {
                 _inventory.Remove(potion);
             }
-            return potion.HealthRestored;
         }
 
         /*

@@ -54,8 +54,9 @@ namespace Dice_and_Combat_Engine
                 feedback.Append(attacker.Stats.name + " hit " + defender.Stats.name +
                                 " for " + damageDealt + "\n");
 
-                if (defender.Stats.hitPoints == 0)
+                if (defender.Stats.hitPoints <= 0)
                 {
+                    attacker.Target = null;
                     feedback.Append(defender.Stats.name + " is dead\n");
                 }
 
