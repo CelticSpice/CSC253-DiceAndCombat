@@ -86,6 +86,19 @@ namespace Dice_and_Combat_Engine
             Location.Contents.Add(item);
         }
 
+
+        /*
+            The EquipWeapon method has the player equip a weapon
+        */
+
+        public void EquipWeapon(Weapon weapon)
+        {
+            _equippedWeapon = weapon;
+            BaseStats newStats = Stats;
+            newStats.damage.DieSize += _equippedWeapon.DamageBonus;
+            Stats = newStats;
+        }
+
         /*
             The GainExperience method simulates the player gaining experience points
             The method accepts the number of experience points earned as an argument
@@ -169,17 +182,6 @@ namespace Dice_and_Combat_Engine
             _leveledUp = false;
         }
 
-        /*
-            The EquipWeapon method has the player equip a weapon
-        */
-
-        public void EquipWeapon(Weapon weapon)
-        {
-            _equippedWeapon = weapon;
-            BaseStats newStats = Stats;
-            newStats.damage.DieSize += _equippedWeapon.DamageBonus;
-            Stats = newStats;
-        }
 
         /*
             The Take method has the Player take an item from the Player's current location

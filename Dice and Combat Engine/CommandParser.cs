@@ -314,6 +314,83 @@ namespace Dice_and_Combat_Engine
         }
 
         /*
+            The ParseEquipCommand method parses a "get" command for equiping a weapon
+        */
+        
+        private void ParseEquipCommand(string[] commandParams)
+        {
+            //We expect one or two parameters
+            if (commandParams.Length == 0 || commandParams.Length > 2)
+            {
+                output += "Command \"Equip\" syntax: [ itemName: string ] { instanceOf: int }\n";
+            }
+            else
+            {
+                List<Item> playerInventory = game.Player.Inventory;
+                Player player = game.Player;
+
+                //Determine number of params
+                if (commandParams.Length == 1)
+                {
+                    //Get first instance of named item from PC's inventory to equip
+                    Item item = playerInventory.Find(i => i.Name.ToLower() == commandParams[0]);
+                    if (item != null)
+                    {
+                        if (item is Weapon)
+                        {
+                            player.Get(item);
+                            int bonus = ((Weapon)item).DamageBonus;
+                            output += "You equip " + item.Name + ", increasing your damage by " + bonus + "\n";
+                        }
+                        else
+                        {
+                            output += "You cannot equip the item, " + item + "\n";
+                        }
+                    }
+                    else
+                    {
+                        output += "No such item exists in your inventory\n";
+                    }
+                }
+                else
+                {
+                    //Get nth item of PC's inventory to equip.
+                    int instance;
+                    if (int.TryParse(commandParams[1], out instance))
+                    {
+                        string suffix = GetOrdinalSuffix(instance);
+                        instance--;     // We don't expect instance to be 0-based, so make it so
+                        Item[] items = playerInventory.Where(i => i.Name.ToLower() == commandParams[0]).ToArray();
+                        Item item = (instance >= 0 && instance < items.Length) ? items[instance] : null;
+                        if (item != null)
+                        {
+                            if (item is Weapon)
+                            {
+                                player.Get(item);
+                                int bonus = ((Weapon)item).DamageBonus;
+                                output += "You equip " + item.Name + ", increasing your damage by " + bonus + "\n";
+                            }
+                            else
+                            {
+                                output += "You cannot equip the item, " + item + "\n";
+                            }
+                        }
+                        else
+                        {
+                            output += "You don't have a " + (instance + 1) + suffix + " " +
+                                      commandParams[0] + " in your inventory to get\n";
+                        }
+                    }
+                    else
+                    {
+                        output += "Second parameter must be an integer specifying which " +
+                                   "of " + commandParams[0] + " in your inventory to get\n";
+                    }
+                }
+            }
+        }
+
+        /*
             The ParseGetCommand method parses a "get" command for some action to perform
         */
 
