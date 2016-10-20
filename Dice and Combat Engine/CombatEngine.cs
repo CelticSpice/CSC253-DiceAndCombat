@@ -56,14 +56,23 @@ namespace Dice_and_Combat_Engine
 
                 if (defender.Stats.hitPoints <= 0)
                 {
-                    attacker.Target = null;
                     feedback.Append(defender.Stats.name + " is dead\n");
+                    feedback.Append(attacker.Stats.name + " gains " + defender.Stats.xpValue + " xp\n");
+                    if (attacker is Player && ((Player)attacker).LeveledUp)
+                    {
+                        ((Player)attacker).LevelUp();
+                        feedback.Append("You leveled up to level " + ((Player)attacker).PlayerStats.level + "\n");
+                    }
                 }
 
                 if (weaponUsed && attacker is Player && ((Player)attacker).EquippedWeapon == null)
                 {
                     feedback.Append("Your " + weaponName + " broke\n");
                 }
+            }
+            else
+            {
+                feedback.Append(attacker.Stats.name + " missed\n");
             }
             return feedback.ToString();
         }

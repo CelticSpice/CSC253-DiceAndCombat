@@ -7,6 +7,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace Dice_and_Combat_Engine
 {
@@ -53,14 +54,13 @@ namespace Dice_and_Combat_Engine
             int damage = Stats.damage.DieResult;
             BaseStats newDefenderStats = defender.Stats;
             newDefenderStats.hitPoints -= damage;
+            defender.Stats = newDefenderStats;
 
             if (newDefenderStats.hitPoints <= 0)
             {
                 Location.Denizens.Remove(defender);
-            }
-            else
-            {
-                defender.Stats = newDefenderStats;
+                Target = null;
+                GainExperience(defender.Stats.xpValue);
             }
 
             if (_equippedWeapon != null)
@@ -86,7 +86,6 @@ namespace Dice_and_Combat_Engine
             Location.Contents.Add(item);
         }
 
-
         /*
             The EquipWeapon method has the player equip a weapon
         */
@@ -97,7 +96,7 @@ namespace Dice_and_Combat_Engine
             BaseStats newStats = Stats;
             newStats.damage.DieSize += _equippedWeapon.DamageBonus;
             Stats = newStats;
-        }
+        }3
 
         /*
             The GainExperience method simulates the player gaining experience points
@@ -138,14 +137,21 @@ namespace Dice_and_Combat_Engine
         }
 
         /*
+            The Go method has the Player move from its current location to
+            another location in the specifed direction
+        */
+
+        public void Go(Direction direction)
+        {
+            Location = Location.Links[(int)direction];
+        }
+
+        /*
             The LevelUp method levels up the player
         */
 
         public void LevelUp()
         {
-            // Points to spend on upgrades each level up
-            // const int POINTS = 3;
-            
             // Raise player's level
             _playerStats.level += 1;
 
@@ -154,34 +160,28 @@ namespace Dice_and_Combat_Engine
             newStats.maxHitPoints += _playerStats.level;
             Stats = newStats;
 
-            /*
-
-            // Add 1 to each of the player's stats
-            BaseStats newStats = Stats;
-            newStats.hitPoints += 1;
-            newStats.maxHitPoints += 1;
-            newStats.attackBonus += 1;
-            newStats.armorClass += 1;
-
-            // Add 1 to each of the player's attributes
-            Attributes attribs = Attributes;
-            attribs.strength += 1;
-            attribs.constitution += 1;
-            attribs.dexterity += 1;
-            attribs.intelligence += 1;
-            attribs.wisdom += 1;
-            attribs.charisma += 1;
-
-            // Set new stats and attributes
-            /Stats = newStats;
-            Attributes = attribs;
-
-            */
-
-            // Return leveled up notifier to false
+            // Reset leveled up notifier
             _leveledUp = false;
         }
 
+        /*
+            The Look method has the Player observe the contents of its current location
+        */
+
+        public string Look()
+        {
+            StringBuilder results = new StringBuilder();
+            string[][] info = Location.GetInfo();
+            foreach (string[] row in info)
+            {
+                foreach (string col in row)
+                {
+                    results.Append(col);
+                }
+                results.Append("\n\n");
+            }
+            return results.ToString();
+        }
 
         /*
             The Take method has the Player take an item from the Player's current location

@@ -207,7 +207,10 @@ namespace Dice_and_Combat_Engine
                         player.Target = creature;
                         creature.Target = player;
                         output += game.CombatEngine.DoCombat(player, player.Target);
-                        output += game.CombatEngine.DoCombat(creature, creature.Target);
+                        if (player.Target != null)
+                        {
+                            output += game.CombatEngine.DoCombat(creature, creature.Target);
+                        }
                     }
                     else
                     {
@@ -316,7 +319,7 @@ namespace Dice_and_Combat_Engine
         /*
             The ParseEquipCommand method parses a "get" command for equiping a weapon
         */
-        
+
         private void ParseEquipCommand(string[] commandParams)
         {
             //We expect one or two parameters
@@ -545,31 +548,17 @@ namespace Dice_and_Combat_Engine
             // We expect up to 2 parameters
             if (commandParams.Length <= 2)
             {
-                Room currentRoom = game.Player.Location;
+                Player player = game.Player;
 
                 // Determine the number of parameters
                 if (commandParams.Length == 0)
                 {
-                    // We will provide general information about the current room
-                    string[][] info = currentRoom.GetInfo();
-                    for (int i = 0; i < info.GetLength(0); i++)
-                    {
-                        for (int j = 0; j < info[i].Length; j++)
-                        {
-                            output += info[i][j];
-                        }
-
-                        // If we haven't yet output the last set of information, add newlines
-                        if (i != info.GetLength(0) - 1)
-                        {
-                            output += "\n\n";
-                        }
-                    }
+                    // We will provide general information about the Player's current location
+                    output += player.Look();
                 }
                 else
                 {
-                    List<Creature> roomDenizens = currentRoom.Denizens;
-                    Player player = game.Player;
+                    List<Creature> roomDenizens = player.Location.Denizens;
 
                     if (commandParams.Length == 1)
                     {
@@ -654,7 +643,7 @@ namespace Dice_and_Combat_Engine
                     Room currentRoom = game.Player.Location;
                     if (currentRoom.Links[(int)direction] == null)
                     {
-                        output+= "There is no exit leading " + direction.ToString() + " to open";
+                        output += "There is no exit leading " + direction.ToString() + " to open";
                     }
                     else if (currentRoom.LinksUnlocked[(int)direction])
                     {
@@ -812,7 +801,7 @@ namespace Dice_and_Combat_Engine
                 List<string> names = new List<string>();
 
                 // Candidate for a compound parameter name, built as name matches are found
-                StringBuilder builtParameter = new StringBuilder();               
+                StringBuilder builtParameter = new StringBuilder();
 
                 // Index of the parameter we begin checking names against
                 int start = 0;
