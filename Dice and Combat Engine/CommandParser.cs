@@ -158,7 +158,7 @@ namespace Dice_and_Combat_Engine
                         ParseGoCommand(commandParams);
                         break;
                     case "inventory":
-                        //ParseInventoryCommand();
+                        ParseInventoryCommand();
                         break;
                     case "look":
                     case "examine":
@@ -537,6 +537,49 @@ namespace Dice_and_Combat_Engine
             else
             {
                 output += "Command \"go\" syntax: [ directionToTravel: Direction ]";
+            }
+        }
+
+        /*
+            The ParseInventoryCommand method displays the PC's inventory.
+         */
+        private void ParseInventoryCommand()
+        {
+            output += "Inventory:";
+
+            Player player = game.Player;
+
+            // Check if there are items in the inventory.
+            if (player.Inventory.Count > 0)
+            {
+                int i = 0;      // Accumulator, the number for 
+                                // an item in the inventory
+
+                foreach (Item item in player.Inventory)
+                {
+                    // Print on new line.
+                    output += "\n";
+
+                    i++;
+
+                    // Check if the item is equipped.
+                    if (item == player.EquippedWeapon)
+                    {
+                        // Display item with asterisk.
+                        output += i + ". " + "*" + item.Name;
+                    }
+                    else
+                    {
+                        // Display item as usual, w/o asterisk.
+                        output += i + ". " + item.Name;
+                    }
+                }
+                // New line for spacing/readability.
+                output += "\n";
+            }
+            else
+            {
+                output += "\nYour inventory is lacking of items";
             }
         }
 
