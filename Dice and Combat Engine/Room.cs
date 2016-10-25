@@ -140,6 +140,16 @@ namespace Dice_and_Combat_Engine
         }
 
         /*
+            The GetItems method returns every item in the room
+            with the specified name
+        */
+
+        public Item[] GetItems(string name)
+        {
+            return _contents.Where(i => i.Name.ToLower() == name.ToLower()).ToArray();
+        }
+
+        /*
             The GetItemNames method returns an array containing the names
             of the Room's items
         */

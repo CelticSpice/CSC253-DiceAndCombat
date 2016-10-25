@@ -93,7 +93,7 @@ namespace Dice_and_Combat_Engine
             _stats.damage.Roll();
             int damage = _stats.damage.DieResult;
             defender._stats.hitPoints -= damage;
-            if (defender._stats.hitPoints <= 0)
+            if (defender._stats.hitPoints <= 0 && !(defender is Player))
             {
                 _location.Denizens.Remove(defender);
             }

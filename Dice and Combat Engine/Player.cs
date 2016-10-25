@@ -163,6 +163,16 @@ namespace Dice_and_Combat_Engine
         }
 
         /*
+            The GetItems method returns every item in the Player's inventory
+            with the specified name
+        */
+
+        public Item[] GetItems(string name)
+        {
+            return _inventory.Where(i => i.Name.ToLower() == name.ToLower()).ToArray();
+        }
+
+        /*
             The Go method has the Player move from its current location to
             another location in the specifed direction
         */

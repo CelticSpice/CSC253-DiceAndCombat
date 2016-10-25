@@ -200,65 +200,46 @@ namespace Dice_and_Combat_Engine
         private void ParseAttackCommand(string[] commandParams)
         {
             // We expect at least 1 and up to 2 parameters
-            if (commandParams.Length == 1 || commandParams.Length == 2)
+            if (commandParams.Length == 0 || commandParams.Length > 2)
+                output += "Command \"attack\" syntax: [ creatureToAttack: Creature ] { instanceOf: int }\n";
+            else if (commandParams.Length == 1)
             {
-                List<Creature> roomDenizens = game.Player.Location.Denizens;
-                Player player = game.Player;
-
-                // Determine number of parameters
-                if (commandParams.Length == 1)
+                // Player attacks first instance of named creature
+                Creature creature = game.Player.Location.GetDenizen(commandParams[0]);
+                if (creature != null)
                 {
-                    // Player attacks first instance of named creature
-                    Creature creature = roomDenizens.Find(c => c.Stats.name.ToLower() == commandParams[0]);
+                    game.Player.Target = creature;
+                    creature.Target = game.Player;
+                    output += game.CombatEngine.DoCombat(game.Player, creature);
                     if (creature != null)
-                    {
-                        player.Target = creature;
-                        creature.Target = player;
-                        output += game.CombatEngine.DoCombat(player, player.Target);
-                        if (player.Target != null)
-                        {
-                            output += game.CombatEngine.DoCombat(creature, creature.Target);
-                        }
-                    }
-                    else
-                    {
-                        output += "No such creature, " + commandParams[0] + ", exists in this room\n";
-                    }
+                        output += game.CombatEngine.DoCombat(creature, creature.Target);
                 }
                 else
-                {
-                    // Player attacks nth instance of named creature
-                    int instance;
-                    if (int.TryParse(commandParams[1], out instance))
-                    {
-                        string suffix = GetOrdinalSuffix(instance);
-                        instance -= 1;       // We don't expect instance to be 0-based, so make it so
-                        Creature[] creatures = roomDenizens.Where(c => c.Stats.name.ToLower() ==
-                                                                  commandParams[0]).ToArray();
-                        Creature creature = (instance >= 0 && instance < creatures.Length) ? creatures[instance] : null;
-                        if (creature != null)
-                        {
-                            player.Target = creature;
-                            creature.Target = player;
-                            output += game.CombatEngine.DoCombat(player, player.Target);
-                            output += game.CombatEngine.DoCombat(creature, creature.Target);
-                        }
-                        else
-                        {
-                            output += "No " + (instance + 1) + suffix + " " +
-                                      commandParams[0] + " exists in this room\n";
-                        }
-                    }
-                    else
-                    {
-                        output += "Second parameter must be an integer specifying which " +
-                                  "of " + commandParams[0] + " to attack\n";
-                    }
-                }
+                    output += "No such creature exists in this room\n";
             }
             else
             {
-                output += "Command \"attack\" syntax: [ creatureToAttack: Creature ] { instanceOf: int }\n";
+                // Player attacks nth instance of named creature
+                int instance;
+                if (int.TryParse(commandParams[1], out instance) && instance > 0)
+                {
+                    string suffix = GetOrdinalSuffix(instance);
+                    instance--;       // We don't expect instance to be 0-based, so make it so
+                    Creature creature = game.Player.Location.GetDenizen(commandParams[0], instance);
+                    if (creature != null)
+                    {
+                        game.Player.Target = creature;
+                        creature.Target = game.Player;
+                        output += game.CombatEngine.DoCombat(game.Player, creature);
+                        if (creature != null)
+                            output += game.CombatEngine.DoCombat(creature, game.Player);
+                    }
+                    else
+                        output += "No " + (instance - 1) + suffix +
+                                  " creature of that name exists\n";
+                }
+                else
+                    output += "Second parameter must be an integer for the instance of the object to drop\n";
             }
         }
 
@@ -336,68 +317,55 @@ namespace Dice_and_Combat_Engine
 
         private void ParseEquipCommand(string[] commandParams)
         {
-            //We expect one or two parameters
+            // We expect at least 1 and up to 2 parameters
             if (commandParams.Length == 0 || commandParams.Length > 2)
             {
                 output += "Command \"Equip\" syntax: [ itemName: string ] { instanceOf: int }\n";
             }
+            else if (commandParams.Length == 1)
+            {
+                // Get first instance of named item from PC's inventory to equip
+                Item item = game.Player.GetItem(commandParams[0]);
+                if (item != null)
+                {
+                    if (item is Weapon)
+                    {
+                        game.Player.EquipWeapon((Weapon)item);
+                        int bonus = ((Weapon)item).DamageBonus;
+                        output += "You equip " + item.Name + ", increasing your damage by " + bonus + "\n";
+                    }
+                    else
+                        output += "You cannot equip that item\n";
+                }
+                else
+                    output += "No such item exists in your inventory\n";
+            }
             else
             {
-                List<Item> playerInventory = game.Player.Inventory;
-                Player player = game.Player;
-
-                //Determine number of params
-                if (commandParams.Length == 1)
+                //Get nth instance of named item from PC's inventory to equip.
+                int instance;
+                if (int.TryParse(commandParams[1], out instance) && instance > 0)
                 {
-                    //Get first instance of named item from PC's inventory to equip
-                    Item item = playerInventory.Find(i => i.Name.ToLower() == commandParams[0]);
+                    string suffix = GetOrdinalSuffix(instance);
+                    instance--;     // We don't expect instance to be 0-based, so make it so
+                    Item item = game.Player.GetItem(commandParams[0], instance);
                     if (item != null)
                     {
                         if (item is Weapon)
                         {
-                            player.EquipWeapon((Weapon)item);
+                            game.Player.EquipWeapon((Weapon)item);
                             int bonus = ((Weapon)item).DamageBonus;
                             output += "You equip " + item.Name + ", increasing your damage by " + bonus + "\n";
                         }
                         else
-                        {
-                            output += "You cannot equip the item, " + commandParams[0] + "\n";
-                        }
+                            output += "You cannot equip that item\n";
                     }
                     else
-                    {
-                        output += "No such item exists in your inventory\n";
-                    }
+                        output += "No " + (instance - 1) + suffix +
+                                  " item of that name is in your inventory\n";
                 }
                 else
-                {
-                    //Get nth item of PC's inventory to equip.
-                    int instance;
-                    if (int.TryParse(commandParams[1], out instance))
-                    {
-                        string suffix = GetOrdinalSuffix(instance);
-                        instance--;     // We don't expect instance to be 0-based, so make it so
-                        Item[] items = playerInventory.Where(i => i.Name.ToLower() == commandParams[0]).ToArray();
-                        Item item = (instance >= 0 && instance < items.Length) ? items[instance] : null;
-                        if (item != null)
-                        {
-                            if (item is Weapon)
-                            {
-                                player.EquipWeapon((Weapon)item);
-                                int bonus = ((Weapon)item).DamageBonus;
-                                output += "You equip " + item.Name + ", increasing your damage by " + bonus + "\n";
-                            }
-                            else
-                                output += "You cannot equip the item, " + commandParams[0] + "\n";
-                        }
-                        else
-                            output += "You don't have a " + (instance + 1) + suffix + " " +
-                                      commandParams[0] + " in your inventory to get\n";
-                    }
-                    else
-                        output += "Second parameter must be an integer specifying which " +
-                                   "of " + commandParams[0] + " in your inventory to get\n";
-                }
+                    output += "Second parameter must be an integer for the instance of the object to drop\n";
             }
         }
 
@@ -662,16 +630,10 @@ namespace Dice_and_Combat_Engine
         private void ParseQuitCommand(string[] commandParams)
         {
             // We expect no parameters
-            if (commandParams.Length == 0)
-            {
-                // Confirm quit
-                output += "Quitting...\n";
-            }
+            if (commandParams.Length > 0)
+                output += "Command \"quit\" takes no parameters\n";
             else
-            {
-                // Output error
-                output += "Error: Command \"quit\" takes no parameters\n";
-            }
+                output += "Quitting...\n";
         }
 
         /*
@@ -682,88 +644,69 @@ namespace Dice_and_Combat_Engine
         {
             // We expect at least 1 and up to 2 parameters
             if (commandParams.Length == 0 || commandParams.Length > 2)
-            {
                 output += "Command \"take\" syntax: [ itemToTake: Item ] { instanceOf: int }\n";
-            }
-            else
+            else if (commandParams.Length == 1)
             {
-                List<Item> roomContents = game.Player.Location.Contents;
-                Player player = game.Player;
-
                 // Check for "all" keyword
                 if (commandParams[0] == "all")
                 {
-                    // Determine number of parameters
-                    if (commandParams.Length == 2)
+                    if (game.Player.Location.Contents.Count != 0)
                     {
-                        if (roomContents.Exists(item => item.Name.ToLower() == commandParams[1]))
-                        {
-                            player.TakeAll(commandParams[1]);
-                            output += "You take every " + commandParams[1] + " from the room\n";
-                        }
-                        else
-                        {
-                            output += "There are no " + commandParams[1] + "s in this room to take\n";
-                        }
+                        // Take every item from Player's current location
+                        game.Player.TakeAll();
+                        output += "You take every item in the room\n";
                     }
                     else
-                    {
-                        if (roomContents.Count != 0)
-                        {
-                            player.TakeAll();
-                            output += "You take every item in the room\n";
-                        }
-                        else
-                        {
-                            output += "There are no items in this room to take\n";
-                        }
-                    }
+                        output += "There are no items in this room to take\n";
                 }
                 else
                 {
-                    // Determine number of parameters
-                    if (commandParams.Length == 2)
+                    // Take first instance of item with specified name
+                    Item item = game.Player.Location.GetItem(commandParams[0]);
+                    if (item != null)
                     {
-                        // Take nth instance of named item from room
-                        int instance;
-                        if (int.TryParse(commandParams[1], out instance))
-                        {
-                            string suffix = GetOrdinalSuffix(instance);
-                            instance -= 1;      // We don't expect instance to be 0-based, so make it so
-                            Item[] items = roomContents.Where(i => i.Name.ToLower() == commandParams[0]).ToArray();
-                            Item item = (instance >= 0 && instance < items.Length) ? items[instance] : null;
-                            if (item != null)
-                            {
-                                player.Take(item);
-                                output += "You take the " + (instance + 1) + suffix + " " +
-                                          item.Name + " from the room\n";
-                            }
-                            else
-                            {
-                                output += "No " + (instance + 1) + suffix + " " +
-                                          commandParams[0] + " exists in this room\n";
-                            }
-                        }
-                        else
-                        {
-                            output += "Second parameter must be an integer specifying which " +
-                                       "of " + commandParams[0] + " to take\n";
-                        }
+                        game.Player.Take(item);
+                        output += "You take " + item.Name + "\n";
                     }
                     else
+                        output += "No item of that name exists\n";
+                }
+            }
+            else
+            {
+                // Check for "all" keyword
+                if (commandParams[0] == "all")
+                {
+                    // Take every item with specified name from the room
+                    Item[] items = game.Player.Location.GetItems(commandParams[0]);
+                    if (items.Length > 0)
                     {
-                        // Take first instance of named item from room
-                        Item item = roomContents.Find(i => i.Name.ToLower() == commandParams[0]);
+                        game.Player.TakeAll(commandParams[0]);
+                        output += "You take every " + items[0].Name + "\n";
+                    }
+                    else
+                        output += "No items with that name exists\n";
+                }
+                else
+                {
+                    // Take nth instance of named item from room
+                    int instance;
+                    if (int.TryParse(commandParams[1], out instance) && instance > 0)
+                    {
+                        string suffix = GetOrdinalSuffix(instance);
+                        instance -= 1;      // We don't expect instance to be 0-based, so make it so
+                        Item item = game.Player.Location.GetItem(commandParams[0], instance);
                         if (item != null)
                         {
-                            player.Take(item);
-                            output += "You take " + item.Name + "\n";
+                            game.Player.Take(item);
+                            output += "You take the " + (instance + 1) + suffix + " " +
+                                      item.Name + " from the room\n";
                         }
                         else
-                        {
-                            output += "There is no " + commandParams[0] + " in this room to take\n";
-                        }
+                            output += "No " + (instance + 1) + suffix + " instance of that item exists\n";
                     }
+                    else
+                        output += "Second parameter must be an integer for the instance of the object to examine\n";
                 }
             }
         }
@@ -827,9 +770,7 @@ namespace Dice_and_Combat_Engine
                             names.RemoveAll(name => !name.StartsWith(resolvedParam.ToString()));
                         }
                         else
-                        {
                             names.Clear();
-                        }
                     }
 
                     // Increment start to point to the next parameter in the parameter list
@@ -841,10 +782,8 @@ namespace Dice_and_Combat_Engine
                 toReturn = paramList.ToArray();
             }
             else
-            {
                 // Parameters are unchanged
                 toReturn = parameters;
-            }
 
             // Return
             return toReturn;
