@@ -22,7 +22,6 @@ namespace Dice_and_Combat_Engine
         public Treasure(string name, string desc, int durability, int value)
             : base(name, desc, durability, value, TREASURE_ID)
         {
-            // ???  XD
         }
 
         /*
@@ -30,11 +29,8 @@ namespace Dice_and_Combat_Engine
         */
 
         public Treasure(Treasure t)
+            : base(t.Name, t.Description, t.Durability, t.Value, TREASURE_ID)
         {
-            this.Name = t.Name;
-            this.Description = t.Description;
-            this.Durability = t.Durability;
-            this.Value = t.Value;
         }
     }
 }

@@ -40,6 +40,7 @@ namespace Dice_and_Combat_Engine
         private Attributes _attributes;
         private Room _location;
         private Creature _target;
+        private string _description;
 
         /*
             Constructor
@@ -51,6 +52,7 @@ namespace Dice_and_Combat_Engine
             _attributes = new Attributes();
             _location = null;
             _target = null;
+            _description = "";
         }
 
         /*
@@ -58,12 +60,13 @@ namespace Dice_and_Combat_Engine
             Defines starting stats and attributes
         */
 
-        public Creature(BaseStats stats, Attributes attribs)
+        public Creature(BaseStats stats, Attributes attribs, string desc)
         {
             _stats = stats;
             _attributes = attribs;
             _location = null;
             _target = null;
+            _description = desc;
         }
 
         /*
@@ -77,6 +80,7 @@ namespace Dice_and_Combat_Engine
             _attributes = c._attributes;
             _location = c._location;
             _target = c._target;
+            _description = c._description;
         }
 
         /*
@@ -134,6 +138,15 @@ namespace Dice_and_Combat_Engine
         {
             get { return _target; }
             set { _target = value; }
+        }
+
+        /*
+            Description Property
+        */
+
+        public string Description
+        {
+            get { return _description; }
         }
     }
 }

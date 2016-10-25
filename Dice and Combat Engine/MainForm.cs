@@ -77,7 +77,7 @@ namespace Dice_and_Combat_Engine
         private void goBtn_Click(object sender, EventArgs e)
         {
             string output = game.ParseCommand(commandTxtBox.Text);
-            outputRTxtBox.Text += output + "\n";
+            outputRTxtBox.Text += output;
             outputRTxtBox.SelectionStart = outputRTxtBox.Text.Length;
             outputRTxtBox.ScrollToCaret();
             commandTxtBox.Text = "";

@@ -32,12 +32,9 @@ namespace Dice_and_Combat_Engine
         */
 
         public Weapon(Weapon w)
+            : base(w.Name, w.Description, w.Durability, w.Value, WEAPON_ID)
         {
-            this.Name = w.Name;
-            this.Description = w.Description;
-            this.Durability = w.Durability;
-            this.Value = w.Value;
-            this._damageBonus = w._damageBonus;
+            _damageBonus = w._damageBonus;
         }
 
         /*

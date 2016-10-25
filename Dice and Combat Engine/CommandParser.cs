@@ -42,9 +42,7 @@ namespace Dice_and_Combat_Engine
             // Separate command from parameters
             int i = 0;
             while (i < commandString.Length && !char.IsWhiteSpace(commandString[i]))
-            {
                 i++;
-            }
             return commandString.Substring(0, i);
         }
 
@@ -55,20 +53,16 @@ namespace Dice_and_Combat_Engine
 
         public string GetOrdinalSuffix(int num)
         {
-            string suffix = "";
+            string suffix;
 
             // Numbers in the range of 10-19 always have the suffix "th"
             if (num >= 10 && num <= 19)
-            {
                 suffix = "th";
-            }
             else
             {
                 // Get the number in the 1st place
                 while (num / 10 != 0)
-                {
                     num /= 10;
-                }
 
                 // Determine suffix
                 switch (num)
@@ -91,6 +85,26 @@ namespace Dice_and_Combat_Engine
         }
 
         /*
+            The IsDirection method determines whether a string represents a direction
+        */
+
+        private bool IsDirection(string str)
+        {
+            bool isDirection;
+            if (str == "n" || str == "north")
+                isDirection = true;
+            else if (str == "s" || str == "south")
+                isDirection = true;
+            else if (str == "e" || str == "east")
+                isDirection = true;
+            else if (str == "w" || str == "west")
+                isDirection = true;
+            else
+                isDirection = false;
+            return isDirection;
+        }
+
+        /*
             The IsGoodCommand method determines if a user-input command is acceptable
         */
 
@@ -102,13 +116,9 @@ namespace Dice_and_Combat_Engine
             while (!good && i < commands.Length)
             {
                 if (command == commands[i])
-                {
                     good = true;
-                }
                 else
-                {
                     i++;
-                }
             }
             return good;
         }
@@ -179,9 +189,7 @@ namespace Dice_and_Combat_Engine
                 }
             }
             else
-            {
                 output += "Bad command: " + command + "\n";
-            }
             return output;
         }
 
@@ -255,6 +263,25 @@ namespace Dice_and_Combat_Engine
         }
 
         /*
+            The ParseDirection method parses a string representing a Direction
+            into its appropriate Direction type
+        */
+
+        private Direction ParseDirection(string str)
+        {
+            Direction direction;
+            if (str == "n" || str == "north")
+                direction = Direction.North;
+            else if (str == "s" || str == "south")
+                direction = Direction.South;
+            else if (str == "e" || str == "east")
+                direction = Direction.East;
+            else
+                direction = Direction.West;
+            return direction;
+        }
+
+        /*
             The ParseDropCommand method parses a "drop" command for some action to perform
         */
 
@@ -262,57 +289,44 @@ namespace Dice_and_Combat_Engine
         {
             // We expect at least 1 and up to 2 parmeters
             if (commandParams.Length == 0 || commandParams.Length > 2)
-            {
                 output += "Command \"drop\" syntax: [ itemName: string ] { instanceOf: int }\n";
+            else if (commandParams.Length == 1)
+            {
+                Player player = game.Player;
+
+                // Drop first instance of named item from PC's inventory in the current room
+                Item item = player.GetItem(commandParams[0]);
+                if (item != null)
+                {
+                    player.Drop(item);
+                    output += "You drop " + item.Name + "\n";
+                }
+                else
+                    output += "No such item exists in your inventory\n";
             }
             else
             {
-                List<Item> playerInventory = game.Player.Inventory;
                 Player player = game.Player;
 
-                // Determine the number of parameters
-                if (commandParams.Length == 1)
+                // Drop nth instance of named item from PC's inventory in the current room
+                int instance;
+                if (int.TryParse(commandParams[1], out instance) && instance > 0)
                 {
-                    // Drop first instance of named item from PC's inventory in the current room
-                    Item item = playerInventory.Find(i => i.Name.ToLower() == commandParams[0]);
+                    string suffix = GetOrdinalSuffix(instance);
+                    instance--;      // We don't expect instance to be 0-based, so make it so
+                    Item item = player.GetItem(commandParams[0], instance);
                     if (item != null)
                     {
                         player.Drop(item);
-                        output += "You drop " + item.Name + "\n";
+                        output += "You drop the " + (instance + 1) + suffix + " " +
+                                  item.Name + " from your inventory\n";
                     }
                     else
-                    {
-                        output += "No such item exists in your inventory\n";
-                    }
+                        output += "No " + (instance - 1) + suffix +
+                                  " item of that name is in your inventory\n";
                 }
                 else
-                {
-                    // Drop nth instance of named item from PC's inventory in the current room
-                    int instance;
-                    if (int.TryParse(commandParams[1], out instance))
-                    {
-                        string suffix = GetOrdinalSuffix(instance);
-                        instance -= 1;      // We don't expect instance to be 0-based, so make it so
-                        Item[] items = playerInventory.Where(i => i.Name.ToLower() == commandParams[0]).ToArray();
-                        Item item = (instance >= 0 && instance < items.Length) ? items[instance] : null;
-                        if (item != null)
-                        {
-                            player.Drop(item);
-                            output += "You drop the " + (instance + 1) + suffix + " " +
-                                      item.Name + " from your inventory\n";
-                        }
-                        else
-                        {
-                            output += "You don't have a " + (instance + 1) + suffix + " " +
-                                      commandParams[0] + " in your inventory to drop\n";
-                        }
-                    }
-                    else
-                    {
-                        output += "Second parameter must be an integer specifying which " +
-                                   "of " + commandParams[0] + " in your inventory to drop\n";
-                    }
-                }
+                    output += "Second parameter must be an integer for the instance of the object to drop\n";
             }
         }
 
@@ -374,21 +388,15 @@ namespace Dice_and_Combat_Engine
                                 output += "You equip " + item.Name + ", increasing your damage by " + bonus + "\n";
                             }
                             else
-                            {
                                 output += "You cannot equip the item, " + commandParams[0] + "\n";
-                            }
                         }
                         else
-                        {
                             output += "You don't have a " + (instance + 1) + suffix + " " +
                                       commandParams[0] + " in your inventory to get\n";
-                        }
                     }
                     else
-                    {
                         output += "Second parameter must be an integer specifying which " +
                                    "of " + commandParams[0] + " in your inventory to get\n";
-                    }
                 }
             }
         }
@@ -401,84 +409,69 @@ namespace Dice_and_Combat_Engine
         {
             // We expect at least 1 and up to 2 parameters
             if (commandParams.Length == 0 || commandParams.Length > 2)
-            {
                 output += "Command \"get\" syntax: [ itemName: string ] { instanceOf: int }\n";
+            else if (commandParams.Length == 1)
+            {
+                Player player = game.Player;
+                Room currentRoom = player.Location;
+
+                // Get first instance of named item from PC's inventory to use
+                Item item = currentRoom.GetItem(commandParams[0]);
+                if (item != null)
+                {
+                    if (item is Weapon)
+                    {
+                        player.Use(item);
+                        int bonus = ((Weapon)item).DamageBonus;
+                        output += "You equip " + item.Name + ", increasing your damage by " + bonus + "\n";
+                    }
+                    else if (item is Potion)
+                    {
+                        player.Use(item);
+                        int restored = ((Potion)item).HealthRestored;
+                        output += "You use " + item.Name + ", restoring your health by " + restored + "\n";
+                    }
+                    else
+                        output += "You cannot use the item, " + item.Name + "\n";
+                }
+                else
+                    output += "No such item exists in your inventory\n";
             }
             else
             {
-                List<Item> playerInventory = game.Player.Inventory;
                 Player player = game.Player;
+                Room currentRoom = player.Location;
 
-                // Determine number of parameters
-                if (commandParams.Length == 1)
+                // Get nth instance of named item from PC's inventory to use
+                int instance;
+                if (int.TryParse(commandParams[1], out instance) && instance > 0)
                 {
-                    // Get first instance of named item from PC's inventory to use
-                    Item item = playerInventory.Find(i => i.Name.ToLower() == commandParams[0]);
+                    string suffix = GetOrdinalSuffix(instance);
+                    instance--;     // We don't expect instance to be 0-based, so make it so
+                    Item item = currentRoom.GetItem(commandParams[0], instance);
                     if (item != null)
                     {
                         if (item is Weapon)
                         {
-                            player.Get(item);
+                            player.Use(item);
                             int bonus = ((Weapon)item).DamageBonus;
                             output += "You equip " + item.Name + ", increasing your damage by " + bonus + "\n";
                         }
                         else if (item is Potion)
                         {
-                            player.Get(item);
+                            player.Use(item);
                             int restored = ((Potion)item).HealthRestored;
                             output += "You use " + item.Name + ", restoring your health by " + restored + "\n";
                         }
                         else
-                        {
                             output += "You cannot use the item, " + item.Name + "\n";
-                        }
                     }
                     else
-                    {
-                        output += "No such item exists in your inventory\n";
-                    }
+                        output += "No " + (instance - 1) + suffix +
+                                  " item of that name is in your inventory\n";
                 }
                 else
-                {
-                    // Get nth instance of named item from PC's inventory to use
-                    int instance;
-                    if (int.TryParse(commandParams[1], out instance))
-                    {
-                        string suffix = GetOrdinalSuffix(instance);
-                        instance--;     // We don't expect instance to be 0-based, so make it so
-                        Item[] items = playerInventory.Where(i => i.Name.ToLower() == commandParams[0]).ToArray();
-                        Item item = (instance >= 0 && instance < items.Length) ? items[instance] : null;
-                        if (item != null)
-                        {
-                            if (item is Weapon)
-                            {
-                                player.Get(item);
-                                int bonus = ((Weapon)item).DamageBonus;
-                                output += "You equip " + item.Name + ", increasing your damage by " + bonus + "\n";
-                            }
-                            else if (item is Potion)
-                            {
-                                player.Get(item);
-                                int restored = ((Potion)item).HealthRestored;
-                                output += "You use " + item.Name + ", restoring your health by " + restored + "\n";
-                            }
-                            else
-                            {
-                                output += "You cannot use the item, " + item.Name + "\n";
-                            }
-                        }
-                        else
-                        {
-                            output += "You don't have a " + (instance + 1) + suffix + " " +
-                                      commandParams[0] + " in your inventory to get\n";
-                        }
-                    }
-                    else
-                    {
-                        output += "Second parameter must be an integer specifying which " +
-                                   "of " + commandParams[0] + " in your inventory to get\n";
-                    }
-                }
+                    output += "Second parameter must be an integer for the instance of the object to get\n";
             }
         }
 
@@ -490,59 +483,37 @@ namespace Dice_and_Combat_Engine
         {
             // We expect only 1 parameter: The direction to travel in
             if (commandParams.Length == 1)
-            {
-                // Make sure that parameter is a direction
-                Direction direction = Direction.North;
-                bool isDirection = false;
-                while (!isDirection && direction <= Direction.West)
+                if (IsDirection(commandParams[0]))
                 {
-                    if (commandParams[0] == direction.ToString().ToLower())
-                    {
-                        isDirection = true;
-                    }
-                    else
-                    {
-                        direction++;
-                    }
-                }
-
-                // If the parameter is a proper direction, continue
-                if (isDirection)
-                {
+                    Direction direction = ParseDirection(commandParams[0]);
                     Player player = game.Player;
                     Room currentRoom = player.Location;
 
                     // If a room in the specified direction does not exist
                     if (currentRoom.Links[(int)direction] == null)
-                    {
-                        output += "There is no exit leading " + direction.ToString();
-                    }
+                        output += "There is no exit leading " + direction.ToString() + "\n";
+
                     // If the link to the room in the specified direction is not open
                     else if (!currentRoom.LinksUnlocked[(int)direction])
-                    {
-                        output += "The " + direction.ToString() + " exit is not open";
-                    }
+                        output += "The " + direction.ToString() + " exit is not open\n";
+
                     // If the room in the specified direction both exists and is open
                     else
                     {
                         player.Go(direction);
-                        output += "You went " + direction.ToString();
+                        output += "You go " + direction.ToString() + "\n";
                     }
                 }
                 else
-                {
-                    output += "Parameter must be one of North, South, East, or West";
-                }
-            }
+                    output += "Parameter must be a cardinal direction\n";
             else
-            {
-                output += "Command \"go\" syntax: [ directionToTravel: Direction ]";
-            }
+                output += "Command \"go\" syntax: [ directionToTravel: Direction ]\n";
         }
 
         /*
-            The ParseInventoryCommand method displays the PC's inventory.
-         */
+            The ParseInventoryCommand method parses an "inventory" command for some action to perform
+        */
+
         private void ParseInventoryCommand()
         {
             output += "Inventory:";
@@ -578,9 +549,7 @@ namespace Dice_and_Combat_Engine
                 output += "\n";
             }
             else
-            {
-                output += "\nYour inventory is lacking of items";
-            }
+                output += "Your inventory is lacking of items\n";
         }
 
         /*
@@ -590,71 +559,63 @@ namespace Dice_and_Combat_Engine
         private void ParseLookCommand(string[] commandParams)
         {
             // We expect up to 2 parameters
-            if (commandParams.Length <= 2)
+            if (commandParams.Length > 3)
+                output += "Command \"look\" syntax: { creatureName: string } { instanceOf: int }\n";
+            else if (commandParams.Length == 0)
             {
+                // Provide general information about the Player's current location
+                Room currentRoom = game.Player.Location;
+                output += currentRoom.GetInfo() + "\n";
+            }
+            else if (commandParams.Length == 1)
+            {
+                // Output description of object and, if creature, set Player's target
                 Player player = game.Player;
-
-                // Determine the number of parameters
-                if (commandParams.Length == 0)
+                Room currentRoom = player.Location;
+                if (currentRoom.GetDenizenNames().Contains(commandParams[0], StringComparer.OrdinalIgnoreCase))
                 {
-                    // We will provide general information about the Player's current location
-                    output += player.Look();
+                    player.Target = currentRoom.GetDenizen(commandParams[0]);
+                    output += player.Target.Description + "\n";
                 }
+                else if (currentRoom.GetItemNames().Contains(commandParams[0], StringComparer.OrdinalIgnoreCase))
+                    output += currentRoom.GetItem(commandParams[0]).Description + "\n";
                 else
-                {
-                    List<Creature> roomDenizens = player.Location.Denizens;
-
-                    if (commandParams.Length == 1)
-                    {
-                        // Get first instance of named creature in the current room to examine
-                        Creature creature = roomDenizens.Find(denizen => denizen.Stats.name.ToLower() == commandParams[0]);
-                        if (creature != null)
-                        {
-                            player.Target = creature;
-                            output += "You observe " + creature.Stats.name;
-                        }
-                        else
-                        {
-                            output += "No such creature, " + commandParams[0] + " exists in this room";
-                        }
-                    }
-                    else
-                    {
-                        // Get nth instance of named creature in the current room to examine
-                        int instance;
-                        if (int.TryParse(commandParams[1], out instance) && instance > 0)
-                        {
-                            string suffix = GetOrdinalSuffix(instance);
-                            instance -= 1;      // We do not expect instance to be 0-based, so make it so
-                            Creature[] creatures = roomDenizens.Where(denizen => denizen.
-                                                                                 Stats.
-                                                                                 name.
-                                                                                 ToLower() == commandParams[0]).
-                                                                                 ToArray();
-
-                            Creature creature = (instance < creatures.Length) ? creatures[instance] : null;
-                            if (creature != null)
-                            {
-                                player.Target = creature;
-                                output += "You observe " + creature.Stats.name;
-                            }
-                            else
-                            {
-                                output += "There is no " + (instance + 1) + suffix + " " +
-                                          commandParams[0] + " in this room";
-                            }
-                        }
-                        else
-                        {
-                            output += "Second parameter must be an integer specifying which " +
-                                      "of " + commandParams[0] + " in this room to examine";
-                        }
-                    }
-                }
+                    output += "No object with that name exists\n";
             }
             else
             {
-                output += "Command \"look\" syntax: [ creatureName: string ] { instanceOf: int }";
+                // Output description of nth instance of object and, if creature, set Player's target
+                Player player = game.Player;
+                Room currentRoom = player.Location;
+                int instance;
+                if (int.TryParse(commandParams[1], out instance) && instance > 0)
+                {
+                    string suffix = GetOrdinalSuffix(instance);
+                    instance--;      // We do not expect instance to be 0-based, so make it so
+                    if (game.IsCreature(commandParams[0]))
+                    {
+                        Creature creature = currentRoom.GetDenizen(commandParams[0], instance);
+                        if (creature != null)
+                        {
+                            player.Target = creature;
+                            output += player.Target.Description + "\n";
+                        }
+                        else
+                            output += "No " + (instance + 1) + suffix + " instance of that creature exists\n";
+                    }
+                    else if (game.IsItem(commandParams[0]))
+                    {
+                        Item item = currentRoom.GetItem(commandParams[0], instance);
+                        if (item != null)
+                            output += item.Description + "\n";
+                        else
+                            output += "No " + (instance + 1) + suffix + " instance of that item exists\n";
+                    }
+                    else
+                        output += "No object with that name exists\n";
+                }
+                else
+                    output += "Second parameter must be an integer for the instance of the object to examine\n";
             }
         }
 
@@ -667,48 +628,31 @@ namespace Dice_and_Combat_Engine
             // We expect only 1 parameter: The direction of the exit to open
             if (commandParams.Length == 1)
             {
-                // Make sure that parameter is a direction
-                Direction direction = Direction.North;
-                bool isDirection = false;
-                while (!isDirection && direction <= Direction.West)
+                if (IsDirection(commandParams[0]))
                 {
-                    if (commandParams[0].Equals(direction.ToString().ToLower()))
-                    {
-                        isDirection = true;
-                    }
-                    else
-                    {
-                        direction++;
-                    }
-                }
-
-                if (isDirection)
-                {
+                    Direction direction = ParseDirection(commandParams[0]);
                     Room currentRoom = game.Player.Location;
+
+                    // If a room in the specified direction does not exist
                     if (currentRoom.Links[(int)direction] == null)
-                    {
-                        output += "There is no exit leading " + direction.ToString() + " to open";
-                    }
+                        output += "There is no exit leading " + direction.ToString() + " to open\n";
+
+                    // If the link to the room in the specified direction is already open
                     else if (currentRoom.LinksUnlocked[(int)direction])
-                    {
-                        output += "The " + direction.ToString() + " exit is already open";
-                    }
+                        output += "The " + direction.ToString() + " exit is already open\n";
+
+                    // Open link
                     else
                     {
-                        // Open link
                         currentRoom.OpenLink(currentRoom.Links[(int)direction]);
-                        output += "You opened the " + direction.ToString() + " exit";
+                        output += "You opened the " + direction.ToString() + " exit\n";
                     }
                 }
                 else
-                {
-                    output += "Invalid parameter: Must be one of North, South, East, or West";
-                }
+                    output += "Parameter must be a cardinal direction\n";
             }
             else
-            {
-                output += "Command \"open\" takes 1 parameter";
-            }
+                output += "Command \"open\" syntax: [ directionToOpen: Direction ]\n";
         }
 
         /*
@@ -721,12 +665,12 @@ namespace Dice_and_Combat_Engine
             if (commandParams.Length == 0)
             {
                 // Confirm quit
-                output += "Quitting...";
+                output += "Quitting...\n";
             }
             else
             {
                 // Output error
-                output += "Error: Command \"quit\" takes no parameters";
+                output += "Error: Command \"quit\" takes no parameters\n";
             }
         }
 
@@ -833,53 +777,41 @@ namespace Dice_and_Combat_Engine
 
         private string[] ResolveCompoundParameters(string[] parameters)
         {
-            // The array to return
             string[] toReturn;
 
             if (parameters.Length >= 2)
             {
-                // Prepare list for the purposes of modifying the array
+                // Prepare variables
                 List<string> paramList = new List<string>(parameters);
-
-                // Prepare list of object names
                 List<string> names = new List<string>();
-
-                // Candidate for a compound parameter name, built as name matches are found
-                StringBuilder builtParameter = new StringBuilder();
-
-                // Index of the parameter we begin checking names against
+                StringBuilder resolvedParam = new StringBuilder();
                 int start = 0;
-
-                // The current index of the element in the parameter list we have expanded to
                 int current = 0;
 
                 // While there are more parameters
                 while (start < paramList.Count)
                 {
-                    // Start off built parameter with the start parameter
-                    builtParameter.Append(paramList[start]);
-
-                    // Get list of object names that start with the start parameter
+                    resolvedParam.Append(paramList[start]);
                     names.AddRange(game.GetObjectNames().Where(name => name.StartsWith(paramList[start])));
 
                     // While matching names list is not empty and there are more parameters
                     while (names.Count != 0 && current != paramList.Count - 1)
                     {
-                        // If name list contains elements that start with the built parameter and the next parameter joined together
-                        if (names.Find(name => name.StartsWith(builtParameter.ToString() + " " + paramList[current + 1])) != null)
+                        // If name list contains elements that start with the resolved parameter and the next parameter joined
+                        if (names.Find(name => name.StartsWith(resolvedParam.ToString() + " " + paramList[current + 1])) != null)
                         {
-                            // Join the built parameter and the next parameter together into a single parameter
-                            builtParameter.Append(" " + paramList[current + 1]);
+                            // Join the resolved parameter and the next parameter together into a single parameter
+                            resolvedParam.Append(" " + paramList[current + 1]);
 
                             // Increment current to point to the next parameter which we have expanded to
                             current++;
 
-                            // Check if the currently built parameter matches exactly with an object name
+                            // Check if the currently resolved parameter matches exactly with an object name
                             // In which case, a compound parameter has definitely been resolved
-                            if (names.Contains(builtParameter.ToString()))
+                            if (names.Contains(resolvedParam.ToString()))
                             {
                                 // Set start parameter to the resolved parameter
-                                paramList[start] = builtParameter.ToString();
+                                paramList[start] = resolvedParam.ToString();
 
                                 // Remove all parameters from the parameter list starting at
                                 // the current index and down to but not including the start
@@ -892,18 +824,17 @@ namespace Dice_and_Combat_Engine
                             }
 
                             // Refresh list of names that begin with the built parameter
-                            names.RemoveAll(name => !name.StartsWith(builtParameter.ToString()));
+                            names.RemoveAll(name => !name.StartsWith(resolvedParam.ToString()));
                         }
                         else
                         {
-                            // Clear names
                             names.Clear();
                         }
                     }
 
                     // Increment start to point to the next parameter in the parameter list
                     start++;
-                    builtParameter.Clear();
+                    resolvedParam.Clear();
                 }
 
                 // Prepare to return possibly modifed array

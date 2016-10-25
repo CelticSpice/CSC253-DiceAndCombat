@@ -1,4 +1,5 @@
 Name: Goblin
+Description: An ugly green thing
 Friendly: False
 HP: 5
 AB: 1
@@ -13,6 +14,7 @@ Wisdom: -1
 Charisma: -2
 
 Name: Orc
+Description: A large beastly thing
 Friendly: False
 HP: 5
 AB: 1
@@ -27,6 +29,7 @@ Wisdom: -2
 Charisma: -2
 
 Name: Zombie
+Description: Something that should be dead
 Friendly: False
 HP: 16
 AB: 2
@@ -41,6 +44,7 @@ Wisdom: 0
 Charisma: -5
 
 Name: Kobold
+Description: Annoying, is what they are!
 Friendly: False
 HP: 4
 AB: 1
@@ -55,6 +59,7 @@ Wisdom: -1
 Charisma: -1
 
 Name: Dragon
+Description: Your doom
 Friendly: False
 HP: 551
 AB: 38

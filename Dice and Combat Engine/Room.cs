@@ -8,6 +8,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace Dice_and_Combat_Engine
 {
@@ -78,177 +79,191 @@ namespace Dice_and_Combat_Engine
         }
 
         /*
-            The GetContentInformation method returns an array containing information
-            about the number and kind of items in this room
+            The GetItemInformation method returns a string describing
+            the number and kind of items in this room
         */
 
-        private string[] GetContentInformation()
+        private string GetItemInformation()
         {
-            List<string> info = new List<string>();
-
-            info.Add("There are " + _contents.Count + " items in this room");
+            StringBuilder output = new StringBuilder();
+            output.Append("There are " + _contents.Count + " items in this room");
+            List<string> items = new List<string>();
 
             // Get item names
             foreach (Item item in _contents)
-            {
-                if (!info.Contains(item.Name))
-                {
-                    info.Add(item.Name);
-                }
-            }
+                if (!items.Contains(item.Name))
+                    items.Add(item.Name);
 
-            // Build info
-            if (info.Count > 1)
+            // Build output
+            if (items.Count > 0)
             {
-                info[0] += ": ";
-                int count = 0;
-                for (int i = 1; i < info.Count; i++)
+                output.Append(":");
+                for (int i = 0; i < items.Count; i++)
                 {
-                    count = 0;
-                    foreach (Item item in _contents)
-                    {
-                        if (item.Name == info[i])
-                        {
-                            count++;
-                        }
-                    }
-
-                    // Make plural if necessary
-                    if (count > 1)
-                    {
-                        info[i] += "s";
-                    }
+                    int count = _contents.Where(item => item.Name == items[i]).Count();
 
                     // Format
-                    if (info.Count == 2)
-                    {
-                        info[i] = count + " " + info[i];
-                    }
-                    else if (i < info.Count - 1)
-                    {
-                        info[i] = count + " " + info[i] + ", ";
-                    }
+                    if (items.Count == 1)
+                        output.Append("\n-- " + count + " " + items[i]);
+                    else if (i < items.Count - 1)
+                        output.Append("\n-- " + count + " " + items[i] + ",");
                     else
-                    {
-                        info[i] = "and " + count + " " + info[i];
-                    }
+                        output.Append("\n-- and " + count + " " + items[i]);
                 }
             }
-            return info.ToArray();
+            return output.ToString();
         }
 
         /*
-            The GetDenizenInformation method returns an array containing information
-            about the number and kind of creatures in this room
+            The GetItem method returns the item with the specified name;
+            If no item with that name exists, null is returned
         */
 
-        private string[] GetDenizenInformation()
+        public Item GetItem(string name)
         {
-            List<string> info = new List<string>();
+            return _contents.Find(i => i.Name.ToLower() == name.ToLower());
+        }
 
-            info.Add("There are " + _denizens.Count + " creatures in this room");
+        /*
+            The GetItem method returns the nth instance of the item
+            with the specified name; if no item of the specified instance
+            or name exists, null is returned
+        */
+
+        public Item GetItem(string name, int instance)
+        {
+            Item[] items = _contents.Where(i => i.Name.ToLower() == name.ToLower()).ToArray();
+            if (items.Length > 0 && instance < items.Length)
+                return _contents[instance];
+            else
+                return null;
+        }
+
+        /*
+            The GetItemNames method returns an array containing the names
+            of the Room's items
+        */
+
+        public string[] GetItemNames()
+        {
+            string[] names = new string[_contents.Count];
+            for (int i = 0; i < names.Length; i++)
+                names[i] = _contents[i].Name;
+            return names;
+        }
+
+        /*
+            The GetDenizen method returns the denizen with the specified name;
+            If no denizen with that name exists, null is returned
+        */
+
+        public Creature GetDenizen(string name)
+        {
+            return _denizens.Find(d => d.Stats.name.ToLower() == name.ToLower());
+        }
+
+        /*
+            The GetDenizen method returns the nth instance of the denizen
+            with the specified name; if no denizen of the specified instance
+            or name exists, null is returned
+        */
+
+        public Creature GetDenizen(string name, int instance)
+        {
+            Creature[] denizens = _denizens.Where(d => d.Stats.name.ToLower() == name.ToLower()).ToArray();
+            if (denizens.Length > 0 && instance < denizens.Length)
+                return _denizens[instance];
+            else
+                return null;
+        }
+
+        /*
+            The GetDenizenInformation method returns a string describing
+            the number and kind of creatures in this room
+        */
+
+        private string GetDenizenInformation()
+        {
+            StringBuilder output = new StringBuilder();
+            output.Append("There are " + _denizens.Count + " creatures in this room");
+            List<string> creatures = new List<string>();
 
             // Get creature names
             foreach (Creature creature in _denizens)
-            {
-                if (!info.Contains(creature.Stats.name))
-                {
-                    info.Add(creature.Stats.name);
-                }
-            }
+                if (!creatures.Contains(creature.Stats.name))
+                    creatures.Add(creature.Stats.name);
 
-            // Build info
-            if (info.Count > 1)
+            // Build output
+            if (creatures.Count > 0)
             {
-                info[0] += ": ";
-                int count = 0;
-                for (int i = 1; i < info.Count; i++)
+                output.Append(":");
+                for (int i = 0; i < creatures.Count; i++)
                 {
-                    count = 0;
-                    foreach (Creature creature in _denizens)
-                    {
-                        if (creature.Stats.name == info[i])
-                        {
-                            count++;
-                        }
-                    }
-
-                    // Make plural if necessary
-                    if (count > 1)
-                    {
-                        info[i] += "s";
-                    }
+                    int count = _denizens.Where(creature => creature.Stats.name == creatures[i]).Count();
 
                     // Format
-                    if (info.Count == 2)
-                    {
-                        info[i] = count + " " + info[i];
-                    }
-                    else if (i < info.Count - 1)
-                    {
-                        info[i] = count + " " + info[i] + ", ";
-                    }
+                    if (creatures.Count == 1)
+                        output.Append("\n-- " + count + " " + creatures[i]);
+                    else if (i < creatures.Count - 1)
+                        output.Append("\n-- " + count + " " + creatures[i] + ",");
                     else
-                    {
-                        info[i] = "and " + count + " " + info[i];
-                    }
+                        output.Append("\n-- and " + count + " " + creatures[i]);
                 }
             }
-            return info.ToArray();
+            return output.ToString();
         }
 
         /*
-            The GetExitInformation method returns an array containing information about
+            The GetDenizenNames method returns an array containing the names
+            of the Room's denizens
+        */
+
+        public string[] GetDenizenNames()
+        {
+            string[] names = new string[_denizens.Count];
+            for (int i = 0; i < names.Length; i++)
+                names[i] = _denizens[i].Stats.name;
+            return names;
+        }
+
+        /*
+            The GetExitInformation method returns a string describing
             the directions in which exits exist
         */
 
-        private string[] GetExitInfomation()
+        private string GetExitInfomation()
         {
-            string[] info = new string[_links.Where(link => link != null).Count() + 1];
-            info[0] = "There are " + (info.Length - 1) + " exits in this room: ";
-            int i = 1;
+            StringBuilder output = new StringBuilder();
+            int numExits = _links.Where(exit => exit != null).Count();
+            output.Append("There are " + numExits + " exits in this room:");
+            int exitNumber = 1;
             for (Direction direction = Direction.North; direction <= Direction.West; direction++)
             {
                 if (_links[(int)direction] != null)
                 {
-                    if (info.Length == 2)
-                    {
-                        info[i] = direction.ToString();
-                    }
-                    else if (i < info.Length - 1)
-                    {
-                        info[i] = direction.ToString() + ", ";
-                        i++;
-                    }
+                    if (numExits == 1)
+                        output.Append("\n-- " + direction.ToString());
+                    else if (exitNumber < numExits)
+                        output.Append("\n-- " + direction.ToString() + ",");
                     else
-                    {
-                        info[i] = "and " + direction.ToString();
-                        i++;
-                    }
+                        output.Append("\n-- and " + direction.ToString());
+                    exitNumber++;
                 }
             }
-            return info;
+            return output.ToString();
         }
 
         /*
-            The GetInfo method returns a jagged array containing information about
-            the number and kinds of creatures and items in this room, and 
-            the directions in which exits exist
+            The GetInfo method returns a string describing the number and
+            kinds of creatures and items in this room, and the directions
+            in which exits exist
         */
 
-        public string[][] GetInfo()
+        public string GetInfo()
         {
-            string[] creatureInfo = GetDenizenInformation();
-            string[] itemInfo = GetContentInformation();
-            string[] exitInfo = GetExitInfomation();
-
-            const int NUM_INFO = 3;
-            string[][] info = new string[NUM_INFO][];
-            info[0] = creatureInfo;
-            info[1] = itemInfo;
-            info[2] = exitInfo;
-
-            return info;
+            return GetItemInformation() +
+                   "\n" + GetDenizenInformation() +
+                   "\n" + GetExitInfomation();
         }
 
         /*

@@ -1,5 +1,5 @@
 ﻿/*
-    This class handles item objects
+    This class represents base item objects
     9/22/2016
     CSC 253 0001 - Dice and Combat Engine
     Author: James Alves, Shane McCann, Timothy Burns
@@ -28,19 +28,6 @@ namespace Dice_and_Combat_Engine
             _durability = d;
             _value = v;
             _id = i;
-        }
-
-        /*
-            No-arg Constructor
-        */
-
-        public Item()
-        {
-            _name = "spork";
-            _description = "Complete junk";
-            _durability = -1;
-            _value = 0;
-            _id = -1;
         }
 
         /*

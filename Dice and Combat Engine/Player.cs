@@ -34,8 +34,8 @@ namespace Dice_and_Combat_Engine
             Accepts Player-specific stats, base stats, attributes, and a portrait of the player
         */
 
-        public Player(PlayerStats playerStats, BaseStats baseStats, Attributes attribs)
-            : base(baseStats, attribs)
+        public Player(PlayerStats playerStats, BaseStats baseStats, Attributes attribs, string desc)
+            : base(baseStats, attribs, desc)
         {
             _playerStats = playerStats;
             _inventory = new List<Item>();
@@ -120,11 +120,10 @@ namespace Dice_and_Combat_Engine
         }
 
         /*
-            The Get method has the Player get an item from the Player's inventory
-            to use
+            The Use method has the Player use an item from its inventory
         */
 
-        public void Get(Item item)
+        public void Use(Item item)
         {
             if (item is Weapon)
             {
@@ -134,6 +133,33 @@ namespace Dice_and_Combat_Engine
             {
                 UsePotion((Potion)item);
             }
+        }
+
+        /*
+            The GetItem method returns the item with the specified name
+            from the Player's inventory; If no item with that name exists,
+            null is returned
+        */
+
+        public Item GetItem(string name)
+        {
+            return _inventory.Find(i => i.Name.ToLower() == name.ToLower());
+        }
+
+        /*
+            The GetItem method returns the nth instance of the item
+            with the specified name from the Player's inventory; if
+            no item of the specified instance or name exists,
+            null is returned
+        */
+
+        public Item GetItem(string name, int instance)
+        {
+            Item[] items = _inventory.Where(i => i.Name.ToLower() == name.ToLower()).ToArray();
+            if (items.Length > 0 && instance < items.Length)
+                return _inventory[instance];
+            else
+                return null;
         }
 
         /*
@@ -162,25 +188,6 @@ namespace Dice_and_Combat_Engine
 
             // Reset leveled up notifier
             _leveledUp = false;
-        }
-
-        /*
-            The Look method has the Player observe the contents of its current location
-        */
-
-        public string Look()
-        {
-            StringBuilder results = new StringBuilder();
-            string[][] info = Location.GetInfo();
-            foreach (string[] row in info)
-            {
-                foreach (string col in row)
-                {
-                    results.Append(col);
-                }
-                results.Append("\n\n");
-            }
-            return results.ToString();
         }
 
         /*
@@ -232,7 +239,7 @@ namespace Dice_and_Combat_Engine
             The UsePotion method has the player use a potion
         */
 
-        public void UsePotion(Potion potion)
+        private void UsePotion(Potion potion)
         {
             BaseStats newStats = Stats;
             newStats.hitPoints += potion.Use();

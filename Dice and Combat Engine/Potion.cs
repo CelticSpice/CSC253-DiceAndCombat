@@ -30,12 +30,9 @@ namespace Dice_and_Combat_Engine
         */
 
         public Potion(Potion p)
+            : base(p.Name, p.Description, p.Durability, p.Value, POTION_ID)
         {
-            this.Name = p.Name;
-            this.Description = p.Description;
-            this.Durability = p.Durability;
-            this.Value = p.Value;
-            this._healthRestored = p._healthRestored;
+            _healthRestored = p._healthRestored;
         }
 
         /*

@@ -7,8 +7,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 
 namespace Dice_and_Combat_Engine
@@ -80,7 +80,7 @@ namespace Dice_and_Combat_Engine
             playerStats.experience = 0;
             playerStats.level = 1;
 
-            _player = new Player(playerStats, playerBaseStats, playerAttributes);
+            _player = new Player(playerStats, playerBaseStats, playerAttributes, "You");
             _player.Location = dungeon.Grid[0, 0];
         }
 
@@ -115,6 +115,26 @@ namespace Dice_and_Combat_Engine
         }
 
         /*
+            The IsCreature method returns whether a creature with the passed name
+            exists
+        */
+
+        public bool IsCreature(string name)
+        {
+            return _creatures.First(c => c.Stats.name.ToLower() == name) != null;
+        }
+
+        /*
+            The IsItem method returns whether an item with the passed name
+            exists
+        */
+
+        public bool IsItem(string name)
+        {
+            return _items.First(i => i.Name.ToLower() == name) != null;
+        }
+
+        /*
             The LoadCreatures method loads the creatures in the game
         */
 
@@ -138,6 +158,7 @@ namespace Dice_and_Combat_Engine
                 // Prepare new creature
                 BaseStats creatureStats = new BaseStats();
                 Attributes creatureAttribs = new Attributes();
+                string description = "";
 
                 while (!creatureStream.EndOfStream)
                 {
@@ -154,6 +175,10 @@ namespace Dice_and_Combat_Engine
                             case "Name":
                                 // Read creature's name
                                 creatureStats.name = splitLine[1].Trim();
+                                break;
+                            case "Description":
+                                // Read creature's description
+                                description = splitLine[1].Trim();
                                 break;
                             case "Friendly":
                                 // Read creature's friendly status
@@ -213,7 +238,7 @@ namespace Dice_and_Combat_Engine
                     else
                     {
                         // Create new creature with collected data
-                        loadList.Add(new Creature(creatureStats, creatureAttribs));
+                        loadList.Add(new Creature(creatureStats, creatureAttribs, description));
                     }
                 }
             }
