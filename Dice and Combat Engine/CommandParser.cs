@@ -273,13 +273,11 @@ namespace Dice_and_Combat_Engine
                 output += "Command \"drop\" syntax: [ itemName: string ] { instanceOf: int }\n";
             else if (commandParams.Length == 1)
             {
-                Player player = game.Player;
-
                 // Drop first instance of named item from PC's inventory in the current room
-                Item item = player.GetItem(commandParams[0]);
+                Item item = game.Player.GetItem(commandParams[0]);
                 if (item != null)
                 {
-                    player.Drop(item);
+                    game.Player.Drop(item);
                     output += "You drop " + item.Name + "\n";
                 }
                 else
@@ -287,18 +285,16 @@ namespace Dice_and_Combat_Engine
             }
             else
             {
-                Player player = game.Player;
-
                 // Drop nth instance of named item from PC's inventory in the current room
                 int instance;
                 if (int.TryParse(commandParams[1], out instance) && instance > 0)
                 {
                     string suffix = GetOrdinalSuffix(instance);
                     instance--;      // We don't expect instance to be 0-based, so make it so
-                    Item item = player.GetItem(commandParams[0], instance);
+                    Item item = game.Player.GetItem(commandParams[0], instance);
                     if (item != null)
                     {
-                        player.Drop(item);
+                        game.Player.Drop(item);
                         output += "You drop the " + (instance + 1) + suffix + " " +
                                   item.Name + " from your inventory\n";
                     }
@@ -319,9 +315,7 @@ namespace Dice_and_Combat_Engine
         {
             // We expect at least 1 and up to 2 parameters
             if (commandParams.Length == 0 || commandParams.Length > 2)
-            {
                 output += "Command \"Equip\" syntax: [ itemName: string ] { instanceOf: int }\n";
-            }
             else if (commandParams.Length == 1)
             {
                 // Get first instance of named item from PC's inventory to equip
@@ -342,7 +336,7 @@ namespace Dice_and_Combat_Engine
             }
             else
             {
-                //Get nth instance of named item from PC's inventory to equip.
+                // Get nth instance of named item from PC's inventory to equip.
                 int instance;
                 if (int.TryParse(commandParams[1], out instance) && instance > 0)
                 {
@@ -450,32 +444,32 @@ namespace Dice_and_Combat_Engine
         private void ParseGoCommand(string[] commandParams)
         {
             // We expect only 1 parameter: The direction to travel in
-            if (commandParams.Length == 1)
+            if (commandParams.Length != 1)
+                output += "Command \"go\" syntax: [ directionToTravel: Direction ]\n";
+            else
+            {
                 if (IsDirection(commandParams[0]))
                 {
                     Direction direction = ParseDirection(commandParams[0]);
-                    Player player = game.Player;
-                    Room currentRoom = player.Location;
 
                     // If a room in the specified direction does not exist
-                    if (currentRoom.Links[(int)direction] == null)
+                    if (game.Player.Location.Links[(int)direction] == null)
                         output += "There is no exit leading " + direction.ToString() + "\n";
 
                     // If the link to the room in the specified direction is not open
-                    else if (!currentRoom.LinksUnlocked[(int)direction])
+                    else if (!game.Player.Location.LinksUnlocked[(int)direction])
                         output += "The " + direction.ToString() + " exit is not open\n";
 
                     // If the room in the specified direction both exists and is open
                     else
                     {
-                        player.Go(direction);
+                        game.Player.Go(direction);
                         output += "You go " + direction.ToString() + "\n";
                     }
                 }
                 else
                     output += "Parameter must be a cardinal direction\n";
-            else
-                output += "Command \"go\" syntax: [ directionToTravel: Direction ]\n";
+            }
         }
 
         /*
@@ -530,31 +524,24 @@ namespace Dice_and_Combat_Engine
             if (commandParams.Length > 3)
                 output += "Command \"look\" syntax: { creatureName: string } { instanceOf: int }\n";
             else if (commandParams.Length == 0)
-            {
                 // Provide general information about the Player's current location
-                Room currentRoom = game.Player.Location;
-                output += currentRoom.GetInfo() + "\n";
-            }
+                output += game.Player.Location.GetInfo() + "\n";
             else if (commandParams.Length == 1)
             {
                 // Output description of object and, if creature, set Player's target
-                Player player = game.Player;
-                Room currentRoom = player.Location;
-                if (currentRoom.GetDenizenNames().Contains(commandParams[0], StringComparer.OrdinalIgnoreCase))
+                if (game.Player.Location.GetDenizenNames().Contains(commandParams[0], StringComparer.OrdinalIgnoreCase))
                 {
-                    player.Target = currentRoom.GetDenizen(commandParams[0]);
-                    output += player.Target.Description + "\n";
+                    game.Player.Target = game.Player.Location.GetDenizen(commandParams[0]);
+                    output += game.Player.Target.Description + "\n";
                 }
-                else if (currentRoom.GetItemNames().Contains(commandParams[0], StringComparer.OrdinalIgnoreCase))
-                    output += currentRoom.GetItem(commandParams[0]).Description + "\n";
+                else if (game.Player.Location.GetItemNames().Contains(commandParams[0], StringComparer.OrdinalIgnoreCase))
+                    output += game.Player.Location.GetItem(commandParams[0]).Description + "\n";
                 else
                     output += "No object with that name exists\n";
             }
             else
             {
                 // Output description of nth instance of object and, if creature, set Player's target
-                Player player = game.Player;
-                Room currentRoom = player.Location;
                 int instance;
                 if (int.TryParse(commandParams[1], out instance) && instance > 0)
                 {
@@ -562,20 +549,20 @@ namespace Dice_and_Combat_Engine
                     instance--;      // We do not expect instance to be 0-based, so make it so
                     if (game.IsCreature(commandParams[0]))
                     {
-                        Creature creature = currentRoom.GetDenizen(commandParams[0], instance);
-                        if (creature != null)
+                        Creature c = game.Player.Location.GetDenizen(commandParams[0], instance);
+                        if (c != null)
                         {
-                            player.Target = creature;
-                            output += player.Target.Description + "\n";
+                            game.Player.Target = c;
+                            output += game.Player.Target.Description + "\n";
                         }
                         else
                             output += "No " + (instance + 1) + suffix + " instance of that creature exists\n";
                     }
                     else if (game.IsItem(commandParams[0]))
                     {
-                        Item item = currentRoom.GetItem(commandParams[0], instance);
-                        if (item != null)
-                            output += item.Description + "\n";
+                        Item i = game.Player.Location.GetItem(commandParams[0], instance);
+                        if (i != null)
+                            output += i.Description + "\n";
                         else
                             output += "No " + (instance + 1) + suffix + " instance of that item exists\n";
                     }
@@ -594,33 +581,30 @@ namespace Dice_and_Combat_Engine
         private void ParseOpenCommand(string[] commandParams)
         {
             // We expect only 1 parameter: The direction of the exit to open
-            if (commandParams.Length == 1)
-            {
+            if (commandParams.Length != 1)
+                output += "Command \"open\" syntax: [ directionToOpen: Direction ]\n";
+            else
                 if (IsDirection(commandParams[0]))
                 {
                     Direction direction = ParseDirection(commandParams[0]);
-                    Room currentRoom = game.Player.Location;
 
                     // If a room in the specified direction does not exist
-                    if (currentRoom.Links[(int)direction] == null)
+                    if (game.Player.Location.Links[(int)direction] == null)
                         output += "There is no exit leading " + direction.ToString() + " to open\n";
 
                     // If the link to the room in the specified direction is already open
-                    else if (currentRoom.LinksUnlocked[(int)direction])
+                    else if (game.Player.Location.LinksUnlocked[(int)direction])
                         output += "The " + direction.ToString() + " exit is already open\n";
 
                     // Open link
                     else
                     {
-                        currentRoom.OpenLink(currentRoom.Links[(int)direction]);
+                        game.Player.Location.OpenLink(game.Player.Location.Links[(int)direction]);
                         output += "You opened the " + direction.ToString() + " exit\n";
                     }
                 }
                 else
-                    output += "Parameter must be a cardinal direction\n";
-            }
-            else
-                output += "Command \"open\" syntax: [ directionToOpen: Direction ]\n";
+                    output += "Parameter must be a cardinal direction\n";                
         }
 
         /*
@@ -633,7 +617,10 @@ namespace Dice_and_Combat_Engine
             if (commandParams.Length > 0)
                 output += "Command \"quit\" takes no parameters\n";
             else
+            {
+                game.RequestToQuit = true;
                 output += "Quitting...\n";
+            }
         }
 
         /*
@@ -662,11 +649,11 @@ namespace Dice_and_Combat_Engine
                 else
                 {
                     // Take first instance of item with specified name
-                    Item item = game.Player.Location.GetItem(commandParams[0]);
-                    if (item != null)
+                    Item i = game.Player.Location.GetItem(commandParams[0]);
+                    if (i != null)
                     {
-                        game.Player.Take(item);
-                        output += "You take " + item.Name + "\n";
+                        game.Player.Take(i);
+                        output += "You take " + i.Name + "\n";
                     }
                     else
                         output += "No item of that name exists\n";
@@ -678,7 +665,7 @@ namespace Dice_and_Combat_Engine
                 if (commandParams[0] == "all")
                 {
                     // Take every item with specified name from the room
-                    Item[] items = game.Player.Location.GetItems(commandParams[0]);
+                    Item[] items = game.Player.Location.GetItems(commandParams[1]);
                     if (items.Length > 0)
                     {
                         game.Player.TakeAll(commandParams[0]);

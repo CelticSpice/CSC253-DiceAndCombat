@@ -72,6 +72,7 @@ namespace Dice_and_Combat_Engine.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to Name: Goblin
+        ///Description: An ugly green thing
         ///Friendly: False
         ///HP: 5
         ///AB: 1
@@ -86,6 +87,7 @@ namespace Dice_and_Combat_Engine.Properties {
         ///Charisma: -2
         ///
         ///Name: Orc
+        ///Description: A large beastly thing
         ///Friendly: False
         ///HP: 5
         ///AB: 1
@@ -100,22 +102,14 @@ namespace Dice_and_Combat_Engine.Properties {
         ///Charisma: -2
         ///
         ///Name: Zombie
+        ///Description: Something that should be dead
         ///Friendly: False
         ///HP: 16
         ///AB: 2
         ///AC: 11
         ///Damage: 6
         ///XP: 15
-        ///Strength: 1
-        ///Constitution: 0
-        ///Dexterity: -1
-        ///Intelligence: 0
-        ///Wisdom: 0
-        ///Charisma: -5
-        ///
-        ///Name: Kobold
-        ///Friendly: False
-        /// [rest of string was truncated]&quot;;.
+        ///Streng [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string creatures {
             get {
@@ -126,52 +120,58 @@ namespace Dice_and_Combat_Engine.Properties {
         /// <summary>
         ///   Looks up a localized string similar to ID: 1
         ///Name: Short Sword
+        ///Description: A short slashing utility
         ///Durability: 10
         ///Value: 15
         ///DamageBonus: 5
         ///
         ///ID: 1
         ///Name: Long Sword 
+        ///Description: A long slashing utility
         ///Durability: 12
         ///Value: 15
         ///DamageBonus: 6
         ///
         ///ID: 1
         ///Name: Bastard Sword
+        ///Description: Bastard child of blades
         ///Durability: 6
         ///Value 40
         ///DamageBonus: 10
         ///
         ///ID: 1
         ///Name: Reinforced Spork
+        ///Description: Eat with might
         ///Durability: 666
         ///Value: 420
         ///DamageBonus: 0
         ///
         ///ID: 1
         ///Name: Anti Dragon Tech
-        ///Durability: 1
-        ///Value: 40
-        ///DamageBonus: 555
-        ///
-        ///ID: 2
-        ///Name: Small Weak Potion
-        ///Durability: 1
-        ///Value: 6
-        ///HealthRestored: 3
-        ///
-        ///ID: 2
-        ///Name: Small Strong Potion
-        ///Durability: 1
-        ///Value: 9
-        ///HealthRestored: 6
-        ///
-        ///ID: 2
-        ///Name: Small Powerful  [rest of string was truncated]&quot;;.
+        ///Description: You&apos;re doomed without it
+        ///Durabi [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string items {
             get {
                 return ResourceManager.GetString("items", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Name: Merchant
+        ///Description: &quot;An grumpy man, sitting behind a shabby kiosk.&quot;
+        ///Responces: &quot;No I don&apos;t have any potions.&quot;, &quot;FedEx doesn&apos;t ship to dragon infested areas.&quot;
+        ///
+        ///Name: Mirror
+        ///Description: &quot;A dingy old mirror attatched to the wall. When you look into it, there is a strange man looking back.&quot;
+        ///Responces: &quot;I&apos;m glad those things aren&apos;t in my side.&quot;, &quot;You should turn back, I&apos;ve seen some nasty guys walking around here.&quot;, &quot;I hate to break it to you, but you might be going crazy.&quot;
+        ///
+        ///Name: Child
+        ///Descrip [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string NPCs {
+            get {
+                return ResourceManager.GetString("NPCs", resourceCulture);
             }
         }
         

@@ -227,10 +227,10 @@ namespace Dice_and_Combat_Engine
             the Player's current location and place them into the Player's inventory
         */
 
-        public void TakeAll(string itemNames)
+        public void TakeAll(string itemName)
         {
-            _inventory.AddRange(Location.Contents.Where(item => item.Name.ToLower() == itemNames.ToLower()));
-            Location.Contents.RemoveAll(item => item.Name.ToLower() == itemNames.ToLower());
+            _inventory.AddRange(Location.GetItems(itemName));
+            Location.Contents.RemoveAll(i => i.Name.ToLower() == itemName.ToLower());
         }
 
         /*

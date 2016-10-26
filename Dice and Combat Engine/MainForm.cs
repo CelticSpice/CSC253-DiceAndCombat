@@ -85,16 +85,15 @@ namespace Dice_and_Combat_Engine
             UpdateViews();
 
             // Check if user requested to quit
-            if (output == "Quitting...")
+            if (game.RequestToQuit)
             {
                 DialogResult result = MessageBox.Show("Are you sure you want to quit?", "Dice and Combat",
                                                       MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
                 if (result == DialogResult.Yes)
-                {
-                    // Exit
                     this.Close();
-                }
+                else
+                    game.RequestToQuit = false;
             }
 
             // Check if Player is dead

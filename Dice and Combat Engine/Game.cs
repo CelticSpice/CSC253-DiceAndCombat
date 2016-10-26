@@ -16,6 +16,7 @@ namespace Dice_and_Combat_Engine
     class Game
     {
         // Fields
+        private bool _requestToQuit;
         private CombatEngine _combatEngine;      // Handles combat logic
         private CommandParser parser;           // The command parser
         private Creature[] _creatures;          // The creatures in the game
@@ -35,6 +36,7 @@ namespace Dice_and_Combat_Engine
 
         public Game(int dungeonSize, bool uniqueRooms = false)
         {
+            _requestToQuit = false;
             _combatEngine = new CombatEngine();
             parser = new CommandParser(this);
             LoadCreatures();
@@ -497,6 +499,16 @@ namespace Dice_and_Combat_Engine
         public string ParseCommand(string commandString)
         {
             return parser.Parse(commandString.Trim().ToLower());
+        }
+
+        /*
+            RequestToQuit Property
+        */
+
+        public bool RequestToQuit
+        {
+            get { return _requestToQuit; }
+            set { _requestToQuit = value; }
         }
 
         /*

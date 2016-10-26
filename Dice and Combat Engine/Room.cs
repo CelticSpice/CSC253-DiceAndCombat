@@ -101,14 +101,15 @@ namespace Dice_and_Combat_Engine
                 for (int i = 0; i < items.Count; i++)
                 {
                     int count = _contents.Where(item => item.Name == items[i]).Count();
+                    string name = (count > 1) ? items[i] + "s" : items[i];
 
                     // Format
                     if (items.Count == 1)
-                        output.Append("\n-- " + count + " " + items[i]);
+                        output.Append("\n-- " + count + " " + name);
                     else if (i < items.Count - 1)
-                        output.Append("\n-- " + count + " " + items[i] + ",");
+                        output.Append("\n-- " + count + " " + name + ",");
                     else
-                        output.Append("\n-- and " + count + " " + items[i]);
+                        output.Append("\n-- and " + count + " " + name);
                 }
             }
             return output.ToString();
@@ -156,10 +157,11 @@ namespace Dice_and_Combat_Engine
 
         public string[] GetItemNames()
         {
-            string[] names = new string[_contents.Count];
-            for (int i = 0; i < names.Length; i++)
-                names[i] = _contents[i].Name;
-            return names;
+            List<string> names = new List<string>();
+            foreach (Creature c in _denizens)
+                if (!names.Contains(c.Stats.name))
+                    names.Add(c.Stats.name);
+            return names.ToArray();
         }
 
         /*
@@ -210,14 +212,15 @@ namespace Dice_and_Combat_Engine
                 for (int i = 0; i < creatures.Count; i++)
                 {
                     int count = _denizens.Where(creature => creature.Stats.name == creatures[i]).Count();
+                    string name = (count > 1) ? creatures[i] + "s" : creatures[i];
 
                     // Format
                     if (creatures.Count == 1)
-                        output.Append("\n-- " + count + " " + creatures[i]);
+                        output.Append("\n-- " + count + " " + name);
                     else if (i < creatures.Count - 1)
-                        output.Append("\n-- " + count + " " + creatures[i] + ",");
+                        output.Append("\n-- " + count + " " + name + ",");
                     else
-                        output.Append("\n-- and " + count + " " + creatures[i]);
+                        output.Append("\n-- and " + count + " " + name);
                 }
             }
             return output.ToString();
@@ -230,10 +233,11 @@ namespace Dice_and_Combat_Engine
 
         public string[] GetDenizenNames()
         {
-            string[] names = new string[_denizens.Count];
-            for (int i = 0; i < names.Length; i++)
-                names[i] = _denizens[i].Stats.name;
-            return names;
+            List<string> names = new List<string>();
+            foreach (Item i in _contents)
+                if (!names.Contains(i.Name))
+                    names.Add(i.Name);
+            return names.ToArray();
         }
 
         /*
