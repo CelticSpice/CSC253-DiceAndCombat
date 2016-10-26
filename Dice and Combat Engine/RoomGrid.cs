@@ -220,15 +220,16 @@ namespace Dice_and_Combat_Engine
 
         /*
             The GenerateRoomContents method populates the Rooms in the Grid with objects
-            passed in appropriate arrays of Creatures and Items
+            passed in appropriate arrays of Creatures, Items, and NPCS
         */
 
-        public void GenerateRoomContents(Creature[] creatures, Item[] items)
+        public void GenerateRoomContents(Creature[] creatures, Item[] items, NPC[] npcs)
         {
             Random rng = new Random((int)DateTime.Now.Ticks & 0x0000FFFF);
 
             Item itemToAdd;
             Creature creatureToAdd;
+            NPC npcToAdd;
             int maxItems, maxCreatures;
 
             foreach (Room room in _grid)
@@ -264,6 +265,14 @@ namespace Dice_and_Combat_Engine
                     creatureToAdd.Location = room;
                 }
 
+                // Determine whether room should contain an NPC
+                if ((rng.Next()) < 1000000000)
+                {
+                    npcToAdd = npcs[rng.Next(npcs.Length)];
+                    room.Denizens.Add(new NPC(npcToAdd));
+                    npcToAdd.Location = room;
+                }
+                    
                 // Sort contents (creatures and items) alphabetically
                 room.Denizens.Sort((Creature a, Creature b) => { return a.Stats.Name.CompareTo(b.Stats.Name); });
                 room.Contents.Sort((Item a, Item b) => { return a.Name.CompareTo(b.Name); });

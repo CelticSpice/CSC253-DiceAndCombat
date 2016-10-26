@@ -17,7 +17,7 @@ namespace Dice_and_Combat_Engine
         // Fields
         private static string[] commands = { "attack", "clear", "drop", "equip", "examine", "get",
                                              "go", "inventory", "look", "open", "quit",
-                                             "score", "take", "use" };
+                                             "score", "take", "talk", "use" };
 
         private Game game;
         private string output;
@@ -186,6 +186,9 @@ namespace Dice_and_Combat_Engine
                     case "score":
                         //ParseScored();
                         break;
+                    case "talk":
+                        ParseTalk(commandParams);
+                        break;
                     case "take":
                         ParseTake(commandParams);
                         break;
@@ -209,7 +212,7 @@ namespace Dice_and_Combat_Engine
             {
                 // Player attacks first instance of named creature
                 Creature creature = game.Player.Location.GetDenizen(commandParams[0]);
-                if (creature != null)
+                if (creature != null && !(creature is NPC))
                 {
                     game.Player.Target = creature;
                     creature.Target = game.Player;
@@ -217,6 +220,8 @@ namespace Dice_and_Combat_Engine
                     if (creature.Stats.HitPoints > 0)
                         output += game.CombatEngine.DoCombat(creature, creature.Target);
                 }
+                else if (creature != null && creature is NPC)
+                    output += "You cannot attack that NPC\n";
                 else
                     output += "No such creature exists in this room\n";
             }
@@ -229,7 +234,7 @@ namespace Dice_and_Combat_Engine
                     string suffix = GetOrdinalSuffix(instance);
                     instance--;       // We don't expect instance to be 0-based, so make it so
                     Creature creature = game.Player.Location.GetDenizen(commandParams[0], instance);
-                    if (creature != null)
+                    if (creature != null & !(creature is NPC))
                     {
                         game.Player.Target = creature;
                         creature.Target = game.Player;
@@ -237,6 +242,8 @@ namespace Dice_and_Combat_Engine
                         if (creature.Stats.HitPoints > 0)
                             output += game.CombatEngine.DoCombat(creature, game.Player);
                     }
+                    else if (creature != null && creature is NPC)
+                        output += "You cannot attack that NPC\n";
                     else
                         output += "No " + (instance - 1) + suffix +
                                   " creature of that name exists\n";
@@ -708,6 +715,28 @@ namespace Dice_and_Combat_Engine
                     else
                         output += "Second parameter must be an integer for the instance of the object to examine\n";
                 }
+            }
+        }
+
+        /*
+            The ParseTalk method parses a "talk" command for some action to perform
+        */
+
+        private void ParseTalk(string[] commandParams)
+        {
+            // We expect only 1 parameter: The name of the NPC to talk to
+            if (commandParams.Length != 1)
+                output += "Command \"talk\" syntax: [ toTalkTo: NPC ] { instanceOf: int }\n";
+            else
+            {
+                // Talk to first instance of named NPC
+                Creature npc = game.Player.Location.GetDenizen(commandParams[0]);
+                if (npc != null && npc is NPC)
+                    output += ((NPC)npc).GetResponse() + "\n";
+                else if (npc != null && !(npc is NPC))
+                    output += "You cannot talk to that NPC\n";
+                else
+                    output += "No NPC with that name exists\n";
             }
         }
 

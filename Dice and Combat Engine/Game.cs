@@ -21,6 +21,7 @@ namespace Dice_and_Combat_Engine
         private CombatEngine _combatEngine;     // Handles combat logic
         private CommandParser parser;           // The command parser
         private Creature[] _creatures;          // The creatures in the game
+        private NPC[] _npcs;                    // The NPCs in the gme
         private Item[] _items;                  // The items in the game
         private Room[] rooms;                   // The rooms in the game
         private RoomGrid dungeon;               // The dungeon
@@ -45,7 +46,7 @@ namespace Dice_and_Combat_Engine
             LoadItems();
             LoadRooms();
             dungeon = new RoomGrid(dungeonSize, dungeonSize, rooms, uniqueRooms);
-            dungeon.GenerateRoomContents(_creatures, _items);
+            dungeon.GenerateRoomContents(_creatures, _items, _npcs);
             GeneratePlayer();
         }
 
@@ -147,7 +148,9 @@ namespace Dice_and_Combat_Engine
             // Consts
             const string CREATURE_RESOURCE = "Dice_and_Combat_Engine.Resources.creatures.txt";
 
-            List<Creature> loadList = new List<Creature>();
+            bool isNPC = false;
+            List<Creature> creatureLoadList = new List<Creature>();
+            List<NPC> npcLoadList = new List<NPC>();
 
             Assembly assembly = Assembly.GetExecutingAssembly();
 
@@ -158,11 +161,13 @@ namespace Dice_and_Combat_Engine
 
                 // Delimiter
                 char[] delim = { ':' };
+                char[] responseDelim = { ',' };
 
                 // Prepare new creature
-                BaseStats creatureStats = new BaseStats();
-                Attributes creatureAttribs = new Attributes();
+                BaseStats stats = new BaseStats();
+                Attributes attribs = new Attributes();
                 string description = "";
+                List<string> responses = new List<string>();
 
                 while (!creatureStream.EndOfStream)
                 {
@@ -178,71 +183,86 @@ namespace Dice_and_Combat_Engine
                             // Stats
                             case "Name":
                                 // Read creature's name
-                                creatureStats.Name = splitLine[1].Trim();
+                                stats.Name = splitLine[1].Trim();
                                 break;
                             case "Description":
                                 // Read creature's description
                                 description = splitLine[1].Trim();
                                 break;
+                            case "Responses":
+                                // Creature is NPC : Read responses
+                                string[] responseTokens = splitLine[1].Split(responseDelim);
+                                foreach (string response in responseTokens)
+                                    responses.Add(response.Trim());
+                                isNPC = true;
+                                break;
                             case "Friendly":
                                 // Read creature's friendly status
-                                creatureStats.Friendly = bool.Parse(splitLine[1]);
+                                stats.Friendly = bool.Parse(splitLine[1]);
                                 break;
                             case "HP":
                                 // Read creature's HP
-                                creatureStats.HitPoints = int.Parse(splitLine[1]);
+                                stats.HitPoints = int.Parse(splitLine[1]);
 
                                 // Set max HP as well
-                                creatureStats.MaxHitPoints = int.Parse(splitLine[1]);
+                                stats.MaxHitPoints = int.Parse(splitLine[1]);
                                 break;
                             case "AB":
                                 // Read creature's AB
-                                creatureStats.AttackBonus = int.Parse(splitLine[1]);
+                                stats.AttackBonus = int.Parse(splitLine[1]);
                                 break;
                             case "AC":
                                 // Read creature's AC
-                                creatureStats.ArmorClass = int.Parse(splitLine[1]);
+                                stats.ArmorClass = int.Parse(splitLine[1]);
                                 break;
                             case "Damage":
                                 // Read creature's damage
-                                creatureStats.Damage = new RandomDie(int.Parse(splitLine[1]));
+                                stats.Damage = new RandomDie(int.Parse(splitLine[1]));
                                 break;
                             case "XP":
                                 // Read creature's XP value
-                                creatureStats.XPValue = int.Parse(splitLine[1]);
+                                stats.XPValue = int.Parse(splitLine[1]);
                                 break;
 
                             // Attributes
                             case "Strength":
                                 // Read creature's strength
-                                creatureAttribs.strength = int.Parse(splitLine[1]);
+                                attribs.strength = int.Parse(splitLine[1]);
                                 break;
                             case "Constitution":
                                 // Read creature's constitution
-                                creatureAttribs.constitution = int.Parse(splitLine[1]);
+                                attribs.constitution = int.Parse(splitLine[1]);
                                 break;
                             case "Dexterity":
                                 // Read creature's dexterity
-                                creatureAttribs.dexterity = int.Parse(splitLine[1]);
+                                attribs.dexterity = int.Parse(splitLine[1]);
                                 break;
                             case "Intelligence":
                                 // Read creature's intelligence
-                                creatureAttribs.intelligence = int.Parse(splitLine[1]);
+                                attribs.intelligence = int.Parse(splitLine[1]);
                                 break;
                             case "Wisdom":
                                 // Read creature's wisdom
-                                creatureAttribs.wisdom = int.Parse(splitLine[1]);
+                                attribs.wisdom = int.Parse(splitLine[1]);
                                 break;
                             case "Charisma":
                                 // Read creature's charisma
-                                creatureAttribs.charisma = int.Parse(splitLine[1]);
+                                attribs.charisma = int.Parse(splitLine[1]);
                                 break;
                         }
                     }
                     else
                     {
-                        // Create new creature with collected data
-                        loadList.Add(new Creature(creatureStats, creatureAttribs, description));
+                        // Check if creature is NPC
+                        if (isNPC)
+                        {
+                            npcLoadList.Add(new NPC(stats, attribs, description, responses.ToArray()));
+                            responses.Clear();
+                            isNPC = false;
+                        }
+                        else
+                            // Create new creature with collected data
+                            creatureLoadList.Add(new Creature(stats, attribs, description));
                     }
                 }
             }
@@ -251,14 +271,17 @@ namespace Dice_and_Combat_Engine
                 Console.WriteLine(ex.Message);
             }
 
-            // Trim list
-            loadList.TrimExcess();
+            // Trim lists
+            creatureLoadList.TrimExcess();
+            npcLoadList.TrimExcess();
 
-            // Sort list alphabetically
-            loadList.Sort((Creature creatureA, Creature creatureB) => creatureA.Stats.Name.CompareTo(creatureB.Stats.Name));
+            // Sort lists alphabetically
+            creatureLoadList.Sort((Creature a, Creature b) => a.Stats.Name.CompareTo(b.Stats.Name));
+            npcLoadList.Sort((NPC a, NPC b) => a.Stats.Name.CompareTo(b.Stats.Name));
 
-            // Set array
-            _creatures = loadList.ToArray();
+            // Set arrays
+            _creatures = creatureLoadList.ToArray();
+            _npcs = npcLoadList.ToArray();
         }
 
         /*

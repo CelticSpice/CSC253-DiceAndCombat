@@ -158,24 +158,6 @@ namespace Dice_and_Combat_Engine.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Name: Merchant
-        ///Description: &quot;An grumpy man, sitting behind a shabby kiosk.&quot;
-        ///Responces: &quot;No I don&apos;t have any potions.&quot;, &quot;FedEx doesn&apos;t ship to dragon infested areas.&quot;
-        ///
-        ///Name: Mirror
-        ///Description: &quot;A dingy old mirror attatched to the wall. When you look into it, there is a strange man looking back.&quot;
-        ///Responces: &quot;I&apos;m glad those things aren&apos;t in my side.&quot;, &quot;You should turn back, I&apos;ve seen some nasty guys walking around here.&quot;, &quot;I hate to break it to you, but you might be going crazy.&quot;
-        ///
-        ///Name: Child
-        ///Descrip [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string NPCs {
-            get {
-                return ResourceManager.GetString("NPCs", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Name: Hall of Sophia
         ///NumCreatures: 3
         ///NumItems: 3
