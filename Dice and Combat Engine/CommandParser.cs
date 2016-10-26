@@ -15,7 +15,7 @@ namespace Dice_and_Combat_Engine
     class CommandParser
     {
         // Fields
-        private static string[] commands = { "attack", "drop", "equip", "examine", "get",
+        private static string[] commands = { "attack", "clear", "drop", "equip", "examine", "get",
                                              "go", "inventory", "look", "open", "quit",
                                              "score", "take", "use" };
 
@@ -152,39 +152,42 @@ namespace Dice_and_Combat_Engine
                 switch (command)
                 {
                     case "attack":
-                        ParseAttackCommand(commandParams);
+                        ParseAttack(commandParams);
+                        break;
+                    case "clear":
+                        ParseClear(commandParams);
                         break;
                     case "drop":
-                        ParseDropCommand(commandParams);
+                        ParseDrop(commandParams);
                         break;
                     case "equip":
-                        ParseEquipCommand(commandParams);
+                        ParseEquip(commandParams);
                         break;
                     case "get":
                     case "use":
-                        ParseGetCommand(commandParams);
+                        ParseGet(commandParams);
                         break;
                     case "go":
-                        ParseGoCommand(commandParams);
+                        ParseGo(commandParams);
                         break;
                     case "inventory":
-                        ParseInventoryCommand();
+                        ParseInventory(commandParams);
                         break;
                     case "look":
                     case "examine":
-                        ParseLookCommand(commandParams);
+                        ParseLook(commandParams);
                         break;
                     case "open":
-                        ParseOpenCommand(commandParams);
+                        ParseOpen(commandParams);
                         break;
                     case "quit":
-                        ParseQuitCommand(commandParams);
+                        ParseQuit(commandParams);
                         break;
                     case "score":
-                        //ParseScoreCommand();
+                        //ParseScored();
                         break;
                     case "take":
-                        ParseTakeCommand(commandParams);
+                        ParseTake(commandParams);
                         break;
                 }
             }
@@ -194,10 +197,10 @@ namespace Dice_and_Combat_Engine
         }
 
         /*
-            The ParseAttackCommand method parses an "attack" command
+            The ParseAttack method parses an "attack" command
         */
 
-        private void ParseAttackCommand(string[] commandParams)
+        private void ParseAttack(string[] commandParams)
         {
             // We expect at least 1 and up to 2 parameters
             if (commandParams.Length == 0 || commandParams.Length > 2)
@@ -211,7 +214,7 @@ namespace Dice_and_Combat_Engine
                     game.Player.Target = creature;
                     creature.Target = game.Player;
                     output += game.CombatEngine.DoCombat(game.Player, creature);
-                    if (creature != null)
+                    if (creature.Stats.HitPoints > 0)
                         output += game.CombatEngine.DoCombat(creature, creature.Target);
                 }
                 else
@@ -231,7 +234,7 @@ namespace Dice_and_Combat_Engine
                         game.Player.Target = creature;
                         creature.Target = game.Player;
                         output += game.CombatEngine.DoCombat(game.Player, creature);
-                        if (creature != null)
+                        if (creature.Stats.HitPoints > 0)
                             output += game.CombatEngine.DoCombat(creature, game.Player);
                     }
                     else
@@ -241,6 +244,19 @@ namespace Dice_and_Combat_Engine
                 else
                     output += "Second parameter must be an integer for the instance of the object to drop\n";
             }
+        }
+
+        /*
+            The ParseClear method parses a "clear" command for some action to perform
+        */
+
+        private void ParseClear(string[] commandParams)
+        {
+            // We expect no parameters
+            if (commandParams.Length == 0)
+                game.RequestToClear = true;
+            else
+                output += "Command \"clear\" takes no parameters\n";
         }
 
         /*
@@ -263,10 +279,10 @@ namespace Dice_and_Combat_Engine
         }
 
         /*
-            The ParseDropCommand method parses a "drop" command for some action to perform
+            The ParseDrop method parses a "drop" command for some action to perform
         */
 
-        private void ParseDropCommand(string[] commandParams)
+        private void ParseDrop(string[] commandParams)
         {
             // We expect at least 1 and up to 2 parmeters
             if (commandParams.Length == 0 || commandParams.Length > 2)
@@ -308,10 +324,10 @@ namespace Dice_and_Combat_Engine
         }
 
         /*
-            The ParseEquipCommand method parses an "equip" command for some action to perform
+            The ParseEquip method parses an "equip" command for some action to perform
         */
 
-        private void ParseEquipCommand(string[] commandParams)
+        private void ParseEquip(string[] commandParams)
         {
             // We expect at least 1 and up to 2 parameters
             if (commandParams.Length == 0 || commandParams.Length > 2)
@@ -364,10 +380,10 @@ namespace Dice_and_Combat_Engine
         }
 
         /*
-            The ParseGetCommand method parses a "get" command for some action to perform
+            The ParseGet method parses a "get" command for some action to perform
         */
 
-        private void ParseGetCommand(string[] commandParams)
+        private void ParseGet(string[] commandParams)
         {
             // We expect at least 1 and up to 2 parameters
             if (commandParams.Length == 0 || commandParams.Length > 2)
@@ -438,10 +454,10 @@ namespace Dice_and_Combat_Engine
         }
 
         /*
-            The ParseGoCommand method parses a "go" command for some action to perform
+            The ParseGo method parses a "go" command for some action to perform
         */
 
-        private void ParseGoCommand(string[] commandParams)
+        private void ParseGo(string[] commandParams)
         {
             // We expect only 1 parameter: The direction to travel in
             if (commandParams.Length != 1)
@@ -473,10 +489,10 @@ namespace Dice_and_Combat_Engine
         }
 
         /*
-            The ParseInventoryCommand method parses an "inventory" command for some action to perform
+            The ParseInventory method parses an "inventory" command for some action to perform
         */
 
-        private void ParseInventoryCommand()
+        private void ParseInventory(string[] commandParams)
         {
             output += "Inventory:";
 
@@ -515,10 +531,10 @@ namespace Dice_and_Combat_Engine
         }
 
         /*
-            The ParseLookCommand method parses a "look" command for some action to perform
+            The ParseLook method parses a "look" command for some action to perform
         */
 
-        private void ParseLookCommand(string[] commandParams)
+        private void ParseLook(string[] commandParams)
         {
             // We expect up to 2 parameters
             if (commandParams.Length > 3)
@@ -575,10 +591,10 @@ namespace Dice_and_Combat_Engine
         }
 
         /*
-            The ParseOpenCommand method parses an "open" command for some action to perform
+            The ParseOpen method parses an "open" command for some action to perform
         */
 
-        private void ParseOpenCommand(string[] commandParams)
+        private void ParseOpen(string[] commandParams)
         {
             // We expect only 1 parameter: The direction of the exit to open
             if (commandParams.Length != 1)
@@ -608,26 +624,23 @@ namespace Dice_and_Combat_Engine
         }
 
         /*
-            The ParseQuitCommand method parses a "quit" command for some action to perform
+            The ParseQuit method parses a "quit" command for some action to perform
         */
 
-        private void ParseQuitCommand(string[] commandParams)
+        private void ParseQuit(string[] commandParams)
         {
             // We expect no parameters
-            if (commandParams.Length > 0)
-                output += "Command \"quit\" takes no parameters\n";
-            else
-            {
+            if (commandParams.Length == 0)
                 game.RequestToQuit = true;
-                output += "Quitting...\n";
-            }
+            else
+                output += "Command \"quit\" takes no parameters\n";
         }
 
         /*
-            The ParseTakeCommand method parses a "take" command for some action to perform
+            The ParseTake method parses a "take" command for some action to perform
         */
 
-        private void ParseTakeCommand(string[] commandParams)
+        private void ParseTake(string[] commandParams)
         {
             // We expect at least 1 and up to 2 parameters
             if (commandParams.Length == 0 || commandParams.Length > 2)

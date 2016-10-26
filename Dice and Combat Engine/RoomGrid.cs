@@ -265,7 +265,7 @@ namespace Dice_and_Combat_Engine
                 }
 
                 // Sort contents (creatures and items) alphabetically
-                room.Denizens.Sort((Creature a, Creature b) => { return a.Stats.name.CompareTo(b.Stats.name); });
+                room.Denizens.Sort((Creature a, Creature b) => { return a.Stats.Name.CompareTo(b.Stats.Name); });
                 room.Contents.Sort((Item a, Item b) => { return a.Name.CompareTo(b.Name); });
             }
         }

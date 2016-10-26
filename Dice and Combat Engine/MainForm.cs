@@ -35,12 +35,13 @@ namespace Dice_and_Combat_Engine
         private void StartGame()
         {
             // Initialize UI
-            playerNameTextBox.Text = game.Player.Stats.name;
+            playerNameTextBox.Text = game.Player.Stats.Name;
             playerRaceClassTextBox.Text = game.Player.PlayerStats.race + " " + game.Player.PlayerStats.playerClass;
-            playerHPTextBox.Text = game.Player.Stats.hitPoints.ToString();
-            playerABTextBox.Text = game.Player.Stats.attackBonus.ToString();
-            playerACTextBox.Text = game.Player.Stats.armorClass.ToString();
+            playerHPTextBox.Text = game.Player.Stats.HitPoints.ToString();
+            playerABTextBox.Text = game.Player.Stats.AttackBonus.ToString();
+            playerACTextBox.Text = game.Player.Stats.ArmorClass.ToString();
             roomNameLbl.Text = game.Player.Location.Name;
+            outputRTxtBox.Text = ">>  ";
         }
 
         /*
@@ -49,17 +50,22 @@ namespace Dice_and_Combat_Engine
 
         private void UpdateViews()
         {
-            playerHPTextBox.Text = game.Player.Stats.hitPoints.ToString();
-            playerABTextBox.Text = game.Player.Stats.attackBonus.ToString();
-            playerACTextBox.Text = game.Player.Stats.armorClass.ToString();
+            playerHPTextBox.Text = game.Player.Stats.HitPoints.ToString();
+            playerABTextBox.Text = game.Player.Stats.AttackBonus.ToString();
+            playerACTextBox.Text = game.Player.Stats.ArmorClass.ToString();
             roomNameLbl.Text = game.Player.Location.Name;
+            outputRTxtBox.Text += ">>  ";
+            outputRTxtBox.SelectionStart = outputRTxtBox.Text.Length;
+            outputRTxtBox.ScrollToCaret();
+            commandTxtBox.Text = "";
+            commandTxtBox.Focus();
 
             if (game.Player.Target != null)
             {
-                creatureNameTextBox.Text = game.Player.Target.Stats.name;
-                creatureHPTextBox.Text = game.Player.Target.Stats.hitPoints.ToString();
-                creatureABTextBox.Text = game.Player.Target.Stats.attackBonus.ToString();
-                creatureACTextBox.Text = game.Player.Target.Stats.armorClass.ToString();
+                creatureNameTextBox.Text = game.Player.Target.Stats.Name;
+                creatureHPTextBox.Text = game.Player.Target.Stats.HitPoints.ToString();
+                creatureABTextBox.Text = game.Player.Target.Stats.AttackBonus.ToString();
+                creatureACTextBox.Text = game.Player.Target.Stats.ArmorClass.ToString();
             }
             else
             {
@@ -78,14 +84,16 @@ namespace Dice_and_Combat_Engine
         {
             string output = game.ParseCommand(commandTxtBox.Text);
             outputRTxtBox.Text += output;
-            outputRTxtBox.SelectionStart = outputRTxtBox.Text.Length;
-            outputRTxtBox.ScrollToCaret();
-            commandTxtBox.Text = "";
-            commandTxtBox.Focus();
-            UpdateViews();
 
-            // Check if user requested to quit
-            if (game.RequestToQuit)
+            // Check for utility requests
+            if (game.RequestToClear)
+            {
+                outputRTxtBox.Clear();
+                game.RequestToClear = false;
+                commandTxtBox.Text = "";
+                commandTxtBox.Focus();
+            }
+            else if (game.RequestToQuit)
             {
                 DialogResult result = MessageBox.Show("Are you sure you want to quit?", "Dice and Combat",
                                                       MessageBoxButtons.YesNo, MessageBoxIcon.Question);
@@ -94,10 +102,15 @@ namespace Dice_and_Combat_Engine
                     this.Close();
                 else
                     game.RequestToQuit = false;
+
+                commandTxtBox.Text = "";
+                commandTxtBox.Focus();
             }
+            else
+                UpdateViews();
 
             // Check if Player is dead
-            if (game.Player.Stats.hitPoints <= 0)
+            if (game.Player.Stats.HitPoints <= 0)
             {
                 MessageBox.Show("You have died!");
                 this.Close();

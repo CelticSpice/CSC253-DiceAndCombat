@@ -135,7 +135,7 @@ namespace Dice_and_Combat_Engine
         {
             Item[] items = _contents.Where(i => i.Name.ToLower() == name.ToLower()).ToArray();
             if (items.Length > 0 && instance < items.Length)
-                return _contents[instance];
+                return items[instance];
             else
                 return null;
         }
@@ -158,9 +158,9 @@ namespace Dice_and_Combat_Engine
         public string[] GetItemNames()
         {
             List<string> names = new List<string>();
-            foreach (Creature c in _denizens)
-                if (!names.Contains(c.Stats.name))
-                    names.Add(c.Stats.name);
+            foreach (Item i in _contents)
+                if (!names.Contains(i.Name))
+                    names.Add(i.Name);
             return names.ToArray();
         }
 
@@ -171,7 +171,7 @@ namespace Dice_and_Combat_Engine
 
         public Creature GetDenizen(string name)
         {
-            return _denizens.Find(d => d.Stats.name.ToLower() == name.ToLower());
+            return _denizens.Find(d => d.Stats.Name.ToLower() == name.ToLower());
         }
 
         /*
@@ -182,9 +182,9 @@ namespace Dice_and_Combat_Engine
 
         public Creature GetDenizen(string name, int instance)
         {
-            Creature[] denizens = _denizens.Where(d => d.Stats.name.ToLower() == name.ToLower()).ToArray();
+            Creature[] denizens = _denizens.Where(d => d.Stats.Name.ToLower() == name.ToLower()).ToArray();
             if (denizens.Length > 0 && instance < denizens.Length)
-                return _denizens[instance];
+                return denizens[instance];
             else
                 return null;
         }
@@ -202,8 +202,8 @@ namespace Dice_and_Combat_Engine
 
             // Get creature names
             foreach (Creature creature in _denizens)
-                if (!creatures.Contains(creature.Stats.name))
-                    creatures.Add(creature.Stats.name);
+                if (!creatures.Contains(creature.Stats.Name))
+                    creatures.Add(creature.Stats.Name);
 
             // Build output
             if (creatures.Count > 0)
@@ -211,7 +211,7 @@ namespace Dice_and_Combat_Engine
                 output.Append(":");
                 for (int i = 0; i < creatures.Count; i++)
                 {
-                    int count = _denizens.Where(creature => creature.Stats.name == creatures[i]).Count();
+                    int count = _denizens.Where(creature => creature.Stats.Name == creatures[i]).Count();
                     string name = (count > 1) ? creatures[i] + "s" : creatures[i];
 
                     // Format
@@ -234,9 +234,9 @@ namespace Dice_and_Combat_Engine
         public string[] GetDenizenNames()
         {
             List<string> names = new List<string>();
-            foreach (Item i in _contents)
-                if (!names.Contains(i.Name))
-                    names.Add(i.Name);
+            foreach (Creature c in _denizens)
+                if (!names.Contains(c.Stats.Name))
+                    names.Add(c.Stats.Name);
             return names.ToArray();
         }
 

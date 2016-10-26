@@ -35,11 +35,11 @@ namespace Dice_and_Combat_Engine
 
             // Attack roll
             d20Die.Roll();
-            int attackModifier = attacker.Stats.attackBonus + attacker.Attributes.strength;
+            int attackModifier = attacker.Stats.AttackBonus + attacker.Attributes.strength;
             int attackResult = d20Die.DieResult + attackModifier;
 
             // Check against defender's AC
-            if (attackResult >= defender.Stats.armorClass)
+            if (attackResult >= defender.Stats.ArmorClass)
             {
                 bool weaponUsed = false;
                 string weaponName = "";
@@ -51,13 +51,13 @@ namespace Dice_and_Combat_Engine
 
                 // Attack
                 int damageDealt = attacker.Attack(defender);
-                feedback.Append(attacker.Stats.name + " hit " + defender.Stats.name +
+                feedback.Append(attacker.Stats.Name + " hit " + defender.Stats.Name +
                                 " for " + damageDealt + "\n");
 
-                if (defender.Stats.hitPoints <= 0)
+                if (defender.Stats.HitPoints <= 0)
                 {
-                    feedback.Append(defender.Stats.name + " is dead\n");
-                    feedback.Append(attacker.Stats.name + " gains " + defender.Stats.xpValue + " xp\n");
+                    feedback.Append(defender.Stats.Name + " is dead\n");
+                    feedback.Append(attacker.Stats.Name + " gains " + defender.Stats.XPValue + " xp\n");
                     if (attacker is Player && ((Player)attacker).LeveledUp)
                     {
                         ((Player)attacker).LevelUp();
@@ -72,7 +72,7 @@ namespace Dice_and_Combat_Engine
             }
             else
             {
-                feedback.Append(attacker.Stats.name + " missed\n");
+                feedback.Append(attacker.Stats.Name + " missed\n");
             }
             return feedback.ToString();
         }

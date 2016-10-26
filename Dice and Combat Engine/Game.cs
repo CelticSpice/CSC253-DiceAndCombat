@@ -16,8 +16,9 @@ namespace Dice_and_Combat_Engine
     class Game
     {
         // Fields
+        private bool _requestToClear;
         private bool _requestToQuit;
-        private CombatEngine _combatEngine;      // Handles combat logic
+        private CombatEngine _combatEngine;     // Handles combat logic
         private CommandParser parser;           // The command parser
         private Creature[] _creatures;          // The creatures in the game
         private Item[] _items;                  // The items in the game
@@ -36,6 +37,7 @@ namespace Dice_and_Combat_Engine
 
         public Game(int dungeonSize, bool uniqueRooms = false)
         {
+            _requestToClear = false;
             _requestToQuit = false;
             _combatEngine = new CombatEngine();
             parser = new CommandParser(this);
@@ -61,14 +63,14 @@ namespace Dice_and_Combat_Engine
                 Temp values to work with!
             */
 
-            playerBaseStats.name = "Bobert";
-            playerBaseStats.hitPoints = 30;
-            playerBaseStats.maxHitPoints = 30;
-            playerBaseStats.attackBonus = 5;
-            playerBaseStats.armorClass = 12;
-            playerBaseStats.damage = new RandomDie();
-            playerBaseStats.xpValue = 100;
-            playerBaseStats.friendly = true;
+            playerBaseStats.Name = "Bobert";
+            playerBaseStats.HitPoints = 30;
+            playerBaseStats.MaxHitPoints = 30;
+            playerBaseStats.AttackBonus = 5;
+            playerBaseStats.ArmorClass = 12;
+            playerBaseStats.Damage = new RandomDie();
+            playerBaseStats.XPValue = 100;
+            playerBaseStats.Friendly = true;
 
             playerAttributes.strength = 5;
             playerAttributes.constitution = 5;
@@ -106,7 +108,7 @@ namespace Dice_and_Combat_Engine
             List<string> names = new List<string>();
             foreach (Creature creature in _creatures)
             {
-                names.Add(creature.Stats.name.ToLower());
+                names.Add(creature.Stats.Name.ToLower());
             }
             foreach (Item item in _items)
             {
@@ -123,7 +125,7 @@ namespace Dice_and_Combat_Engine
 
         public bool IsCreature(string name)
         {
-            return _creatures.First(c => c.Stats.name.ToLower() == name) != null;
+            return _creatures.First(c => c.Stats.Name.ToLower() == name) != null;
         }
 
         /*
@@ -176,7 +178,7 @@ namespace Dice_and_Combat_Engine
                             // Stats
                             case "Name":
                                 // Read creature's name
-                                creatureStats.name = splitLine[1].Trim();
+                                creatureStats.Name = splitLine[1].Trim();
                                 break;
                             case "Description":
                                 // Read creature's description
@@ -184,30 +186,30 @@ namespace Dice_and_Combat_Engine
                                 break;
                             case "Friendly":
                                 // Read creature's friendly status
-                                creatureStats.friendly = bool.Parse(splitLine[1]);
+                                creatureStats.Friendly = bool.Parse(splitLine[1]);
                                 break;
                             case "HP":
                                 // Read creature's HP
-                                creatureStats.hitPoints = int.Parse(splitLine[1]);
+                                creatureStats.HitPoints = int.Parse(splitLine[1]);
 
                                 // Set max HP as well
-                                creatureStats.maxHitPoints = int.Parse(splitLine[1]);
+                                creatureStats.MaxHitPoints = int.Parse(splitLine[1]);
                                 break;
                             case "AB":
                                 // Read creature's AB
-                                creatureStats.attackBonus = int.Parse(splitLine[1]);
+                                creatureStats.AttackBonus = int.Parse(splitLine[1]);
                                 break;
                             case "AC":
                                 // Read creature's AC
-                                creatureStats.armorClass = int.Parse(splitLine[1]);
+                                creatureStats.ArmorClass = int.Parse(splitLine[1]);
                                 break;
                             case "Damage":
                                 // Read creature's damage
-                                creatureStats.damage = new RandomDie(int.Parse(splitLine[1]));
+                                creatureStats.Damage = new RandomDie(int.Parse(splitLine[1]));
                                 break;
                             case "XP":
                                 // Read creature's XP value
-                                creatureStats.xpValue = int.Parse(splitLine[1]);
+                                creatureStats.XPValue = int.Parse(splitLine[1]);
                                 break;
 
                             // Attributes
@@ -253,7 +255,7 @@ namespace Dice_and_Combat_Engine
             loadList.TrimExcess();
 
             // Sort list alphabetically
-            loadList.Sort((Creature creatureA, Creature creatureB) => creatureA.Stats.name.CompareTo(creatureB.Stats.name));
+            loadList.Sort((Creature creatureA, Creature creatureB) => creatureA.Stats.Name.CompareTo(creatureB.Stats.Name));
 
             // Set array
             _creatures = loadList.ToArray();
@@ -499,6 +501,16 @@ namespace Dice_and_Combat_Engine
         public string ParseCommand(string commandString)
         {
             return parser.Parse(commandString.Trim().ToLower());
+        }
+
+        /*
+            RequestToClear Property
+        */
+
+        public bool RequestToClear
+        {
+            get { return _requestToClear; }
+            set { _requestToClear = value; }
         }
 
         /*

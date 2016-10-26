@@ -61,6 +61,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BaseStats.cs" />
     <Compile Include="CombatEngine.cs" />
     <Compile Include="CommandParser.cs" />
     <Compile Include="Creature.cs" />

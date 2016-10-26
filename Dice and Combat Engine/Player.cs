@@ -50,17 +50,16 @@ namespace Dice_and_Combat_Engine
 
         public override int Attack(Creature defender)
         {
-            Stats.damage.Roll();
-            int damage = Stats.damage.DieResult;
-            BaseStats newDefenderStats = defender.Stats;
-            newDefenderStats.hitPoints -= damage;
-            defender.Stats = newDefenderStats;
+            Stats.Damage.Roll();
+            int damage = Stats.Damage.DieResult;
+            defender.Stats.HitPoints -= damage;
 
-            if (newDefenderStats.hitPoints <= 0)
+            if (defender.Stats.HitPoints <= 0)
             {
                 Location.Denizens.Remove(defender);
+                GainExperience(defender.Stats.XPValue);
+                defender = null;
                 Target = null;
-                GainExperience(defender.Stats.xpValue);
             }
 
             if (_equippedWeapon != null)
@@ -93,9 +92,7 @@ namespace Dice_and_Combat_Engine
         public void EquipWeapon(Weapon weapon)
         {
             _equippedWeapon = weapon;
-            BaseStats newStats = Stats;
-            newStats.damage.DieSize += _equippedWeapon.DamageBonus;
-            Stats = newStats;
+            Stats.Damage.DieSize += _equippedWeapon.DamageBonus;
         }
 
         /*
@@ -192,9 +189,7 @@ namespace Dice_and_Combat_Engine
             _playerStats.level += 1;
 
             // Upgrade player's max hitpoints
-            BaseStats newStats = Stats;
-            newStats.maxHitPoints += _playerStats.level;
-            Stats = newStats;
+            Stats.MaxHitPoints += _playerStats.level;
 
             // Reset leveled up notifier
             _leveledUp = false;
@@ -239,9 +234,7 @@ namespace Dice_and_Combat_Engine
 
         public void UnequipWeapon()
         {
-            BaseStats newStats = Stats;
-            newStats.damage.DieSize -= _equippedWeapon.DamageBonus;
-            Stats = newStats;
+            Stats.Damage.DieSize -= _equippedWeapon.DamageBonus;
             _equippedWeapon = null;
         }
 
@@ -251,17 +244,11 @@ namespace Dice_and_Combat_Engine
 
         private void UsePotion(Potion potion)
         {
-            BaseStats newStats = Stats;
-            newStats.hitPoints += potion.Use();
-            if (newStats.hitPoints > Stats.maxHitPoints)
-            {
-                newStats.hitPoints = Stats.maxHitPoints;
-            }
-            Stats = newStats;
+            Stats.HitPoints += potion.Use();
+            if (Stats.HitPoints > Stats.MaxHitPoints)
+                Stats.HitPoints = Stats.MaxHitPoints;
             if (potion.Durability == 0)
-            {
                 _inventory.Remove(potion);
-            }
         }
 
         /*

@@ -7,22 +7,6 @@
 
 namespace Dice_and_Combat_Engine
 {
-    // Structs
-    struct BaseStats
-    {
-        public string name;
-
-        public int hitPoints,
-                   maxHitPoints,
-                   attackBonus,
-                   armorClass,
-                   xpValue;
-
-        public RandomDie damage;
-
-        public bool friendly;
-    }
-
     struct Attributes
     {
         public int strength,
@@ -57,12 +41,12 @@ namespace Dice_and_Combat_Engine
 
         /*
             Constructor
-            Defines starting stats and attributes
+            Defines stats and attributes
         */
 
         public Creature(BaseStats stats, Attributes attribs, string desc)
         {
-            _stats = stats;
+            _stats = new BaseStats(stats);
             _attributes = attribs;
             _location = null;
             _target = null;
@@ -76,7 +60,7 @@ namespace Dice_and_Combat_Engine
 
         public Creature(Creature c)
         {
-            _stats = c._stats;
+            _stats = new BaseStats(c._stats);
             _attributes = c._attributes;
             _location = c._location;
             _target = c._target;
@@ -90,12 +74,15 @@ namespace Dice_and_Combat_Engine
 
         public virtual int Attack(Creature defender)
         {
-            _stats.damage.Roll();
-            int damage = _stats.damage.DieResult;
-            defender._stats.hitPoints -= damage;
-            if (defender._stats.hitPoints <= 0 && !(defender is Player))
+            _stats.Damage.Roll();
+            int damage = _stats.Damage.DieResult;
+            defender._stats.HitPoints -= damage;
+            if (defender._stats.HitPoints <= 0)
             {
-                _location.Denizens.Remove(defender);
+                defender = null;
+                Target = null;
+                if (!(defender is Player))
+                    _location.Denizens.Remove(defender);
             }
             return damage;
         }
