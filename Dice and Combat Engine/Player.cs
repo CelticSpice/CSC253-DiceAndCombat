@@ -132,6 +132,39 @@ namespace Dice_and_Combat_Engine
             }
         }
 
+        public string GetInventoryInformation()
+        {
+            StringBuilder output = new StringBuilder();
+            List<string> items = new List<string>();
+
+            // Get item names
+            foreach (Item item in _inventory)
+                if (!items.Contains(item.Name))
+                    items.Add(item.Name);
+
+            // Build output
+            if (items.Count > 0)
+            {
+                output.Append("Inventory:");
+                for (int i = 0; i < items.Count; i++)
+                {
+                    int count = _inventory.Where(item => item.Name == items[i]).Count();
+                    string name = (count > 1) ? items[i] + "s" : items[i];
+
+                    // Format
+                    if (items.Count == 1)
+                        output.Append("\n-- " + count + " " + name);
+                    else if (i < items.Count - 1)
+                        output.Append("\n-- " + count + " " + name);
+                    else
+                        output.Append("\n-- and " + count + " " + name);
+                }
+            }
+            else
+                output.Append("Your inventory is lacking of items");
+            return output.ToString();
+        }
+
         /*
             The GetItem method returns the item with the specified name
             from the Player's inventory; If no item with that name exists,

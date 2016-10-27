@@ -163,9 +163,8 @@ namespace Dice_and_Combat_Engine
                     case "equip":
                         ParseEquip(commandParams);
                         break;
-                    case "get":
                     case "use":
-                        ParseGet(commandParams);
+                        ParseUse(commandParams);
                         break;
                     case "go":
                         ParseGo(commandParams);
@@ -190,6 +189,7 @@ namespace Dice_and_Combat_Engine
                         ParseTalk(commandParams);
                         break;
                     case "take":
+                    case "get":
                         ParseTake(commandParams);
                         break;
                 }
@@ -387,32 +387,29 @@ namespace Dice_and_Combat_Engine
         }
 
         /*
-            The ParseGet method parses a "get" command for some action to perform
+            The ParseUse method parses a "use" command for some action to perform
         */
 
-        private void ParseGet(string[] commandParams)
+        private void ParseUse(string[] commandParams)
         {
             // We expect at least 1 and up to 2 parameters
             if (commandParams.Length == 0 || commandParams.Length > 2)
-                output += "Command \"get\" syntax: [ itemName: string ] { instanceOf: int }\n";
+                output += "Command \"use\" syntax: [ itemName: string ] { instanceOf: int }\n";
             else if (commandParams.Length == 1)
             {
-                Player player = game.Player;
-                Room currentRoom = player.Location;
-
                 // Get first instance of named item from PC's inventory to use
-                Item item = currentRoom.GetItem(commandParams[0]);
+                Item item = game.Player.GetItem(commandParams[0]);
                 if (item != null)
                 {
                     if (item is Weapon)
                     {
-                        player.Use(item);
+                        game.Player.Use(item);
                         int bonus = ((Weapon)item).DamageBonus;
                         output += "You equip " + item.Name + ", increasing your damage by " + bonus + "\n";
                     }
                     else if (item is Potion)
                     {
-                        player.Use(item);
+                        game.Player.Use(item);
                         int restored = ((Potion)item).HealthRestored;
                         output += "You use " + item.Name + ", restoring your health by " + restored + "\n";
                     }
@@ -424,27 +421,24 @@ namespace Dice_and_Combat_Engine
             }
             else
             {
-                Player player = game.Player;
-                Room currentRoom = player.Location;
-
                 // Get nth instance of named item from PC's inventory to use
                 int instance;
                 if (int.TryParse(commandParams[1], out instance) && instance > 0)
                 {
                     string suffix = GetOrdinalSuffix(instance);
                     instance--;     // We don't expect instance to be 0-based, so make it so
-                    Item item = currentRoom.GetItem(commandParams[0], instance);
+                    Item item = game.Player.GetItem(commandParams[0], instance);
                     if (item != null)
                     {
                         if (item is Weapon)
                         {
-                            player.Use(item);
+                            game.Player.Use(item);
                             int bonus = ((Weapon)item).DamageBonus;
                             output += "You equip " + item.Name + ", increasing your damage by " + bonus + "\n";
                         }
                         else if (item is Potion)
                         {
-                            player.Use(item);
+                            game.Player.Use(item);
                             int restored = ((Potion)item).HealthRestored;
                             output += "You use " + item.Name + ", restoring your health by " + restored + "\n";
                         }
@@ -501,40 +495,10 @@ namespace Dice_and_Combat_Engine
 
         private void ParseInventory(string[] commandParams)
         {
-            output += "Inventory:";
-
-            Player player = game.Player;
-
-            // Check if there are items in the inventory.
-            if (player.Inventory.Count > 0)
-            {
-                int i = 0;      // Accumulator, the number for 
-                                // an item in the inventory
-
-                foreach (Item item in player.Inventory)
-                {
-                    // Print on new line.
-                    output += "\n";
-
-                    i++;
-
-                    // Check if the item is equipped.
-                    if (item == player.EquippedWeapon)
-                    {
-                        // Display item with asterisk.
-                        output += i + ". " + "*" + item.Name;
-                    }
-                    else
-                    {
-                        // Display item as usual, w/o asterisk.
-                        output += i + ". " + item.Name;
-                    }
-                }
-                // New line for spacing/readability.
-                output += "\n";
-            }
+            if (commandParams.Length == 0)
+                output += game.Player.GetInventoryInformation() + "\n";
             else
-                output += "Your inventory is lacking of items\n";
+                output += "Command \"inventory\" takes no parameters\n";
         }
 
         /*
