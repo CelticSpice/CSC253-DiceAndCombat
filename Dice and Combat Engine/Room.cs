@@ -241,6 +241,20 @@ namespace Dice_and_Combat_Engine
         }
 
         /*
+            The GetNPCDenizens method returns an int representing
+            the amount of NPC creatures in the room.
+        */
+
+        public int GetNPCCreatures()
+        {
+            int npcs = 0;
+            foreach (Creature c in _denizens)
+                if (c is NPC)
+                    npcs++;
+            return npcs;
+        }
+
+        /*
             The GetExitInformation method returns a string describing
             the directions in which exits exist
         */

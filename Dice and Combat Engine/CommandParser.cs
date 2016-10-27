@@ -572,26 +572,30 @@ namespace Dice_and_Combat_Engine
                 output += "Command \"open\" syntax: [ directionToOpen: Direction ]\n";
             else
                 if (IsDirection(commandParams[0]))
-                {
-                    Direction direction = ParseDirection(commandParams[0]);
+            {
+                Direction direction = ParseDirection(commandParams[0]);
 
-                    // If a room in the specified direction does not exist
-                    if (game.Player.Location.Links[(int)direction] == null)
-                        output += "There is no exit leading " + direction.ToString() + " to open\n";
+                // If a room in the specified direction does not exist
+                if (game.Player.Location.Links[(int)direction] == null)
+                    output += "There is no exit leading " + direction.ToString() + " to open\n";
 
-                    // If the link to the room in the specified direction is already open
-                    else if (game.Player.Location.LinksUnlocked[(int)direction])
-                        output += "The " + direction.ToString() + " exit is already open\n";
+                // If the link to the room in the specified direction is already open
+                else if (game.Player.Location.LinksUnlocked[(int)direction])
+                    output += "The " + direction.ToString() + " exit is already open\n";
 
-                    // Open link
-                    else
-                    {
-                        game.Player.Location.OpenLink(game.Player.Location.Links[(int)direction]);
-                        output += "You opened the " + direction.ToString() + " exit\n";
-                    }
-                }
+                // If there are enemies (non-NPCs) remaining in the current room
+                else if (game.Player.Location.Denizens.Count != game.Player.Location.GetNPCCreatures())
+                    output += "There are remaining enemies in this room\n";
+
+                // Open link
                 else
-                    output += "Parameter must be a cardinal direction\n";                
+                {
+                    game.Player.Location.OpenLink(game.Player.Location.Links[(int)direction]);
+                    output += "You opened the " + direction.ToString() + " exit\n";
+                }
+            }
+            else
+                output += "Parameter must be a cardinal direction\n";
         }
 
         /*
