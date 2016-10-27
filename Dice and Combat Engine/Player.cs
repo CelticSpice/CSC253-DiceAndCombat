@@ -203,6 +203,23 @@ namespace Dice_and_Combat_Engine
         }
 
         /*
+            The Score method has the Player calculate the score of treasure in the Player's inventory
+        */
+
+        public int GetScore()
+        {
+            int score = 0;
+            Item[] inven = _inventory.Where(x => (x is Treasure)).ToArray();
+
+            foreach (Item item in inven)
+            {
+                score += item.Value;
+            }
+
+            return score;
+        }
+
+        /*
             The Go method has the Player move from its current location to
             another location in the specifed direction
         */

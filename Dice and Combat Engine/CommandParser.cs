@@ -183,7 +183,7 @@ namespace Dice_and_Combat_Engine
                         ParseQuit(commandParams);
                         break;
                     case "score":
-                        //ParseScored();
+                        ParseScore(commandParams);
                         break;
                     case "talk":
                         ParseTalk(commandParams);
@@ -605,6 +605,22 @@ namespace Dice_and_Combat_Engine
                 game.RequestToQuit = true;
             else
                 output += "Command \"quit\" takes no parameters\n";
+        }
+
+        /*
+            The ParseScore method parses a "score" command for some action to perform 
+        */
+
+        private void ParseScore(string[] commandParams)
+        {
+            //We expect no parameters
+            if (commandParams.Length == 0)
+            {
+                int score = game.Player.GetScore();
+                output += "Your score is " + score + ".\n";
+            }
+            else
+                output += "Command \"score\" takes no parameters\n";
         }
 
         /*
