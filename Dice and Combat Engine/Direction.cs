@@ -1,7 +1,7 @@
 ﻿/*
-    Direction enumeration
-    10/3/2016
-    CSC 253 0001 - Dice and Combat
+    This enumeration represents a cardinal direction
+    10/28/2016
+    CSC 253 0001 - CH8P1
     Author: James Alves, Shane McCann, Timothy Burns
 */
 

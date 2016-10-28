@@ -55,36 +55,22 @@ namespace Dice_and_Combat_Engine
 
         private void GeneratePlayer()
         {
-            BaseStats playerBaseStats = new BaseStats();
-            Attributes playerAttributes = new Attributes();
-            PlayerStats playerStats = new PlayerStats();
+            BaseStats stats = new BaseStats();
 
             /*
                 Temp values to work with!
             */
 
-            playerBaseStats.Name = "Bobert";
-            playerBaseStats.HitPoints = 30;
-            playerBaseStats.MaxHitPoints = 30;
-            playerBaseStats.AttackBonus = 5;
-            playerBaseStats.ArmorClass = 12;
-            playerBaseStats.Damage = new RandomDie();
-            playerBaseStats.XPValue = 100;
-            playerBaseStats.Friendly = true;
+            stats.Name = "Bobert";
+            stats.HitPoints = 30;
+            stats.MaxHitPoints = 30;
+            stats.AttackBonus = 5;
+            stats.ArmorClass = 12;
+            stats.Damage = new RandomDie();
+            stats.XPValue = 100;
+            stats.Friendly = true;
 
-            playerAttributes.strength = 5;
-            playerAttributes.constitution = 5;
-            playerAttributes.dexterity = 5;
-            playerAttributes.intelligence = 5;
-            playerAttributes.wisdom = 5;
-            playerAttributes.charisma = 5;
-
-            playerStats.playerClass = "Fighter";
-            playerStats.race = "Human";
-            playerStats.experience = 0;
-            playerStats.level = 1;
-
-            _player = new Player(playerStats, playerBaseStats, playerAttributes, "You");
+            _player = new Player(stats, "You");
             _player.Location = dungeon.Grid[0, 0];
         }
 
@@ -119,26 +105,6 @@ namespace Dice_and_Combat_Engine
         }
 
         /*
-            The IsCreature method returns whether a creature with the passed name
-            exists
-        */
-
-        public bool IsCreature(string name)
-        {
-            return creatures.First(c => c.Stats.Name.ToLower() == name.ToLower()) != null;
-        }
-
-        /*
-            The IsItem method returns whether an item with the passed name
-            exists
-        */
-
-        public bool IsItem(string name)
-        {
-            return items.First(i => i.Name.ToLower() == name.ToLower()) != null;
-        }
-
-        /*
             The LoadCreatures method loads the creatures in the game
         */
 
@@ -160,7 +126,6 @@ namespace Dice_and_Combat_Engine
                 string[] responseDelim = { " , " };
 
                 // Prepare to read
-                Attributes attribs = new Attributes();
                 BaseStats stats = new BaseStats();
                 bool isNPC = false;
                 List<string> responses = new List<string>();
@@ -220,32 +185,6 @@ namespace Dice_and_Combat_Engine
                                 // Read creature's XP value
                                 stats.XPValue = int.Parse(splitLine[1]);
                                 break;
-
-                            // Attributes
-                            case "Strength":
-                                // Read creature's strength
-                                attribs.strength = int.Parse(splitLine[1]);
-                                break;
-                            case "Constitution":
-                                // Read creature's constitution
-                                attribs.constitution = int.Parse(splitLine[1]);
-                                break;
-                            case "Dexterity":
-                                // Read creature's dexterity
-                                attribs.dexterity = int.Parse(splitLine[1]);
-                                break;
-                            case "Intelligence":
-                                // Read creature's intelligence
-                                attribs.intelligence = int.Parse(splitLine[1]);
-                                break;
-                            case "Wisdom":
-                                // Read creature's wisdom
-                                attribs.wisdom = int.Parse(splitLine[1]);
-                                break;
-                            case "Charisma":
-                                // Read creature's charisma
-                                attribs.charisma = int.Parse(splitLine[1]);
-                                break;
                         }
                     }
 
@@ -254,12 +193,12 @@ namespace Dice_and_Combat_Engine
                         // Check if creature is NPC
                         if (isNPC)
                         {
-                            loadList.Add(new NPC(stats, attribs, description, responses.ToArray()));
+                            loadList.Add(new NPC(stats, description, responses.ToArray()));
                             responses.Clear();
                             isNPC = false;
                         }
                         else
-                            loadList.Add(new Creature(stats, attribs, description));
+                            loadList.Add(new Creature(stats, description));
                     }
                 }
             }

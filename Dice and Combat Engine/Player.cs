@@ -1,7 +1,7 @@
 ﻿/*
     This class represents playable characters
-    9/22/2016
-    CSC 253 0001 - Dice and Combat Engine
+    9/28/2016
+    CSC 253 0001 - CH8P1
     Author: James Alves, Shane McCann, Timothy Burns
 */
 
@@ -11,36 +11,27 @@ using System.Text;
 
 namespace Dice_and_Combat_Engine
 {
-    // Structs
-    struct PlayerStats
-    {
-        public string playerClass,
-                      race;
-
-        public int experience, level;
-    }
-
     class Player : Creature
     {
         // Fields
-        private PlayerStats _playerStats;
+        private bool _leveledUp;
+        private int _experience, _level;
         private List<Item> _inventory;
         private Weapon _equippedWeapon;
-        private bool _leveledUp;
 
         /*
             Constructor
-            
-            Accepts Player-specific stats, base stats, attributes, and a portrait of the player
+            Accepts stats
         */
 
-        public Player(PlayerStats playerStats, BaseStats baseStats, Attributes attribs, string desc)
-            : base(baseStats, attribs, desc)
+        public Player(BaseStats stats, string desc)
+            : base(new BaseStats(stats), desc)
         {
-            _playerStats = playerStats;
+            _leveledUp = false;
+            _experience = 0;
+            _level = 1;
             _inventory = new List<Item>();
             _equippedWeapon = null;
-            _leveledUp = false;
         }
 
         /*
@@ -50,6 +41,7 @@ namespace Dice_and_Combat_Engine
 
         public override int Attack(Creature defender)
         {
+            Target = defender;
             Stats.Damage.Roll();
             int damage = Stats.Damage.DieResult;
             defender.Stats.HitPoints -= damage;
@@ -64,7 +56,7 @@ namespace Dice_and_Combat_Engine
 
             if (_equippedWeapon != null)
             {
-                _equippedWeapon.Use();
+                _equippedWeapon.Durability -= 1;
                 if (_equippedWeapon.Durability == 0)
                 {
                     _inventory.Remove(_equippedWeapon);
@@ -75,7 +67,7 @@ namespace Dice_and_Combat_Engine
         }
 
         /*
-            The Drop method has the Player drop an item from the Player's inventory into
+            The Drop method has the Player drop an item from its inventory into
             the Player's current location
         */
 
@@ -106,31 +98,18 @@ namespace Dice_and_Combat_Engine
             const int MODIFIER = 25;
 
             // Add experience to player
-            _playerStats.experience += xp;
+            _experience += xp;
 
             // Check for level up
-            if (_playerStats.experience >= _playerStats.level * MODIFIER)
-            {
+            if (_experience >= _level * MODIFIER)
                 // Set level up notifier to true
                 _leveledUp = true;
-            }
         }
 
         /*
-            The Use method has the Player use an item from its inventory
+            The GetInventoryInformation method returns a string containing information
+            about the number and kinds of items in the Player's inventory
         */
-
-        public void Use(Item item)
-        {
-            if (item is Weapon)
-            {
-                EquipWeapon((Weapon)item);
-            }
-            else if (item is Potion)
-            {
-                UsePotion((Potion)item);
-            }
-        }
 
         public string GetInventoryInformation()
         {
@@ -155,14 +134,28 @@ namespace Dice_and_Combat_Engine
                     if (items.Count == 1)
                         output.Append("\n-- " + count + " " + name);
                     else if (i < items.Count - 1)
-                        output.Append("\n-- " + count + " " + name);
+                        output.Append("\n-- " + count + " " + name + ",");
                     else
                         output.Append("\n-- and " + count + " " + name);
                 }
             }
             else
-                output.Append("Your inventory is lacking of items");
+                output.Append("Your inventory is empty");
             return output.ToString();
+        }
+
+        /*
+            The GetInventoryNames method returns the names of items contained
+            in the Player's inventory
+        */
+
+        public string[] GetInventoryNames()
+        {
+            List<string> names = new List<string>();
+            foreach (Item item in _inventory)
+                if (!names.Contains(item.Name))
+                    names.Add(item.Name);
+            return names.ToArray();
         }
 
         /*
@@ -186,10 +179,8 @@ namespace Dice_and_Combat_Engine
         public Item GetItem(string name, int instance)
         {
             Item[] items = _inventory.Where(i => i.Name.ToLower() == name.ToLower()).ToArray();
-            if (items.Length > 0 && instance < items.Length)
-                return _inventory[instance];
-            else
-                return null;
+            Item item = (items.Length > 0 && instance < items.Length) ? items[instance] : null;
+            return item;
         }
 
         /*
@@ -203,25 +194,8 @@ namespace Dice_and_Combat_Engine
         }
 
         /*
-            The Score method has the Player calculate the score of treasure in the Player's inventory
-        */
-
-        public int GetScore()
-        {
-            int score = 0;
-            Item[] inven = _inventory.Where(x => (x is Treasure)).ToArray();
-
-            foreach (Item item in inven)
-            {
-                score += item.Value;
-            }
-
-            return score;
-        }
-
-        /*
-            The Go method has the Player move from its current location to
-            another location in the specifed direction
+           The Go method has the Player move from its current location to
+           another location in the specifed direction
         */
 
         public void Go(Direction direction)
@@ -236,13 +210,28 @@ namespace Dice_and_Combat_Engine
         public void LevelUp()
         {
             // Raise player's level
-            _playerStats.level += 1;
+            _level += 1;
 
             // Upgrade player's max hitpoints
-            Stats.MaxHitPoints += _playerStats.level;
+            Stats.MaxHitPoints += _level;
 
             // Reset leveled up notifier
             _leveledUp = false;
+        }
+
+        /*
+            The Score method returns the total score the Player has earned, which
+            will be the accumulated value of each Treasure item the player has
+            in its inventory's value
+        */
+
+        public int GetScore()
+        {
+            int score = 0;
+            Item[] items = _inventory.Where(i => (i is Treasure)).ToArray();
+            foreach (Item item in items)
+                score += item.Value;
+            return score;
         }
 
         /*
@@ -292,7 +281,7 @@ namespace Dice_and_Combat_Engine
             The UsePotion method has the player use a potion
         */
 
-        private void UsePotion(Potion potion)
+        public void UsePotion(Potion potion)
         {
             Stats.HitPoints += potion.Use();
             if (Stats.HitPoints > Stats.MaxHitPoints)
@@ -302,13 +291,30 @@ namespace Dice_and_Combat_Engine
         }
 
         /*
-            PlayerStats property
+            LeveledUp property
         */
 
-        public PlayerStats PlayerStats
+        public bool LeveledUp
         {
-            get { return _playerStats; }
-            set { _playerStats = value; }
+            get { return _leveledUp; }
+        }
+
+        /*
+            Experience Property
+        */
+
+        public int Experience
+        {
+            get { return _experience; }
+        }
+
+        /*
+            Level Property
+        */
+
+        public int Level
+        {
+            get { return _level; }
         }
 
         /*
@@ -327,15 +333,6 @@ namespace Dice_and_Combat_Engine
         public Weapon EquippedWeapon
         {
             get { return _equippedWeapon; }
-        }
-
-        /*
-            LeveledUp property
-        */
-
-        public bool LeveledUp
-        {
-            get { return _leveledUp; }
         }
     }
 }

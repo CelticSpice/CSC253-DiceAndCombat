@@ -7,5 +7,5 @@
 
 namespace Dice_and_Combat_Engine
 {
-    public enum ItemType { Weapon, Potion, Treasure }
+    enum ItemType { Weapon, Potion, Treasure }
 }
