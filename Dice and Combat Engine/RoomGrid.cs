@@ -20,7 +20,7 @@ namespace Dice_and_Combat_Engine
         /*
             Constructor
             Accepts the number of rows and columns that the grid should have,
-            an array containing the Rooms that the Grid should contain
+            and an array containing the Rooms that the Grid should contain
         */
 
         public RoomGrid(int size, Room[] rooms)

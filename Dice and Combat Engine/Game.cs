@@ -30,9 +30,6 @@ namespace Dice_and_Combat_Engine
             Constructor
             Accepts an integer representing the size of the dungeon;
             the dungeon will contain that many rows and columns
-
-            The method also accepts an optional boolean indicating whether
-            each Room should be unique
         */
 
         public Game(int dungeonSize)
