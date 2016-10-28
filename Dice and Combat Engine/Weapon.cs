@@ -1,7 +1,7 @@
 ﻿/*
-    This class represents a weapon in the game
-    9/22/2016
-    CSC 253 0001 - Dice and Combat Engine
+    This class represents a weapon
+    9/28/2016
+    CSC 253 0001 - CH8P1
     Author: James Alves, Shane McCann, Timothy Burns
 */
 
@@ -9,19 +9,18 @@ namespace Dice_and_Combat_Engine
 {
     class Weapon : Item
     {
-        // Consts
-        private const int WEAPON_ID = 1;    // All weapons have an id of 1
+        // Fields
+        private const ItemType TYPE = ItemType.Weapon;
 
-        //Field
         private int _damageBonus;
 
         /*
             Constructor
-            Accepts the name, description, durability, value, and attack bonus of the weapon
+            Accepts the name, description, durability, value, and attack bonus
         */
 
         public Weapon(string name, string desc, int durability, int value, int damage)
-            : base(name, desc, durability, value, WEAPON_ID)
+            : base(name, desc, durability, value, TYPE)
         {
             _damageBonus = damage;
         }
@@ -32,18 +31,9 @@ namespace Dice_and_Combat_Engine
         */
 
         public Weapon(Weapon w)
-            : base(w.Name, w.Description, w.Durability, w.Value, WEAPON_ID)
+            : base(w.Name, w.Description, w.Durability, w.Value, TYPE)
         {
             _damageBonus = w._damageBonus;
-        }
-
-        /*
-            The Use method simulates using a weapon, reducing its durability
-        */
-
-        public void Use()
-        {
-            Durability -= 1;
         }
 
         /*

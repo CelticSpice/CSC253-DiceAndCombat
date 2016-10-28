@@ -1,18 +1,16 @@
 ﻿/*
-    This class represents treasure in the game
-    9/22/2016
-    CSC 253 0001 - Dice and Combat Engine
+    This class represents treasure
+    9/28/2016
+    CSC 253 0001 - CH8P1
     Author: James Alves, Shane McCann, Timothy Burns
 */
-
-using System.Windows.Forms;
 
 namespace Dice_and_Combat_Engine
 {
     class Treasure : Item
     {
-        // Consts
-        private const int TREASURE_ID = 3;   // All treasure has an ID of 3
+        // Fields
+        private const ItemType TYPE = ItemType.Treasure;
 
         /*
              Constructor
@@ -20,7 +18,7 @@ namespace Dice_and_Combat_Engine
         */
 
         public Treasure(string name, string desc, int durability, int value)
-            : base(name, desc, durability, value, TREASURE_ID)
+            : base(name, desc, durability, value, TYPE)
         {
         }
 
@@ -29,7 +27,7 @@ namespace Dice_and_Combat_Engine
         */
 
         public Treasure(Treasure t)
-            : base(t.Name, t.Description, t.Durability, t.Value, TREASURE_ID)
+            : base(t.Name, t.Description, t.Durability, t.Value, TYPE)
         {
         }
     }

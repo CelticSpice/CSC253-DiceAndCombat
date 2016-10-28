@@ -1,7 +1,7 @@
 ﻿/*
     This class handles combat logic
-    9/22/2016
-    CSC 253 0001 - Dice and Combat Engine
+    9/28/2016
+    CSC 253 0001 - CH8P1
     Author: James Alves, Shane McCann, Timothy Burns
 */
 
@@ -32,11 +32,11 @@ namespace Dice_and_Combat_Engine
         public string DoCombat(Creature attacker, Creature defender)
         {
             StringBuilder feedback = new StringBuilder();
+            attacker.Target = defender;
 
             // Attack roll
             d20Die.Roll();
-            int attackModifier = attacker.Stats.AttackBonus + attacker.Attributes.strength;
-            int attackResult = d20Die.DieResult + attackModifier;
+            int attackResult = d20Die.DieResult + attacker.Stats.AttackBonus;
 
             // Check against defender's AC
             if (attackResult >= defender.Stats.ArmorClass)
@@ -61,19 +61,15 @@ namespace Dice_and_Combat_Engine
                     if (attacker is Player && ((Player)attacker).LeveledUp)
                     {
                         ((Player)attacker).LevelUp();
-                        feedback.Append("You leveled up to level " + ((Player)attacker).PlayerStats.level + "\n");
+                        feedback.Append("You leveled up to level " + ((Player)attacker).Level + "\n");
                     }
                 }
 
                 if (weaponUsed && attacker is Player && ((Player)attacker).EquippedWeapon == null)
-                {
                     feedback.Append("Your " + weaponName + " broke\n");
-                }
             }
             else
-            {
                 feedback.Append(attacker.Stats.Name + " missed\n");
-            }
             return feedback.ToString();
         }
     }

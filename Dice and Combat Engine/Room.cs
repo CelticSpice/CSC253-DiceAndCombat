@@ -1,11 +1,10 @@
 ﻿/*
-    This class represents a room in the game
-    10/3/2016
-    CSC 253 0001 - Dice and Combat Engine
+    This class represents a room
+    10/28/2016
+    CSC 253 0001 - CH8P1
     Author: James Alves, Shane McCann, Timothy Burns
 */
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,10 +13,9 @@ namespace Dice_and_Combat_Engine
 {
     class Room
     {
-        // Static Fields
+        // Fields
         private static int numNeighbors = 4;
 
-        // Properties
         private bool _linked;
         private bool[] _linksUnlocked;
         private int _weight, _xLoc, _yLoc;
@@ -28,19 +26,19 @@ namespace Dice_and_Combat_Engine
 
         /*
             Constructor
-            Accepts the room name and the number of creatures and items initially in the room
+            Accepts the room name
         */
 
-        public Room(string name, int numCreatures, int numItems)
+        public Room(string name)
         {
             _name = name;
-            _denizens = new List<Creature>(numCreatures);
-            _contents = new List<Item>(numItems);
+            _denizens = new List<Creature>();
+            _contents = new List<Item>();
             _linked = false;
             _linksUnlocked = new bool[numNeighbors];
-            _weight = -1;
-            _xLoc = -1;
-            _yLoc = -1;
+            _weight = 0;
+            _xLoc = 0;
+            _yLoc = 0;
             _neighbors = new Room[numNeighbors];
             _links = new Room[numNeighbors];
         }
@@ -52,8 +50,8 @@ namespace Dice_and_Combat_Engine
         public Room(Room room)
         {
             _name = room._name;
-            _denizens = new List<Creature>(room._denizens.Capacity);
-            _contents = new List<Item>(room._contents.Capacity);
+            _denizens = new List<Creature>(room._denizens);
+            _contents = new List<Item>(room._contents);
             _linked = room._linked;
             _weight = room._weight;
             _xLoc = room._xLoc;
@@ -61,21 +59,15 @@ namespace Dice_and_Combat_Engine
 
             _linksUnlocked = new bool[numNeighbors];
             for (int i = 0; i < numNeighbors; i++)
-            {
                 _linksUnlocked[i] = room._linksUnlocked[i];
-            }
 
             _neighbors = new Room[numNeighbors];
             for (int i = 0; i < numNeighbors; i++)
-            {
                 _neighbors[i] = room._neighbors[i];
-            }
 
             _links = new Room[numNeighbors];
             for (int i = 0; i < numNeighbors; i++)
-            {
                 _links[i] = room._links[i];
-            }
         }
 
         /*
@@ -134,10 +126,8 @@ namespace Dice_and_Combat_Engine
         public Item GetItem(string name, int instance)
         {
             Item[] items = _contents.Where(i => i.Name.ToLower() == name.ToLower()).ToArray();
-            if (items.Length > 0 && instance < items.Length)
-                return items[instance];
-            else
-                return null;
+            Item item = (items.Length > 0 && instance < items.Length) ? items[instance] : null;
+            return item;
         }
 
         /*
@@ -183,10 +173,8 @@ namespace Dice_and_Combat_Engine
         public Creature GetDenizen(string name, int instance)
         {
             Creature[] denizens = _denizens.Where(d => d.Stats.Name.ToLower() == name.ToLower()).ToArray();
-            if (denizens.Length > 0 && instance < denizens.Length)
-                return denizens[instance];
-            else
-                return null;
+            Creature c = (denizens.Length > 0 && instance < denizens.Length) ? denizens[instance] : null;
+            return c;
         }
 
         /*
@@ -301,10 +289,10 @@ namespace Dice_and_Combat_Engine
         public void Link(Room toLink)
         {
             // Find which direction the Room to link to is in relation
-            // to this Room so we can assign to the proper Links elements
-            bool linked = false;
+            // to this Room so we can assign to the proper Links element
+            bool done = false;
             Direction direction = Direction.North;
-            while (!linked && direction <= Direction.West)
+            while (!done && direction <= Direction.West)
             {
                 if (_neighbors[(int)direction] == toLink)
                 {
@@ -312,23 +300,17 @@ namespace Dice_and_Combat_Engine
                     
                     // We link bidirectionally
                     if (direction == Direction.North || direction == Direction.East)
-                    {
                         toLink._links[(int)direction + 1] = this;
-                    }
                     else
-                    {
                         toLink._links[(int)direction - 1] = this;
-                    }
 
                     // Rooms are now linked
-                    linked = true;
+                    done = true;
                     _linked = true;
                     toLink._linked = true;
                 }
                 else
-                {
                     direction++;
-                }
             }
         }
 
@@ -339,30 +321,24 @@ namespace Dice_and_Combat_Engine
         public void OpenLink(Room link)
         {
             // Find which direction the linked Room is in relation
-            // to this Room so we can assign to the proper elements
-            bool found = false;
+            // to this Room so we can assign to the proper element
+            bool done = false;
             Direction direction = Direction.North;
-            while (!found && direction <= Direction.West)
+            while (!done && direction <= Direction.West)
             {
                 if (_links[(int)direction] == link)
                 {
-                    found = true;
                     _linksUnlocked[(int)direction] = true;
 
                     // We open the links bidirectionally
                     if (direction == Direction.North || direction == Direction.East)
-                    {
                         link._linksUnlocked[(int)direction + 1] = true;
-                    }
                     else
-                    {
                         link._linksUnlocked[(int)direction - 1] = true;
-                    }
+                    done = true;
                 }
                 else
-                {
                     direction++;
-                }
             }
         }
 

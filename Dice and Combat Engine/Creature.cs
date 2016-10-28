@@ -1,29 +1,18 @@
 ﻿/*
     This class represents base creature objects in the game
-    9/22/2016
-    CSC 253 0001 - Dice and Combat Engine
+    9/28/2016
+    CSC 253 0001 - CH8P1
     Author: James Alves, Shane McCann, Timothy Burns
 */
 
 namespace Dice_and_Combat_Engine
 {
-    struct Attributes
-    {
-        public int strength,
-                   constitution,
-                   dexterity,
-                   intelligence,
-                   wisdom,
-                   charisma;
-    }
-
     class Creature
     {
         // Fields
         private BaseStats _stats;
-        private Attributes _attributes;
-        private Room _location;
         private Creature _target;
+        private Room _location;
         private string _description;
 
         /*
@@ -33,23 +22,21 @@ namespace Dice_and_Combat_Engine
         public Creature()
         {
             _stats = new BaseStats();
-            _attributes = new Attributes();
-            _location = null;
             _target = null;
+            _location = null;
             _description = "";
         }
 
         /*
             Constructor
-            Defines stats and attributes
+            Defines stats
         */
 
-        public Creature(BaseStats stats, Attributes attribs, string desc)
+        public Creature(BaseStats stats, string desc)
         {
             _stats = new BaseStats(stats);
-            _attributes = attribs;
-            _location = null;
             _target = null;
+            _location = null;
             _description = desc;
         }
 
@@ -61,9 +48,8 @@ namespace Dice_and_Combat_Engine
         public Creature(Creature c)
         {
             _stats = new BaseStats(c._stats);
-            _attributes = c._attributes;
-            _location = c._location;
             _target = c._target;
+            _location = c._location;
             _description = c._description;
         }
 
@@ -98,14 +84,15 @@ namespace Dice_and_Combat_Engine
         }
 
         /*
-            Attributes property
+            Target property
         */
 
-        public Attributes Attributes
+        public Creature Target
         {
-            get { return _attributes; }
-            set { _attributes = value; }
+            get { return _target; }
+            set { _target = value; }
         }
+
 
         /*
             Location property
@@ -115,16 +102,6 @@ namespace Dice_and_Combat_Engine
         {
             get { return _location; }
             set { _location = value; }
-        }
-
-        /*
-            Target property
-        */
-
-        public Creature Target
-        {
-            get { return _target; }
-            set { _target = value; }
         }
 
         /*

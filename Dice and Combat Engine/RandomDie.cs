@@ -1,7 +1,7 @@
 ﻿/*
-    This class represents dice to be cast
-    9/22/2016
-    CSC 253 0001 - Dice and Combat Engine
+    This class represents a die
+    9/28/2016
+    CSC 253 0001 - CH8P1
     Author: James Alves, Shane McCann, Timothy Burns
 */
 
@@ -13,7 +13,7 @@ namespace Dice_and_Combat_Engine
     {
         // Fields
         private int _dieSize, _dieResult;
-        private static Random rng;
+        private Random rng;
 
         /*
             Constructor
@@ -25,10 +25,7 @@ namespace Dice_and_Combat_Engine
         {
             _dieSize = size;
             _dieResult = 0;
-            if (rng == null)
-            {
-                rng = new Random((int) DateTime.Now.Ticks & 0x0000FFFF);
-            }
+            rng = new Random((int)DateTime.Now.Ticks & 0x0000FFFF);
         }
 
         /*

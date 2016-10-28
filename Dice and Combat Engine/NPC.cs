@@ -1,8 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-
-/*
-    This class represents an NPC
+﻿/*
+    This class represents an NPC, or a creature of some higher degree of
+    intelligence
+    10/28/2016
+    CSC 253 0001 - CH8P1
+    Author: James Alves, Shane McCann, Timothy Burns
 */
 
 namespace Dice_and_Combat_Engine
@@ -16,8 +17,8 @@ namespace Dice_and_Combat_Engine
             Constructor
         */
 
-        public NPC(BaseStats stats, Attributes attribs, string desc, string[] responds)
-            : base(stats, attribs, desc)
+        public NPC(BaseStats stats, string desc, string[] responds)
+            : base(stats, desc)
         {
             responses = new string[responds.Length];
             responds.CopyTo(responses, 0);
@@ -28,7 +29,7 @@ namespace Dice_and_Combat_Engine
         */
 
         public NPC(NPC npc)
-            : base(npc.Stats, npc.Attributes, npc.Description)
+            : base(new BaseStats(npc.Stats), npc.Description)
         {
             responses = new string[npc.responses.Length];
             npc.responses.CopyTo(responses, 0);
