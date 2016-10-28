@@ -1,7 +1,7 @@
 ﻿/*
     This class represents a command-line parser
-    10/10/2016
-    CSC 253 0001 - Dice and Combat Engine
+    10/28/2016
+    CSC 253 0001 - CH8P1
     Author: James Alves, Shane McCann, Timothy Burns
 */
 
@@ -39,7 +39,6 @@ namespace Dice_and_Combat_Engine
 
         private string ExtractCommand(string commandString)
         {
-            // Separate command from parameters
             int i = 0;
             while (i < commandString.Length && !char.IsWhiteSpace(commandString[i]))
                 i++;
@@ -110,7 +109,6 @@ namespace Dice_and_Combat_Engine
 
         private bool IsGoodCommand(string command)
         {
-            // Find command being issued
             bool good = false;
             int i = 0;
             while (!good && i < commands.Length)
@@ -200,7 +198,7 @@ namespace Dice_and_Combat_Engine
         }
 
         /*
-            The ParseAttack method parses an "attack" command
+            The ParseAttack method parses an "attack" command for some action to perform
         */
 
         private void ParseAttack(string[] commandParams)
@@ -211,16 +209,14 @@ namespace Dice_and_Combat_Engine
             else if (commandParams.Length == 1)
             {
                 // Player attacks first instance of named creature
-                Creature creature = game.Player.Location.GetDenizen(commandParams[0]);
-                if (creature != null && !(creature is NPC))
+                Creature c = game.Player.Location.GetDenizen(commandParams[0]);
+                if (c != null && !(c is NPC))
                 {
-                    game.Player.Target = creature;
-                    creature.Target = game.Player;
-                    output += game.CombatEngine.DoCombat(game.Player, creature);
-                    if (creature.Stats.HitPoints > 0)
-                        output += game.CombatEngine.DoCombat(creature, creature.Target);
+                    output += game.CombatEngine.DoCombat(game.Player, c);
+                    if (c.Stats.HitPoints > 0)
+                        output += game.CombatEngine.DoCombat(c, game.Player);
                 }
-                else if (creature != null && creature is NPC)
+                else if (c != null && c is NPC)
                     output += "You cannot attack that NPC\n";
                 else
                     output += "No such creature exists in this room\n";
@@ -233,23 +229,21 @@ namespace Dice_and_Combat_Engine
                 {
                     string suffix = GetOrdinalSuffix(instance);
                     instance--;       // We don't expect instance to be 0-based, so make it so
-                    Creature creature = game.Player.Location.GetDenizen(commandParams[0], instance);
-                    if (creature != null & !(creature is NPC))
+                    Creature c = game.Player.Location.GetDenizen(commandParams[0], instance);
+                    if (c != null & !(c is NPC))
                     {
-                        game.Player.Target = creature;
-                        creature.Target = game.Player;
-                        output += game.CombatEngine.DoCombat(game.Player, creature);
-                        if (creature.Stats.HitPoints > 0)
-                            output += game.CombatEngine.DoCombat(creature, game.Player);
+                        output += game.CombatEngine.DoCombat(game.Player, c);
+                        if (c.Stats.HitPoints > 0)
+                            output += game.CombatEngine.DoCombat(c, game.Player);
                     }
-                    else if (creature != null && creature is NPC)
+                    else if (c != null && c is NPC)
                         output += "You cannot attack that NPC\n";
                     else
                         output += "No " + (instance - 1) + suffix +
                                   " creature of that name exists\n";
                 }
                 else
-                    output += "Second parameter must be an integer for the instance of the object to drop\n";
+                    output += "Second parameter must be an integer for the instance of the creature to attack\n";
             }
         }
 
@@ -297,11 +291,11 @@ namespace Dice_and_Combat_Engine
             else if (commandParams.Length == 1)
             {
                 // Drop first instance of named item from PC's inventory in the current room
-                Item item = game.Player.GetItem(commandParams[0]);
-                if (item != null)
+                Item i = game.Player.GetItem(commandParams[0]);
+                if (i != null)
                 {
-                    game.Player.Drop(item);
-                    output += "You drop " + item.Name + "\n";
+                    game.Player.Drop(i);
+                    output += "You drop " + i.Name + "\n";
                 }
                 else
                     output += "No such item exists in your inventory\n";
@@ -314,12 +308,12 @@ namespace Dice_and_Combat_Engine
                 {
                     string suffix = GetOrdinalSuffix(instance);
                     instance--;      // We don't expect instance to be 0-based, so make it so
-                    Item item = game.Player.GetItem(commandParams[0], instance);
-                    if (item != null)
+                    Item i = game.Player.GetItem(commandParams[0], instance);
+                    if (i != null)
                     {
-                        game.Player.Drop(item);
+                        game.Player.Drop(i);
                         output += "You drop the " + (instance + 1) + suffix + " " +
-                                  item.Name + " from your inventory\n";
+                                  i.Name + " from your inventory\n";
                     }
                     else
                         output += "No " + (instance - 1) + suffix +
@@ -342,14 +336,14 @@ namespace Dice_and_Combat_Engine
             else if (commandParams.Length == 1)
             {
                 // Get first instance of named item from PC's inventory to equip
-                Item item = game.Player.GetItem(commandParams[0]);
-                if (item != null)
+                Item i = game.Player.GetItem(commandParams[0]);
+                if (i != null)
                 {
-                    if (item is Weapon)
+                    if (i is Weapon)
                     {
-                        game.Player.EquipWeapon((Weapon)item);
-                        int bonus = ((Weapon)item).DamageBonus;
-                        output += "You equip " + item.Name + ", increasing your damage by " + bonus + "\n";
+                        game.Player.EquipWeapon((Weapon)i);
+                        int bonus = ((Weapon)i).DamageBonus;
+                        output += "You equip " + i.Name + ", increasing your damage by " + bonus + "\n";
                     }
                     else
                         output += "You cannot equip that item\n";
@@ -365,14 +359,14 @@ namespace Dice_and_Combat_Engine
                 {
                     string suffix = GetOrdinalSuffix(instance);
                     instance--;     // We don't expect instance to be 0-based, so make it so
-                    Item item = game.Player.GetItem(commandParams[0], instance);
-                    if (item != null)
+                    Item i = game.Player.GetItem(commandParams[0], instance);
+                    if (i != null)
                     {
-                        if (item is Weapon)
+                        if (i is Weapon)
                         {
-                            game.Player.EquipWeapon((Weapon)item);
-                            int bonus = ((Weapon)item).DamageBonus;
-                            output += "You equip " + item.Name + ", increasing your damage by " + bonus + "\n";
+                            game.Player.EquipWeapon((Weapon)i);
+                            int bonus = ((Weapon)i).DamageBonus;
+                            output += "You equip " + i.Name + ", increasing your damage by " + bonus + "\n";
                         }
                         else
                             output += "You cannot equip that item\n";
@@ -382,75 +376,7 @@ namespace Dice_and_Combat_Engine
                                   " item of that name is in your inventory\n";
                 }
                 else
-                    output += "Second parameter must be an integer for the instance of the object to drop\n";
-            }
-        }
-
-        /*
-            The ParseUse method parses a "use" command for some action to perform
-        */
-
-        private void ParseUse(string[] commandParams)
-        {
-            // We expect at least 1 and up to 2 parameters
-            if (commandParams.Length == 0 || commandParams.Length > 2)
-                output += "Command \"use\" syntax: [ itemName: string ] { instanceOf: int }\n";
-            else if (commandParams.Length == 1)
-            {
-                // Get first instance of named item from PC's inventory to use
-                Item item = game.Player.GetItem(commandParams[0]);
-                if (item != null)
-                {
-                    if (item is Weapon)
-                    {
-                        game.Player.Use(item);
-                        int bonus = ((Weapon)item).DamageBonus;
-                        output += "You equip " + item.Name + ", increasing your damage by " + bonus + "\n";
-                    }
-                    else if (item is Potion)
-                    {
-                        game.Player.Use(item);
-                        int restored = ((Potion)item).HealthRestored;
-                        output += "You use " + item.Name + ", restoring your health by " + restored + "\n";
-                    }
-                    else
-                        output += "You cannot use the item, " + item.Name + "\n";
-                }
-                else
-                    output += "No such item exists in your inventory\n";
-            }
-            else
-            {
-                // Get nth instance of named item from PC's inventory to use
-                int instance;
-                if (int.TryParse(commandParams[1], out instance) && instance > 0)
-                {
-                    string suffix = GetOrdinalSuffix(instance);
-                    instance--;     // We don't expect instance to be 0-based, so make it so
-                    Item item = game.Player.GetItem(commandParams[0], instance);
-                    if (item != null)
-                    {
-                        if (item is Weapon)
-                        {
-                            game.Player.Use(item);
-                            int bonus = ((Weapon)item).DamageBonus;
-                            output += "You equip " + item.Name + ", increasing your damage by " + bonus + "\n";
-                        }
-                        else if (item is Potion)
-                        {
-                            game.Player.Use(item);
-                            int restored = ((Potion)item).HealthRestored;
-                            output += "You use " + item.Name + ", restoring your health by " + restored + "\n";
-                        }
-                        else
-                            output += "You cannot use the item, " + item.Name + "\n";
-                    }
-                    else
-                        output += "No " + (instance - 1) + suffix +
-                                  " item of that name is in your inventory\n";
-                }
-                else
-                    output += "Second parameter must be an integer for the instance of the object to get\n";
+                    output += "Second parameter must be an integer for the instance of the item to equip\n";
             }
         }
 
@@ -495,7 +421,9 @@ namespace Dice_and_Combat_Engine
 
         private void ParseInventory(string[] commandParams)
         {
+            // We expect no parameters
             if (commandParams.Length == 0)
+                // Display the contents of the Player's inventory
                 output += game.Player.GetInventoryInformation() + "\n";
             else
                 output += "Command \"inventory\" takes no parameters\n";
@@ -508,21 +436,23 @@ namespace Dice_and_Combat_Engine
         private void ParseLook(string[] commandParams)
         {
             // We expect up to 2 parameters
-            if (commandParams.Length > 3)
-                output += "Command \"look\" syntax: { creatureName: string } { instanceOf: int }\n";
+            if (commandParams.Length > 2)
+                output += "Command \"look\" syntax: { objectName: string } { instanceOf: int }\n";
             else if (commandParams.Length == 0)
-                // Provide general information about the Player's current location
+                // Display general information about the Player's current location
                 output += game.Player.Location.GetInfo() + "\n";
             else if (commandParams.Length == 1)
             {
-                // Output description of object and, if creature, set Player's target
-                if (game.Player.Location.GetDenizenNames().Contains(commandParams[0], StringComparer.OrdinalIgnoreCase))
+                // Output description of first instance of object and, if creature, set Player's target
+                if (game.Player.Location.GetDenizenNames().Contains(commandParams[0],
+                                                                    StringComparer.OrdinalIgnoreCase))
                 {
                     game.Player.Target = game.Player.Location.GetDenizen(commandParams[0]);
                     output += game.Player.Target.Description + "\n";
                 }
                 else if (game.Player.Location.GetItemNames().Contains(commandParams[0], StringComparer.OrdinalIgnoreCase))
                     output += game.Player.Location.GetItem(commandParams[0]).Description + "\n";
+                else if (game.Player.GetInventoryNames().Contains(commandParams[0], StringComparer.OrdinalIgnoreCase));
                 else
                     output += "No object with that name exists\n";
             }
@@ -533,8 +463,9 @@ namespace Dice_and_Combat_Engine
                 if (int.TryParse(commandParams[1], out instance) && instance > 0)
                 {
                     string suffix = GetOrdinalSuffix(instance);
-                    instance--;      // We do not expect instance to be 0-based, so make it so
-                    if (game.IsCreature(commandParams[0]))
+                    instance--;      // We don't expect instance to be 0-based, so make it so
+                    if (game.Player.Location.GetDenizenNames().Contains(commandParams[0],
+                                                                        StringComparer.OrdinalIgnoreCase))
                     {
                         Creature c = game.Player.Location.GetDenizen(commandParams[0], instance);
                         if (c != null)
@@ -543,16 +474,19 @@ namespace Dice_and_Combat_Engine
                             output += game.Player.Target.Description + "\n";
                         }
                         else
-                            output += "No " + (instance + 1) + suffix + " instance of that creature exists\n";
+                            output += "No " + (instance + 1) + suffix + " creature with that name exists\n";
                     }
-                    else if (game.IsItem(commandParams[0]))
+                    else if (game.Player.Location.GetItemNames().Contains(commandParams[0],
+                                                                          StringComparer.OrdinalIgnoreCase))
                     {
                         Item i = game.Player.Location.GetItem(commandParams[0], instance);
                         if (i != null)
                             output += i.Description + "\n";
                         else
-                            output += "No " + (instance + 1) + suffix + " instance of that item exists\n";
+                            output += "No " + (instance + 1) + suffix + " item with that name exists\n";
                     }
+                    else if (game.Player.GetInventoryNames().Contains(commandParams[0],
+                                                                      StringComparer.OrdinalIgnoreCase));
                     else
                         output += "No object with that name exists\n";
                 }
@@ -570,8 +504,7 @@ namespace Dice_and_Combat_Engine
             // We expect only 1 parameter: The direction of the exit to open
             if (commandParams.Length != 1)
                 output += "Command \"open\" syntax: [ directionToOpen: Direction ]\n";
-            else
-                if (IsDirection(commandParams[0]))
+            else if (IsDirection(commandParams[0]))
             {
                 Direction direction = ParseDirection(commandParams[0]);
 
@@ -585,7 +518,7 @@ namespace Dice_and_Combat_Engine
 
                 // If there are enemies (non-NPCs) remaining in the current room
                 else if (game.Player.Location.Denizens.Count != game.Player.Location.GetNPCCreatures())
-                    output += "There are remaining enemies in this room\n";
+                    output += "There are enemies remaining in this room\n";
 
                 // Open link
                 else
@@ -617,11 +550,11 @@ namespace Dice_and_Combat_Engine
 
         private void ParseScore(string[] commandParams)
         {
-            //We expect no parameters
+            // We expect no parameters
             if (commandParams.Length == 0)
             {
                 int score = game.Player.GetScore();
-                output += "Your score is " + score + ".\n";
+                output += "Your score is " + score + "\n";
             }
             else
                 output += "Command \"score\" takes no parameters\n";
@@ -643,7 +576,7 @@ namespace Dice_and_Combat_Engine
                 {
                     if (game.Player.Location.Contents.Count != 0)
                     {
-                        // Take every item from Player's current location
+                        // Player takes every item from its current location
                         game.Player.TakeAll();
                         output += "You take every item in the room\n";
                     }
@@ -652,7 +585,7 @@ namespace Dice_and_Combat_Engine
                 }
                 else
                 {
-                    // Take first instance of item with specified name
+                    // Take first instance of named item from room
                     Item i = game.Player.Location.GetItem(commandParams[0]);
                     if (i != null)
                     {
@@ -694,10 +627,10 @@ namespace Dice_and_Combat_Engine
                                       item.Name + " from the room\n";
                         }
                         else
-                            output += "No " + (instance + 1) + suffix + " instance of that item exists\n";
+                            output += "No " + (instance + 1) + suffix + " item of that name exists\n";
                     }
                     else
-                        output += "Second parameter must be an integer for the instance of the object to examine\n";
+                        output += "Second parameter must be an integer for the instance of the object to take\n";
                 }
             }
         }
@@ -714,13 +647,81 @@ namespace Dice_and_Combat_Engine
             else
             {
                 // Talk to first instance of named NPC
-                Creature npc = game.Player.Location.GetDenizen(commandParams[0]);
-                if (npc != null && npc is NPC)
-                    output += ((NPC)npc).GetResponse() + "\n";
-                else if (npc != null && !(npc is NPC))
-                    output += "You cannot talk to that NPC\n";
+                Creature c = game.Player.Location.GetDenizen(commandParams[0]);
+                if (c != null && c is NPC)
+                    output += ((NPC)c).GetResponse() + "\n";
+                else if (c != null && !(c is NPC))
+                    output += "You cannot talk to that creature\n";
                 else
                     output += "No NPC with that name exists\n";
+            }
+        }
+
+        /*
+            The ParseUse method parses a "use" command for some action to perform
+        */
+
+        private void ParseUse(string[] commandParams)
+        {
+            // We expect at least 1 and up to 2 parameters
+            if (commandParams.Length == 0 || commandParams.Length > 2)
+                output += "Command \"use\" syntax: [ itemName: string ] { instanceOf: int }\n";
+            else if (commandParams.Length == 1)
+            {
+                // Get first instance of named item from PC's inventory to use
+                Item i = game.Player.GetItem(commandParams[0]);
+                if (i != null)
+                {
+                    if (i is Weapon)
+                    {
+                        game.Player.EquipWeapon((Weapon)i);
+                        int bonus = ((Weapon)i).DamageBonus;
+                        output += "You equip " + i.Name + ", increasing your damage by " + bonus + "\n";
+                    }
+                    else if (i is Potion)
+                    {
+                        game.Player.UsePotion((Potion)i);
+                        int restored = ((Potion)i).HealthRestored;
+                        output += "You drink " + i.Name + ", restoring your health by " + restored + "\n";
+                    }
+                    else
+                        output += "You cannot use the item, " + i.Name + "\n";
+                }
+                else
+                    output += "No such item exists in your inventory\n";
+            }
+            else
+            {
+                // Get nth instance of named item from PC's inventory to use
+                int instance;
+                if (int.TryParse(commandParams[1], out instance) && instance > 0)
+                {
+                    string suffix = GetOrdinalSuffix(instance);
+                    instance--;     // We don't expect instance to be 0-based, so make it so
+                    Item i = game.Player.GetItem(commandParams[0], instance);
+                    if (i != null)
+                    {
+                        if (i is Weapon)
+                        {
+                            game.Player.EquipWeapon((Weapon)i);
+                            int bonus = ((Weapon)i).DamageBonus;
+                            output += "You equip " + i.Name + ", increasing your damage by " + bonus + "\n";
+                        }
+                        else if (i is Potion)
+                        {
+                            game.Player.UsePotion((Potion)i);
+                            int restored = ((Potion)i).HealthRestored;
+                            output += "You drink " + i.Name + ", restoring your health by " + restored + "\n";
+                        }
+                        else
+                            output += "You cannot use the item, " + i.Name + "\n";
+                    }
+                    else
+                        output += "No " + (instance - 1) + suffix +
+                                  " item of that name is in your inventory\n";
+                }
+                else
+                    output += "Second parameter must be an integer for the instance of the object to use\n";
             }
         }
 
@@ -791,14 +792,13 @@ namespace Dice_and_Combat_Engine
                     resolvedParam.Clear();
                 }
 
-                // Prepare to return possibly modifed array
+                // Prepare to return parameters
                 toReturn = paramList.ToArray();
             }
             else
                 // Parameters are unchanged
                 toReturn = parameters;
 
-            // Return
             return toReturn;
         }
     }
