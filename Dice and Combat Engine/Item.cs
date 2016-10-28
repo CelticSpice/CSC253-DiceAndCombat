@@ -1,7 +1,7 @@
 ﻿/*
     This class represents base item objects
-    9/22/2016
-    CSC 253 0001 - Dice and Combat Engine
+    9/28/2016
+    CSC 253 0001 - CH8P1
     Author: James Alves, Shane McCann, Timothy Burns
 */
 
@@ -13,21 +13,22 @@ namespace Dice_and_Combat_Engine
         private string _name,
                        _description;
 
-        private int _durability, 
-                    _value,
-                    _id;          // Weapon id = 1, Potion id = 2, Treasure id = 3
+        private int _durability,
+                    _value;
+
+        private ItemType _type;
 
         /*
             Constructor
         */
 
-        public Item(string n, string desc, int d, int v, int i)
+        public Item(string n, string desc, int d, int v, ItemType t)
         {
             _name = n;
             _description = desc;
             _durability = d;
             _value = v;
-            _id = i;
+            _type = t;
         }
 
         /*
@@ -71,12 +72,12 @@ namespace Dice_and_Combat_Engine
         }
 
         /*
-            ID property
+            Type property
         */
 
-        public int ID
+        public ItemType Type
         {
-            get { return _id; }
+            get { return _type; }
         }
     }
 }

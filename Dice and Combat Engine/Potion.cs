@@ -1,7 +1,7 @@
 ﻿/*
-    This class represents potions in the game
-    9/22/2016
-    CSC 253 0001 - Dice and Combat Engine
+    This class represents a potion
+    9/28/2016
+    CSC 253 0001 - CH8P1
     Author: James Alves, Shane McCann, Timothy Burns
 */
 
@@ -9,10 +9,9 @@ namespace Dice_and_Combat_Engine
 {
     class Potion : Item
     {
-        // Consts
-        private const int POTION_ID = 2;   // All Potions have an id of 2
-
         // Fields
+        private const ItemType TYPE = ItemType.Potion;
+
         private int _healthRestored;
 
         /*
@@ -20,7 +19,7 @@ namespace Dice_and_Combat_Engine
             Accepts the name, description, durability, value, and amount of health restored
         */
         public Potion(string name, string desc, int durability, int value, int heal)
-            : base(name, desc, durability, value, POTION_ID)
+            : base(name, desc, durability, value, TYPE)
         {
             _healthRestored = heal;
         }
@@ -30,21 +29,9 @@ namespace Dice_and_Combat_Engine
         */
 
         public Potion(Potion p)
-            : base(p.Name, p.Description, p.Durability, p.Value, POTION_ID)
+            : base(p.Name, p.Description, p.Durability, p.Value, TYPE)
         {
             _healthRestored = p._healthRestored;
-        }
-
-        /*
-            The Use method simulates using the potion for its
-            benefits. The value gained is returned and the potion's
-            durability is decreased
-        */
-
-        public int Use()
-        {
-            Durability -= 1;
-            return _healthRestored;
         }
 
         /*

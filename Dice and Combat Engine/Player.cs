@@ -283,9 +283,10 @@ namespace Dice_and_Combat_Engine
 
         public void UsePotion(Potion potion)
         {
-            Stats.HitPoints += potion.Use();
+            Stats.HitPoints += potion.HealthRestored;
             if (Stats.HitPoints > Stats.MaxHitPoints)
                 Stats.HitPoints = Stats.MaxHitPoints;
+            potion.Durability -= 1;
             if (potion.Durability == 0)
                 _inventory.Remove(potion);
         }
