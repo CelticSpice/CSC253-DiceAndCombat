@@ -1,7 +1,7 @@
 ﻿/*
     This class handles the game logic
-    9/22/2016
-    CSC 253 0001 - Dice and Combat Engine
+    10/28/2016
+    CSC 253 0001 - CH8P1
     Author: James Alves, Shane McCann, Timothy Burns
 */
 
@@ -162,7 +162,6 @@ namespace Dice_and_Combat_Engine
                 // Prepare to read
                 Attributes attribs = new Attributes();
                 BaseStats stats = new BaseStats();
-                bool readyToCreate = false;
                 bool isNPC = false;
                 List<string> responses = new List<string>();
                 string description = "";

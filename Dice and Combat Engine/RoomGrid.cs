@@ -1,22 +1,21 @@
 ﻿/*
     This class is a wrapper for a 2D grid of Rooms
-    10/7/2016
-    CSC 253 0001 - Dice and Combat Engine
+    10/28/2016
+    CSC 253 0001 - CH8P1
     Author: James Alves, Shane McCann, Timothy Burns
 */
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Dice_and_Combat_Engine
 {
     class RoomGrid
     {
+        private Random rng;
         private Room[,] _grid;
-        private int _rows, _columns;
+        private int rows, columns;
 
         /*
             Constructor
@@ -29,9 +28,10 @@ namespace Dice_and_Combat_Engine
         {
             if (!appearOnce)
             {
+                rng = new Random((int)DateTime.Now.Ticks & 0x0000FFFF);
                 _grid = new Room[rows, cols];
-                _rows = rows;
-                _columns = cols;
+                this.rows = rows;
+                this.columns = cols;
 
                 PrepareGrid(rooms);
                 SetNeighbors();
@@ -39,18 +39,17 @@ namespace Dice_and_Combat_Engine
             }
             else if (appearOnce && rooms.Length == (rows * cols))
             {
+                rng = new Random((int)DateTime.Now.Ticks & 0x0000FFFF);
                 _grid = new Room[rows, cols];
-                _rows = rows;
-                _columns = cols;
+                this.rows = rows;
+                columns = cols;
 
                 PrepareGrid(rooms, appearOnce);
                 SetNeighbors();
                 LinkRooms();
             }
             else
-            {
                 throw new Exception("Error: Rooms appear once but grid size is inappropriate");
-            }
         }
 
         /*
@@ -61,28 +60,23 @@ namespace Dice_and_Combat_Engine
 
         private void PrepareGrid(Room[] rooms, bool appearOnce = false)
         {
-            Random rng = new Random((int)DateTime.Now.Ticks & 0x0000FFFF);
-
             if (!appearOnce)
             {
-                for (int row = 0; row < _rows; row++)
-                {
-                    for (int col = 0; col < _columns; col++)
+                for (int row = 0; row < rows; row++)
+                    for (int col = 0; col < columns; col++)
                     {
                         _grid[row, col] = new Room(rooms[rng.Next(rooms.Length)]);
                         _grid[row, col].XLoc = col;
                         _grid[row, col].YLoc = row;
                     }
-                }
             }
             else
             {
                 List<Room> toCreate = new List<Room>(rooms);
                 Room room;
 
-                for (int row = 0; row < _rows; row++)
-                {
-                    for (int col = 0; col < _columns; col++)
+                for (int row = 0; row < rows; row++)
+                    for (int col = 0; col < columns; col++)
                     {
                         room = toCreate[rng.Next(toCreate.Count)];
                         _grid[row, col] = room;
@@ -90,7 +84,6 @@ namespace Dice_and_Combat_Engine
                         room.YLoc = row;
                         toCreate.Remove(room);
                     }
-                }
             }            
         }
 
@@ -108,37 +101,27 @@ namespace Dice_and_Combat_Engine
 
                 // Set neighbors
                 for (Direction direction = Direction.North; direction <= Direction.West; direction++)
-                {
                     // Direction represents one of 4 directions: North, South, East, West, respectively
                     // If no neighbor exists in a direction, neighbor in that direction will be left null
                     switch (direction)
                     {
                         case Direction.North:
                             if (yLoc > 0)
-                            {
                                 room.Neighbors[(int)Direction.North] = _grid[yLoc - 1, xLoc];
-                            }
                             break;
                         case Direction.South:
-                            if (yLoc < _rows - 1)
-                            {
+                            if (yLoc < rows - 1)
                                 room.Neighbors[(int)Direction.South] = _grid[yLoc + 1, xLoc];
-                            }
                             break;
                         case Direction.East:
-                            if (xLoc < _columns - 1)
-                            {
+                            if (xLoc < columns - 1)
                                 room.Neighbors[(int)Direction.East] = _grid[yLoc, xLoc + 1];
-                            }
                             break;
                         case Direction.West:
                             if (xLoc > 0)
-                            {
                                 room.Neighbors[(int)Direction.West] = _grid[yLoc, xLoc - 1];
-                            }
                             break;
                     }
-                }
             }
         }
 
@@ -150,17 +133,13 @@ namespace Dice_and_Combat_Engine
 
         private void LinkRooms()
         {
-            Random rng = new Random((int)DateTime.Now.Ticks & 0x0000FFFF);
-
             // Initialize rooms with random weights
             foreach (Room room in _grid)
-            {
                 room.Weight = rng.Next(100);
-            }
 
-            // Initialize list of active rooms which may have neighbors to link to
+            // Initialize list of active rooms to keep track of those rooms which may contain valid neighbors
             List<Room> active = new List<Room>();
-            active.Add(_grid[rng.Next(_rows), rng.Next(_columns)]);
+            active.Add(_grid[rng.Next(rows), rng.Next(columns)]);
             active[0].Linked = true;
 
             // Prepare variables
@@ -173,45 +152,31 @@ namespace Dice_and_Combat_Engine
                 // Get active room with lowest weight
                 activeRoom = active[0];
                 foreach (Room room in active)
-                {
                     if (room.Weight < activeRoom.Weight)
-                    {
                         activeRoom = room;
-                    }
-                }
 
                 // Get neighbors available to link to
                 foreach (Room room in activeRoom.Neighbors)
-                {
                     if (room != null && !room.Linked)
-                    {
                         availableNeighbors.Add(room);
-                    }
-                }
 
                 // If there are neighbors available, get the one with the lowest weight to link to
                 if (availableNeighbors.Count != 0)
                 {
                     neighbor = availableNeighbors[0];
                     foreach (Room room in availableNeighbors)
-                    {
                         if (room.Weight < neighbor.Weight)
-                        {
                             neighbor = room;
-                        }
-                    }
 
-                    // Link the rooms
+                    // Link the active room and its neighbor together
                     activeRoom.Link(neighbor);
 
                     // Add neighbor to active list
                     active.Add(neighbor);
                 }
-                // If there are no neighbors to link to from the active room, remove the room from the active list
+                // If there are no neighbors to link to from the active room, remove it from the active list
                 else
-                {
                     active.Remove(activeRoom);
-                }
 
                 // Clear list of available neighbors
                 availableNeighbors.Clear();                
@@ -219,95 +184,73 @@ namespace Dice_and_Combat_Engine
         }
 
         /*
-            The GenerateRoomContents method populates the Rooms in the Grid with objects
-            passed in appropriate arrays of Creatures, Items, and NPCS
+            The GenerateRoomContents method randomly populates the Rooms in the Grid with objects
+            made avaiable in passed arrays of creatures and items
         */
 
-        public void GenerateRoomContents(Creature[] creatures, Item[] items, NPC[] npcs)
+        public void GenerateRoomContents(Creature[] creatures, Item[] items)
         {
-            Random rng = new Random((int)DateTime.Now.Ticks & 0x0000FFFF);
-
-            Item itemToAdd;
-            Creature creatureToAdd;
-            NPC npcToAdd;
-            int maxItems, maxCreatures;
-
             foreach (Room room in _grid)
             {
                 // Populate room with items
-                maxItems = room.Contents.Capacity;
+                int maxItems = room.Contents.Capacity;
 
                 for (int i = 0; i < maxItems; i++)
                 {
-                    itemToAdd = items[rng.Next(items.Length)];
+                    Item itemToAdd = items[rng.Next(items.Length)];
 
                     if (itemToAdd is Weapon)
-                    {
                         room.Contents.Add(new Weapon((Weapon)itemToAdd));
-                    }
                     else if (itemToAdd is Potion)
-                    {
                         room.Contents.Add(new Potion((Potion)itemToAdd));
-                    }
                     else
-                    {
                         room.Contents.Add(new Treasure((Treasure)itemToAdd));
-                    }
                 }
 
                 // Populate room with creatures
-                maxCreatures = room.Denizens.Capacity;
+                int maxCreatures = room.Contents.Capacity;
 
                 for (int i = 0; i < maxCreatures; i++)
                 {
-                    creatureToAdd = creatures[rng.Next(creatures.Length)];
+                    Creature creatureToAdd = creatures[rng.Next(creatures.Length)];
                     room.Denizens.Add(new Creature(creatureToAdd));
                     creatureToAdd.Location = room;
                 }
-
-                // Determine whether room should contain an NPC
-                if ((rng.Next()) < 1000000000)
-                {
-                    npcToAdd = npcs[rng.Next(npcs.Length)];
-                    room.Denizens.Add(new NPC(npcToAdd));
-                    npcToAdd.Location = room;
-                }
                     
-                // Sort contents (creatures and items) alphabetically
+                // Sort room contents alphabetically
                 room.Denizens.Sort((Creature a, Creature b) => { return a.Stats.Name.CompareTo(b.Stats.Name); });
                 room.Contents.Sort((Item a, Item b) => { return a.Name.CompareTo(b.Name); });
             }
         }
 
         /*
-            The ToString method returns a string representation of the Grid
+            The ToString method returns a string representation of the Grid.
+            More specifically, it will return an ASCII map of the dungeon
         */
 
         public override string ToString()
         {
-            string top, bottom, east, south;
-
             string body   = "   ";
             string corner = "+";
 
-            string output = "+" + String.Concat(Enumerable.Repeat("---+", _columns)) + "\r\n";
+            string output = "+" + String.Concat(Enumerable.Repeat("---+", columns)) + "\n";
 
-            for (int row = 0; row < _rows; row++)
+            for (int row = 0; row < rows; row++)
             {
-                top    = "|";
-                bottom = "+";
+                string top    = "|";
+                string bottom = "+";
 
-                for (int col = 0; col < _columns; col++)
+                for (int col = 0; col < columns; col++)
                 {
-                    east  = (_grid[row, col].Links[(int)Direction.East] != null) ? " " : "|";
-                    south = (_grid[row, col].Links[(int)Direction.South] != null) ? "   " : "---";
+                    string east  = (_grid[row, col].Links[(int)Direction.East] != null) ? " " : "|";
+                    string south = (_grid[row, col].Links[(int)Direction.South] != null) ? "   " : "---";
 
                     top    += body + east;
                     bottom += south + corner;
                 }
 
-                output += top + "\r\n";
-                output += bottom + "\r\n";
+                output += top + "\n";
+                output += bottom + "\n";
             }
 
             return output;
@@ -320,24 +263,6 @@ namespace Dice_and_Combat_Engine
         public Room[,] Grid
         {
             get { return _grid; }
-        }
-
-        /*
-            Rows property
-        */
-
-        public int Rows
-        {
-            get { return _rows; }
-        }
-
-        /*
-            Columns property
-        */
-
-        public int Columns
-        {
-            get { return _columns; }
         }
     }
 }
