@@ -32,6 +32,7 @@ namespace Dice_and_Combat_Engine
         public string DoCombat(Creature attacker, Creature defender)
         {
             StringBuilder feedback = new StringBuilder();
+            attacker.Target = defender;
 
             // Attack roll
             d20Die.Roll();

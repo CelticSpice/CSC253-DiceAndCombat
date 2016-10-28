@@ -41,7 +41,6 @@ namespace Dice_and_Combat_Engine
 
         public override int Attack(Creature defender)
         {
-            Target = defender;
             Stats.Damage.Roll();
             int damage = Stats.Damage.DieResult;
             defender.Stats.HitPoints -= damage;

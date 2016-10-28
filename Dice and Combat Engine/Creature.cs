@@ -60,7 +60,6 @@ namespace Dice_and_Combat_Engine
 
         public virtual int Attack(Creature defender)
         {
-            _target = defender;
             _stats.Damage.Roll();
             int damage = _stats.Damage.DieResult;
             defender._stats.HitPoints -= damage;

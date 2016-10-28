@@ -35,7 +35,7 @@ namespace Dice_and_Combat_Engine
             each Room should be unique
         */
 
-        public Game(int dungeonSize, bool uniqueRooms = false)
+        public Game(int dungeonSize)
         {
             _requestToClear = false;
             _requestToQuit = false;
@@ -44,7 +44,7 @@ namespace Dice_and_Combat_Engine
             LoadCreatures();
             LoadItems();
             LoadRooms();
-            dungeon = new RoomGrid(dungeonSize, dungeonSize, rooms, uniqueRooms);
+            dungeon = new RoomGrid(dungeonSize, rooms);
             dungeon.GenerateRoomContents(creatures, items);
             GeneratePlayer();
         }
@@ -322,12 +322,6 @@ namespace Dice_and_Combat_Engine
                 // Delimiter
                 char[] delim = { ':' };
 
-                // Prepare to read
-                string roomName = "";
-
-                int numCreatures = 0,
-                    numItems = 0;
-
                 while (!roomStream.EndOfStream)
                 {
                     string line = roomStream.ReadLine();
@@ -335,23 +329,8 @@ namespace Dice_and_Combat_Engine
                     if (!(line.Length == 0))
                     {
                         string[] splitLine = line.Split(delim);
-
-                        switch (splitLine[0])
-                        {
-                            case "Name":
-                                roomName = splitLine[1];
-                                break;
-                            case "NumCreatures":
-                                numCreatures = int.Parse(splitLine[1]);
-                                break;
-                            case "NumItems":
-                                numItems = int.Parse(splitLine[1]);
-                                break;
-                        }
+                        loadList.Add(new Room(splitLine[1].Trim()));
                     }
-
-                    if (line.Length == 0 || roomStream.EndOfStream)
-                        loadList.Add(new Room(roomName, numCreatures, numItems));
                 }
             }
             catch (Exception ex)

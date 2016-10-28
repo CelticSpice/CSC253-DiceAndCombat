@@ -1,7 +1,7 @@
 ﻿/*
     This program is a simple rougelike game
-    9/22/2016
-    CSC 253 0001 - Dice and Combat Engine
+    9/28/2016
+    CSC 253 0001 - CH8P1
     Author: James Alves, Shane McCann, Timothy Burns
 */
 
@@ -36,7 +36,6 @@ namespace Dice_and_Combat_Engine
         {
             // Initialize UI
             playerNameTextBox.Text = game.Player.Stats.Name;
-            playerRaceClassTextBox.Text = game.Player.PlayerStats.race + " " + game.Player.PlayerStats.playerClass;
             playerHPTextBox.Text = game.Player.Stats.HitPoints.ToString();
             playerABTextBox.Text = game.Player.Stats.AttackBonus.ToString();
             playerACTextBox.Text = game.Player.Stats.ArmorClass.ToString();
@@ -89,6 +88,7 @@ namespace Dice_and_Combat_Engine
             if (game.RequestToClear)
             {
                 outputRTxtBox.Clear();
+                outputRTxtBox.Text = ">>  ";
                 game.RequestToClear = false;
                 commandTxtBox.Text = "";
                 commandTxtBox.Focus();
@@ -101,10 +101,11 @@ namespace Dice_and_Combat_Engine
                 if (result == DialogResult.Yes)
                     this.Close();
                 else
+                {
                     game.RequestToQuit = false;
-
-                commandTxtBox.Text = "";
-                commandTxtBox.Focus();
+                    commandTxtBox.Text = "";
+                    commandTxtBox.Focus();
+                }
             }
             else
                 UpdateViews();

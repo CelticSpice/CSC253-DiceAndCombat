@@ -91,4 +91,4 @@ ID: 2
 Name: Australium Boulder
 Description: MOAR AUSTRALIA!!
 Durability: 9001
-Value: 8675309
+Value: 750

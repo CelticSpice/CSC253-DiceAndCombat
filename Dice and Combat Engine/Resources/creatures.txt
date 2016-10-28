@@ -6,12 +6,6 @@ AB: 1
 AC: 15
 Damage: 6
 XP: 5
-Strength: 0
-Constitution: 1
-Dexterity: 1
-Intelligence: 0
-Wisdom: -1
-Charisma: -2
 
 Name: Orc
 Description: A large beastly thing
@@ -21,27 +15,15 @@ AB: 1
 AC: 13
 Damage: 6
 XP: 10
-Strength: 3
-Constitution: 1
-Dexterity: 0
-Intelligence: -1
-Wisdom: -2
-Charisma: -2
 
 Name: Zombie
 Description: Something that should be dead
 Friendly: False
-HP: 16
+HP: 6
 AB: 2
 AC: 11
 Damage: 6
 XP: 15
-Strength: 1
-Constitution: 0
-Dexterity: -1
-Intelligence: 0
-Wisdom: 0
-Charisma: -5
 
 Name: Kobold
 Description: Annoying, is what they are!
@@ -51,29 +33,15 @@ AB: 1
 AC: 15
 Damage: 6
 XP: 5
-Strength: -1
-Constitution: 0
-Dexterity: 1
-Intelligence: 0
-Wisdom: -1
-Charisma: -1
 
 Name: Dragon
 Description: Your doom
 Friendly: False
-HP: 551
-AB: 38
-AC: 10
-Damage: 100
-XP: 1000
-Strength: 14
-Constitution: 8
-Dexterity: 0
-Intelligence: 6
-Wisdom: 6
-Charisma: 6
-
-
+HP: 15
+AB: 3
+AC: 12
+Damage: 7
+XP: 50
 
 Name: Merchant
 Description: A grumpy man, sitting behind a shabby kiosk
@@ -84,12 +52,6 @@ AB: 5
 AC: 4
 Damage: 5
 XP: 50
-Strength: 1
-Constitution: 2
-Dexterity: 3
-Intelligence: 1
-Wisdom: 2
-Charisma: 7
 
 Name: Mirror
 Description: A dingy old mirror attatched to the wall. When you look into it, there is a strange man looking back
@@ -100,12 +62,6 @@ AB: 5
 AC: 4
 Damage: 5
 XP: 50
-Strength: 1
-Constitution: 2
-Dexterity: 3
-Intelligence: 1
-Wisdom: 2
-Charisma: 7
 
 Name: Child
 Description: "A very young human, surprizingly good at sneaking around"
@@ -116,12 +72,6 @@ AB: 5
 AC: 4
 Damage: 5
 XP: 50
-Strength: 1
-Constitution: 2
-Dexterity: 3
-Intelligence: 1
-Wisdom: 2
-Charisma: 7
 
 Name: Nicholas Cage
 Description: "Wait... is that Nicholas Cage? He really is in everything"
@@ -132,9 +82,3 @@ AB: 5
 AC: 4
 Damage: 5
 XP: 50
-Strength: 1
-Constitution: 2
-Dexterity: 3
-Intelligence: 1
-Wisdom: 2
-Charisma: 7

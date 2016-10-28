@@ -1,19 +1,49 @@
 Name: Hall of Sophia
-NumCreatures: 3
-NumItems: 3
 
 Name: Hall of The Pleroma
-NumCreatures: 4
-NumItems: 5
 
 Name: Hall of The Monad
-NumCreatures: 5
-NumItems: 5
 
 Name: Hall of the Void
-NumCreatures: 2
-NumItems: 1
 
 Name: Hall of The Ogdoad
-NumCreatures: 6
-NumItems: 5
+
+Name: Hall of The Archons
+
+Name: Hall of Yaldabaoth
+
+Name: Hall of Gnosis
+
+Name: Hall of The Light
+
+Name: Hall of Bythos
+
+Name: Hall of Pneuma
+
+Name: Hall of Psyche
+
+Name: Hall of Hyle
+
+Name: Hall of Profundity
+
+Name: Hall of Grace
+
+Name: Hall of Thunder
+
+Name: Hall of the Perfect Mind
+
+Name: Hall of Pistis
+
+Name: Hall of Noraia
+
+Name: Hall of Sabaoth
+
+Name: Hall of Pronoia
+
+Name: Hall of Nous
+
+Name: Hall of Zoe
+
+Name: Hall of Adonaios
+
+Name: Hall of The Aeons

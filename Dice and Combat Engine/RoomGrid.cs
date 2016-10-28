@@ -20,71 +20,44 @@ namespace Dice_and_Combat_Engine
         /*
             Constructor
             Accepts the number of rows and columns that the grid should have,
-            an array containing the Rooms that the Grid may contain, and an optional
-            boolean indicating whether each Room should appear once and only once
+            an array containing the Rooms that the Grid should contain
         */
 
-        public RoomGrid(int rows, int cols, Room[] rooms, bool appearOnce = false)
+        public RoomGrid(int size, Room[] rooms)
         {
-            if (!appearOnce)
+            if (rooms.Length == (size * size))
             {
                 rng = new Random((int)DateTime.Now.Ticks & 0x0000FFFF);
-                _grid = new Room[rows, cols];
-                this.rows = rows;
-                this.columns = cols;
+                _grid = new Room[size, size];
+                rows = size;
+                columns = size;
 
                 PrepareGrid(rooms);
                 SetNeighbors();
                 LinkRooms();
             }
-            else if (appearOnce && rooms.Length == (rows * cols))
-            {
-                rng = new Random((int)DateTime.Now.Ticks & 0x0000FFFF);
-                _grid = new Room[rows, cols];
-                this.rows = rows;
-                columns = cols;
-
-                PrepareGrid(rooms, appearOnce);
-                SetNeighbors();
-                LinkRooms();
-            }
             else
-                throw new Exception("Error: Rooms appear once but grid size is inappropriate");
+                throw new Exception("Error: Grid size inappropriate for number of rooms");
         }
 
         /*
             The PrepareGrid method initializes the Grid with Rooms
-            It accepts an optional boolean indicating whether each Room should
-            appear once and only once
         */
 
-        private void PrepareGrid(Room[] rooms, bool appearOnce = false)
+        private void PrepareGrid(Room[] rooms)
         {
-            if (!appearOnce)
-            {
-                for (int row = 0; row < rows; row++)
-                    for (int col = 0; col < columns; col++)
-                    {
-                        _grid[row, col] = new Room(rooms[rng.Next(rooms.Length)]);
-                        _grid[row, col].XLoc = col;
-                        _grid[row, col].YLoc = row;
-                    }
-            }
-            else
-            {
-                List<Room> toCreate = new List<Room>(rooms);
-                Room room;
+            List<Room> toCreate = new List<Room>(rooms);
+            Room room;
 
-                for (int row = 0; row < rows; row++)
-                    for (int col = 0; col < columns; col++)
-                    {
-                        room = toCreate[rng.Next(toCreate.Count)];
-                        _grid[row, col] = room;
-                        room.XLoc = col;
-                        room.YLoc = row;
-                        toCreate.Remove(room);
-                    }
-            }            
+            for (int row = 0; row < rows; row++)
+                for (int col = 0; col < columns; col++)
+                {
+                    room = toCreate[rng.Next(toCreate.Count)];
+                    _grid[row, col] = room;
+                    room.XLoc = col;
+                    room.YLoc = row;
+                    toCreate.Remove(room);
+                }
         }
 
         /*
@@ -190,12 +163,15 @@ namespace Dice_and_Combat_Engine
 
         public void GenerateRoomContents(Creature[] creatures, Item[] items)
         {
+            int maxItems = 5;
+            int maxCreatures = 5;
+
             foreach (Room room in _grid)
             {
                 // Populate room with items
-                int maxItems = room.Contents.Capacity;
+                int numItems = rng.Next(maxItems + 1);
 
-                for (int i = 0; i < maxItems; i++)
+                for (int i = 0; i < numItems; i++)
                 {
                     Item itemToAdd = items[rng.Next(items.Length)];
 
@@ -208,12 +184,15 @@ namespace Dice_and_Combat_Engine
                 }
 
                 // Populate room with creatures
-                int maxCreatures = room.Contents.Capacity;
+                int numCreatures = rng.Next(maxCreatures + 1);
 
-                for (int i = 0; i < maxCreatures; i++)
+                for (int i = 0; i < numCreatures; i++)
                 {
                     Creature creatureToAdd = creatures[rng.Next(creatures.Length)];
-                    room.Denizens.Add(new Creature(creatureToAdd));
+                    if (creatureToAdd is NPC)
+                        room.Denizens.Add(new NPC((NPC)creatureToAdd));
+                    else
+                        room.Denizens.Add(new Creature(creatureToAdd));
                     creatureToAdd.Location = room;
                 }
                     
