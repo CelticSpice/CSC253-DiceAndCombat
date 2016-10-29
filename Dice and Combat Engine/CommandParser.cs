@@ -1,6 +1,6 @@
 ﻿/*
     This class represents a command-line parser
-    10/28/2016
+    10/29/2016
     CSC 253 0001 - CH8P1
     Author: James Alves, Shane McCann, Timothy Burns
 */
@@ -239,7 +239,7 @@ namespace Dice_and_Combat_Engine
                     else if (c != null && c is NPC)
                         output += "You cannot attack that NPC\n";
                     else
-                        output += "No " + (instance - 1) + suffix +
+                        output += "No " + (instance + 1) + suffix +
                                   " creature of that name exists\n";
                 }
                 else
@@ -316,7 +316,7 @@ namespace Dice_and_Combat_Engine
                                   i.Name + " from your inventory\n";
                     }
                     else
-                        output += "No " + (instance - 1) + suffix +
+                        output += "No " + (instance + 2) + suffix +
                                   " item of that name is in your inventory\n";
                 }
                 else
@@ -372,7 +372,7 @@ namespace Dice_and_Combat_Engine
                             output += "You cannot equip that item\n";
                     }
                     else
-                        output += "No " + (instance - 1) + suffix +
+                        output += "No " + (instance + 2) + suffix +
                                   " item of that name is in your inventory\n";
                 }
                 else
@@ -452,7 +452,8 @@ namespace Dice_and_Combat_Engine
                 }
                 else if (game.Player.Location.GetItemNames().Contains(commandParams[0], StringComparer.OrdinalIgnoreCase))
                     output += game.Player.Location.GetItem(commandParams[0]).Description + "\n";
-                else if (game.Player.GetInventoryNames().Contains(commandParams[0], StringComparer.OrdinalIgnoreCase));
+                else if (game.Player.GetInventoryNames().Contains(commandParams[0], StringComparer.OrdinalIgnoreCase))
+                    output += game.Player.GetItem(commandParams[0]).Description + "\n";
                 else
                     output += "No object with that name exists\n";
             }
@@ -486,7 +487,14 @@ namespace Dice_and_Combat_Engine
                             output += "No " + (instance + 1) + suffix + " item with that name exists\n";
                     }
                     else if (game.Player.GetInventoryNames().Contains(commandParams[0],
-                                                                      StringComparer.OrdinalIgnoreCase));
+                                                                      StringComparer.OrdinalIgnoreCase))
+                    {
+                        Item i = game.Player.GetItem(commandParams[0], instance);
+                        if (i != null)
+                            output += i.Description + "\n";
+                        else
+                            output += "No " + (instance + 1) + suffix + " item with that name exists\n";
+                    }
                     else
                         output += "No object with that name exists\n";
                 }
@@ -618,7 +626,7 @@ namespace Dice_and_Combat_Engine
                     if (int.TryParse(commandParams[1], out instance) && instance > 0)
                     {
                         string suffix = GetOrdinalSuffix(instance);
-                        instance -= 1;      // We don't expect instance to be 0-based, so make it so
+                        instance--;      // We don't expect instance to be 0-based, so make it so
                         Item item = game.Player.Location.GetItem(commandParams[0], instance);
                         if (item != null)
                         {
@@ -717,7 +725,7 @@ namespace Dice_and_Combat_Engine
                             output += "You cannot use the item, " + i.Name + "\n";
                     }
                     else
-                        output += "No " + (instance - 1) + suffix +
+                        output += "No " + (instance + 2) + suffix +
                                   " item of that name is in your inventory\n";
                 }
                 else
