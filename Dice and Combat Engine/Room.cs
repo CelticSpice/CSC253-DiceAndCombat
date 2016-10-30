@@ -71,6 +71,46 @@ namespace Dice_and_Combat_Engine
         }
 
         /*
+            The ContainsDenizen method returns whether the Room
+            contains the named denizen
+        */
+
+        public bool ContainsDenizen(string name)
+        {
+            return _denizens.Exists(c => c.Stats.Name.ToLower() == name);
+        }
+
+        /*
+            The ContainsDenizen method returns whether the Room
+            contains a nth instance of the named denizen
+        */
+
+        public bool ContainsDenizen(string name, int instance)
+        {
+            return _denizens.Where(c => c.Stats.Name.ToLower() == name).Count() > instance;
+        }
+
+        /*
+            The ContainsItem method returns whether the Room
+            contains the named item
+        */
+
+        public bool ContainsItem(string name)
+        {
+            return _contents.Exists(i => i.Name.ToLower() == name);
+        }
+
+        /*
+            The ContainsItem method returns whether the Room
+            contains a nth instance of the named item
+        */
+
+        public bool ContainsItem(string name, int instance)
+        {
+            return _contents.Where(i => i.Name.ToLower() == name).Count() > instance;
+        }
+
+        /*
             The GetItemInformation method returns a string describing
             the number and kind of items in this room
         */
@@ -108,8 +148,7 @@ namespace Dice_and_Combat_Engine
         }
 
         /*
-            The GetItem method returns the item with the specified name;
-            If no item with that name exists, null is returned
+            The GetItem method returns the item with the specified name
         */
 
         public Item GetItem(string name)
@@ -119,15 +158,13 @@ namespace Dice_and_Combat_Engine
 
         /*
             The GetItem method returns the nth instance of the item
-            with the specified name; if no item of the specified instance
-            or name exists, null is returned
+            with the specified name
         */
 
         public Item GetItem(string name, int instance)
         {
             Item[] items = _contents.Where(i => i.Name.ToLower() == name.ToLower()).ToArray();
-            Item item = (items.Length > 0 && instance < items.Length) ? items[instance] : null;
-            return item;
+            return items[instance];
         }
 
         /*
@@ -141,22 +178,7 @@ namespace Dice_and_Combat_Engine
         }
 
         /*
-            The GetItemNames method returns an array containing the names
-            of the Room's items
-        */
-
-        public string[] GetItemNames()
-        {
-            List<string> names = new List<string>();
-            foreach (Item i in _contents)
-                if (!names.Contains(i.Name))
-                    names.Add(i.Name);
-            return names.ToArray();
-        }
-
-        /*
             The GetDenizen method returns the denizen with the specified name;
-            If no denizen with that name exists, null is returned
         */
 
         public Creature GetDenizen(string name)
@@ -166,15 +188,13 @@ namespace Dice_and_Combat_Engine
 
         /*
             The GetDenizen method returns the nth instance of the denizen
-            with the specified name; if no denizen of the specified instance
-            or name exists, null is returned
+            with the specified name
         */
 
         public Creature GetDenizen(string name, int instance)
         {
             Creature[] denizens = _denizens.Where(d => d.Stats.Name.ToLower() == name.ToLower()).ToArray();
-            Creature c = (denizens.Length > 0 && instance < denizens.Length) ? denizens[instance] : null;
-            return c;
+            return denizens[instance];
         }
 
         /*
@@ -212,34 +232,6 @@ namespace Dice_and_Combat_Engine
                 }
             }
             return output.ToString();
-        }
-
-        /*
-            The GetDenizenNames method returns an array containing the names
-            of the Room's denizens
-        */
-
-        public string[] GetDenizenNames()
-        {
-            List<string> names = new List<string>();
-            foreach (Creature c in _denizens)
-                if (!names.Contains(c.Stats.Name))
-                    names.Add(c.Stats.Name);
-            return names.ToArray();
-        }
-
-        /*
-            The GetNPCDenizens method returns an int representing
-            the amount of NPC creatures in the room.
-        */
-
-        public int GetNPCCreatures()
-        {
-            int npcs = 0;
-            foreach (Creature c in _denizens)
-                if (c is NPC)
-                    npcs++;
-            return npcs;
         }
 
         /*
@@ -283,63 +275,74 @@ namespace Dice_and_Combat_Engine
         }
 
         /*
+            The IsCleared method returns whether the Room
+            has been or is clear of enemies
+        */
+
+        public bool IsCleared()
+        {
+            return _denizens.Where(c => c.Stats.Friendly == false).Count() == 0;
+        }
+
+        /*
+            The IsLinked method returns whether this Room is linked
+            with another Room in the specified direction
+        */
+
+        public bool IsLinked(Direction direction)
+        {
+            return _links[(int)direction] != null;
+        }
+
+        /*
+            The IsLinkOpen method returns whether the link in the
+            specified direction is open
+        */
+
+        public bool IsLinkOpen(Direction direction)
+        {
+            return _linksUnlocked[(int)direction];
+        }
+
+        /*
             The Link method links this Room to another Room
         */
 
         public void Link(Room toLink)
         {
-            // Find which direction the Room to link to is in relation
-            // to this Room so we can assign to the proper Links element
-            bool done = false;
+            // Get direction room is in
+            bool set = false;
             Direction direction = Direction.North;
-            while (!done && direction <= Direction.West)
-            {
-                if (_neighbors[(int)direction] == toLink)
+            for (Direction i = Direction.North; i <= Direction.West && !set; i++)
+                if (_neighbors[(int)i] == toLink)
                 {
-                    _links[(int)direction] = toLink;
-                    
-                    // We link bidirectionally
-                    if (direction == Direction.North || direction == Direction.East)
-                        toLink._links[(int)direction + 1] = this;
-                    else
-                        toLink._links[(int)direction - 1] = this;
-
-                    // Rooms are now linked
-                    done = true;
-                    _linked = true;
-                    toLink._linked = true;
+                    direction = i;
+                    set = true;
                 }
-                else
-                    direction++;
-            }
+
+            // We link bidirectionally
+            _links[(int)direction] = toLink;
+            if (direction == Direction.North || direction == Direction.East)
+                toLink._links[(int)direction + 1] = this;
+            else
+                toLink._links[(int)direction - 1] = this;
+            _linked = true;
+            toLink._linked = true;
         }
 
         /*
             The OpenLink method opens the link to another Room
+            in the specified direction
         */
 
-        public void OpenLink(Room link)
+        public void OpenLink(Direction direction)
         {
-            // Find which direction the linked Room is in relation
-            // to this Room so we can assign to the proper element
-            bool done = false;
-            Direction direction = Direction.North;
-            while (!done && direction <= Direction.West)
-            {
-                if (_links[(int)direction] == link)
-                {
-                    _linksUnlocked[(int)direction] = true;
-
-                    // We open the links bidirectionally
-                    if (direction == Direction.North || direction == Direction.East)
-                        link._linksUnlocked[(int)direction + 1] = true;
-                    else
-                        link._linksUnlocked[(int)direction - 1] = true;
-                    done = true;
-                }
-                else
-                    direction++;
-            }
+            // We open the links bidirectionally
+            _linksUnlocked[(int)direction] = true;
+            if (direction == Direction.North || direction == Direction.East)
+                _links[(int)direction]._linksUnlocked[(int)direction + 1] = true;
+            else
+                _links[(int)direction]._linksUnlocked[(int)direction - 1] = true;
         }
 
         /*

@@ -66,6 +66,26 @@ namespace Dice_and_Combat_Engine
         }
 
         /*
+            The HasItem method returns whether the Player's
+            inventory contains the named item
+        */
+
+        public bool HasItem(string name)
+        {
+            return _inventory.Exists(i => i.Name.ToLower() == name);
+        }
+
+        /*
+            The HasItem method returns whether the Player's
+            inventory contains a nth instance of the named item
+        */
+
+        public bool HasItem(string name, int instance)
+        {
+            return _inventory.Where(i => i.Name.ToLower() == name).Count() > instance;
+        }
+
+        /*
             The Drop method has the Player drop an item from its inventory into
             the Player's current location
         */
@@ -144,23 +164,8 @@ namespace Dice_and_Combat_Engine
         }
 
         /*
-            The GetInventoryNames method returns the names of items contained
-            in the Player's inventory
-        */
-
-        public string[] GetInventoryNames()
-        {
-            List<string> names = new List<string>();
-            foreach (Item item in _inventory)
-                if (!names.Contains(item.Name))
-                    names.Add(item.Name);
-            return names.ToArray();
-        }
-
-        /*
             The GetItem method returns the item with the specified name
-            from the Player's inventory; If no item with that name exists,
-            null is returned
+            from the Player's inventory
         */
 
         public Item GetItem(string name)
@@ -170,26 +175,13 @@ namespace Dice_and_Combat_Engine
 
         /*
             The GetItem method returns the nth instance of the item
-            with the specified name from the Player's inventory; if
-            no item of the specified instance or name exists,
-            null is returned
+            with the specified name from the Player's inventory
         */
 
         public Item GetItem(string name, int instance)
         {
             Item[] items = _inventory.Where(i => i.Name.ToLower() == name.ToLower()).ToArray();
-            Item item = (items.Length > 0 && instance < items.Length) ? items[instance] : null;
-            return item;
-        }
-
-        /*
-            The GetItems method returns every item in the Player's inventory
-            with the specified name
-        */
-
-        public Item[] GetItems(string name)
-        {
-            return _inventory.Where(i => i.Name.ToLower() == name.ToLower()).ToArray();
+            return items[instance];
         }
 
         /*
