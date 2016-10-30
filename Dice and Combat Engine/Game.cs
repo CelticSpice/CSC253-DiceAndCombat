@@ -8,7 +8,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 
 namespace Dice_and_Combat_Engine
@@ -20,6 +19,7 @@ namespace Dice_and_Combat_Engine
         private bool _requestToQuit;            // Whether a request was made to quit
         private CombatEngine _combatEngine;     // Handles combat logic
         private CommandParser parser;           // The command parser
+        private string _previousCommand;        // The previous command entered
         private Creature[] creatures;           // The creatures in the game
         private Item[] items;                   // The items in the game
         private Room[] rooms;                   // The rooms in the game
@@ -41,6 +41,7 @@ namespace Dice_and_Combat_Engine
             LoadCreatures();
             LoadItems();
             LoadRooms();
+            _previousCommand = "";
             dungeon = new RoomGrid(dungeonSize, rooms);
             dungeon.GenerateRoomContents(creatures, items);
             GeneratePlayer();
@@ -239,7 +240,8 @@ namespace Dice_and_Combat_Engine
                 int itemValue = 0,
                     itemDurability = 0,
                     damageBonus = 0,
-                    healthRestored = 0;
+                    healthRestored = 0,
+                    maxItems = 0;
 
                 while (!itemStream.EndOfStream)
                 {
@@ -273,6 +275,9 @@ namespace Dice_and_Combat_Engine
                             case "HealthRestored":
                                 healthRestored = int.Parse(splitLine[1]);
                                 break;
+                            case "MaxItems":
+                                maxItems = int.Parse(splitLine[1]);
+                                break;
                         }
                     }
 
@@ -283,8 +288,10 @@ namespace Dice_and_Combat_Engine
                             loadList.Add(new Weapon(itemName, itemDesc, itemDurability, itemValue, damageBonus));
                         else if (type == ItemType.Potion)
                             loadList.Add(new Potion(itemName, itemDesc, itemDurability, itemValue, healthRestored));
-                        else
+                        else if (type == ItemType.Treasure)
                             loadList.Add(new Treasure(itemName, itemDesc, itemDurability, itemValue));
+                        else
+                            loadList.Add(new Container(itemName, itemDesc, itemDurability, itemValue, maxItems));
                     }
                 }
             }
@@ -350,6 +357,7 @@ namespace Dice_and_Combat_Engine
 
         public string ParseCommand(string commandString)
         {
+            _previousCommand = commandString;
             return parser.Parse(commandString.Trim().ToLower());
         }
 
@@ -380,6 +388,15 @@ namespace Dice_and_Combat_Engine
         public CombatEngine CombatEngine
         {
             get { return _combatEngine; }
+        }
+
+        /*
+            PreviousCommand Property
+        */
+
+        public string PreviousCommand
+        {
+            get { return _previousCommand; }
         }
 
         /*

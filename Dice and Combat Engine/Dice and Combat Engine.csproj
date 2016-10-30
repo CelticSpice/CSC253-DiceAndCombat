@@ -64,6 +64,7 @@
     <Compile Include="BaseStats.cs" />
     <Compile Include="CombatEngine.cs" />
     <Compile Include="CommandParser.cs" />
+    <Compile Include="Container.cs" />
     <Compile Include="Creature.cs" />
     <Compile Include="Direction.cs" />
     <Compile Include="NPC.cs" />

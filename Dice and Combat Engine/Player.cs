@@ -211,6 +211,17 @@ namespace Dice_and_Combat_Engine
         }
 
         /*
+            The Open method has the Player open a container in its current location
+            and add its items to the Player's inventory
+        */
+
+        public void Open(Container container)
+        {
+            _inventory.AddRange(container.GetItems());
+            Location.Contents.Remove(container);
+        }
+
+        /*
             The Score method returns the total score the Player has earned, which
             will be the accumulated value of each Treasure item the player has
             in its inventory's value
@@ -243,8 +254,8 @@ namespace Dice_and_Combat_Engine
 
         public void TakeAll()
         {
-            _inventory.AddRange(Location.Contents);
-            Location.Contents.Clear();
+            _inventory.AddRange(Location.Contents.Where(i => !(i is Container)));
+            Location.Contents.RemoveAll(i => !(i is Container));
         }
 
         /*

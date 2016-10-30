@@ -246,6 +246,7 @@
             this.Controls.Add(this.playerNameTextBox);
             this.Name = "MainForm";
             this.Text = "Dice and Combat Engine - Fight";
+            this.Load += new System.EventHandler(this.MainForm_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

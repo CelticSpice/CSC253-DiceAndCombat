@@ -179,8 +179,25 @@ namespace Dice_and_Combat_Engine
                         room.Contents.Add(new Weapon((Weapon)itemToAdd));
                     else if (itemToAdd is Potion)
                         room.Contents.Add(new Potion((Potion)itemToAdd));
-                    else
+                    else if (itemToAdd is Treasure)
                         room.Contents.Add(new Treasure((Treasure)itemToAdd));
+                    else
+                    {
+                        Container container = new Container((Container)itemToAdd);
+                        Item[] loot = items.Where(item => !(item is Container)).ToArray();
+                        for (int j = 0; j < container.Items.Length; j++)
+                        {
+                            Item lootToAdd = loot[rng.Next(loot.Length)];
+
+                            if (lootToAdd is Weapon)
+                                container.AddItem(new Weapon((Weapon)lootToAdd));
+                            else if (lootToAdd is Potion)
+                                container.AddItem(new Potion((Potion)lootToAdd));
+                            else
+                                container.AddItem(new Treasure((Treasure)lootToAdd));
+                        }
+                        room.Contents.Add(container);
+                    }
                 }
 
                 // Populate room with creatures

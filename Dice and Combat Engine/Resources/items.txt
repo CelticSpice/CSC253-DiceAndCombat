@@ -92,3 +92,10 @@ Name: Australium Boulder
 Description: MOAR AUSTRALIA!!
 Durability: 9001
 Value: 750
+
+ID: 3
+Name: Chest
+Description: A treasure chest of treasure and junk
+Durability: 10
+Value: 25
+MaxItems: 5

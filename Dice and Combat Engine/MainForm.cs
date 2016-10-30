@@ -29,6 +29,16 @@ namespace Dice_and_Combat_Engine
         }
 
         /*
+            Load handler
+        */
+
+        private void MainForm_Load(object sender, EventArgs e)
+        {
+            KeyPreview = true;
+            KeyDown += MainForm_KeyDown;
+        }
+
+        /*
             The StartGame method initializes the game's view
         */
 
@@ -116,6 +126,18 @@ namespace Dice_and_Combat_Engine
                 MessageBox.Show("You have died!");
                 this.Close();
             }
+        }
+
+        /*
+            KeyDown handler
+        */
+
+        private void MainForm_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyData == Keys.Up)
+                commandTxtBox.Text = game.PreviousCommand;
+            else if (e.KeyData == Keys.Down && commandTxtBox.Text == game.PreviousCommand)
+                commandTxtBox.Text = "";
         }
     }
 }
