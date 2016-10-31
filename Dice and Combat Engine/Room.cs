@@ -269,9 +269,18 @@ namespace Dice_and_Combat_Engine
 
         public string GetInfo()
         {
-            return GetItemInformation() +
-                   "\n" + GetDenizenInformation() +
-                   "\n" + GetExitInfomation();
+            string output;
+            if (IsCleared())
+                // Include item info.
+                output = GetItemInformation() +
+                         "\n" + GetDenizenInformation() +
+                         "\n" + GetExitInfomation();
+            else
+                // Otherwise, exclude item info.
+                output = "There are 0 items in this room" +
+                         "\n" + GetDenizenInformation() +
+                         "\n" + GetExitInfomation();
+            return output;
         }
 
         /*

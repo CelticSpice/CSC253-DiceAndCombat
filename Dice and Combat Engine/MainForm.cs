@@ -22,9 +22,9 @@ namespace Dice_and_Combat_Engine
         public MainForm()
         {
             InitializeComponent();
-            const int SIZE = 5;
+            const int SIZE = 5;         // Size of dungeon, will be a 5x5 grid
             game = new Game(SIZE);
-            Console.WriteLine(game.GetDungeonASCII());
+            Console.WriteLine(game.GetDungeonASCII());      // Map does not display properly on the form at the moment!
             StartGame();
         }
 

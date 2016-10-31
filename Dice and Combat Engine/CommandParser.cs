@@ -447,7 +447,7 @@ namespace Dice_and_Combat_Engine
                     game.Player.Target = game.Player.Location.GetDenizen(commandParams[0]);
                     output += game.Player.Target.Description + "\n";
                 }
-                else if (game.Player.Location.ContainsItem(commandParams[0]))
+                else if (game.Player.Location.IsCleared() && game.Player.Location.ContainsItem(commandParams[0]))
                     output += game.Player.Location.GetItem(commandParams[0]).Description + "\n";
                 else if (game.Player.HasItem(commandParams[0]))
                     output += game.Player.GetItem(commandParams[0]).Description + "\n";
@@ -467,12 +467,12 @@ namespace Dice_and_Combat_Engine
                         game.Player.Target = game.Player.Location.GetDenizen(commandParams[0], instance);
                         output += game.Player.Target.Description + "\n";
                     }
-                    else if (game.Player.Location.ContainsItem(commandParams[0], instance))
+                    else if (game.Player.Location.IsCleared() && game.Player.Location.ContainsItem(commandParams[0], instance))
                         output += game.Player.Location.GetItem(commandParams[0], instance).Description + "\n";
                     else if (game.Player.HasItem(commandParams[0], instance))
                         output += game.Player.GetItem(commandParams[0], instance).Description + "\n";
                     else
-                        output += "No " + (instance + 1) + suffix + 
+                        output += "No " + (instance + 1) + suffix +
                                   " object of that name exists\n";
                 }
                 else
@@ -505,7 +505,7 @@ namespace Dice_and_Combat_Engine
                     output += "You opened the " + direction.ToString() + " exit\n";
                 }
             }
-            else if (game.Player.Location.ContainsItem(commandParams[0]))
+            else if (game.Player.Location.IsCleared() && game.Player.Location.ContainsItem(commandParams[0]))
             {
                 Item item = game.Player.Location.GetItem(commandParams[0]);
                 if (item is Container)
@@ -555,7 +555,7 @@ namespace Dice_and_Combat_Engine
             // We expect at least 1 and up to 2 parameters
             if (commandParams.Length == 0 || commandParams.Length > 2)
                 output += "Command \"take\" syntax: [ itemToTake: Item ] { instanceOf: int }\n";
-            else if (commandParams.Length == 1)
+            else if (commandParams.Length == 1 && game.Player.Location.IsCleared())
             {
                 // Check for "all" keyword
                 if (commandParams[0] == "all")
@@ -584,7 +584,7 @@ namespace Dice_and_Combat_Engine
                 else
                     output += "No item of that name exists\n";
             }
-            else
+            else if (commandParams.Length == 2 && game.Player.Location.IsCleared())
             {
                 // Check for "all" keyword
                 if (commandParams[0] == "all")
@@ -631,6 +631,8 @@ namespace Dice_and_Combat_Engine
                         output += "Second parameter must be an integer for the instance of the object to take\n";
                 }
             }
+            else
+                output += "There are no items in this room to take\n";
         }
 
         /*
